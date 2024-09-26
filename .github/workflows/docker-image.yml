@@ -11,9 +11,12 @@ jobs:
       contents: read
       packages: write
     steps:
+      - name: Convert REPO_NAME to lower case
+        run: echo "REPO_NAME_LOWER=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
       - name: Build the Docker image
-        run: docker build . --file Dockerfile --tag orionflow:$(date +%s)
+        run: docker build . --file .docker/Dockerfile --tag ${{ env.REPO_NAME_LOWER }}:$(date +%s)
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -22,12 +25,9 @@ jobs:
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Convert REPO_NAME to lower case
-        run: echo "REPO_NAME_LOWER=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ env.REPO_NAME_LOWER }}/pocketdimension:latest
+          tags: ghcr.io/${{ env.REPO_NAME_LOWER }}:latest
