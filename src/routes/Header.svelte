@@ -6,7 +6,7 @@
 
 <header>
 	<div class="corner">
-		<a href="https://github.com/sveltejs/kit">
+		<a href="https://github.com/damaurer/PocketDimension/issues" aria-label="Github Issue Board">
 			<img src={github} alt="GitHub" />
 		</a>
 	</div>
