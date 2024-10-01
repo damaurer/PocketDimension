@@ -3,8 +3,8 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>Pocket Dimension</title>
+	<meta name="description" content="Pocket Dimension: Game Server Management" />
 </svelte:head>
 
 <section>
