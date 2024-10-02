@@ -8,27 +8,27 @@
 
 <nav>
 	<ul>
-		<li aria-current={$page.url.pathname === `${$locale}/games` ? 'page' : undefined}>
+		<li aria-current={$page.url.pathname === "/games" ? 'page' : undefined}>
 			<svg viewBox="0 0 2 3" aria-hidden="true">
 				<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 			</svg>
-			<a href={`${$locale}/games`}>
+			<a href="/games">
 				<Translate key="nav.games"></Translate>
 			</a>
 			<svg viewBox="0 0 2 3" aria-hidden="true">
 				<path d="M0,0 L0,3 C0.5,3 0.5,3 1,2 L2,0 Z" />
 			</svg>
 		</li>
-		<li aria-current={$page.url.pathname === `${$locale}/container` ? 'page' : undefined}>
-			<a href={`${$locale}/container`}  class="icon-container" aria-label="Home Button">
+		<li aria-current={$page.url.pathname === "/container"  ? 'page' : undefined}>
+			<a href="/container"  class="icon-container" aria-label="Home Button">
 				<img src={pdIcon} alt="Home Button" />
 			</a>
 		</li>
-		<li aria-current={$page.url.pathname === `${$locale}/about` ? 'page' : undefined}>
+		<li aria-current={$page.url.pathname === "/about" ? 'page' : undefined}>
 			<svg viewBox="0 0 2 3" aria-hidden="true">
 				<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 			</svg>
-			<a href={`${$locale}/about`}>
+			<a href="/about">
 				<Translate key="nav.about"></Translate>
 			</a>
 			<svg viewBox="0 0 2 3" aria-hidden="true">
