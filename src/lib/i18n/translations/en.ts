@@ -1,0 +1,18 @@
+export default {
+	"local.modal.header": "Choose your Language",
+	"local.en": "English",
+	"local.de": "German",
+	"nav.games": "Games",
+	"nav.about": "About",
+	"modal.close": "close modal",
+	// "homepage.title": "Hello, World!",
+	// "homepage.welcome": "Hi <strong>{{name}}</strong>, how are you?",
+	// "homepage.time": "The current time is: {{time}}",
+	"about": "About this app",
+	"games": "Games",
+	"about.innovation": "<strong>Pocket Dimension</strong> is an innovative application designed with the needs of gamers in mind. It utilizes Docker technology to manage game servers, providing a seamless gaming experience that is both robust and reliable.",
+	"about.accessibility": "The application allows downloading game servers directly, letting you access and install your favorite game servers with just a few taps on your device. This easy-to-use interface is designed with convenience and efficiency as our top priorities",
+	"about.simplification": "Our mission with <strong>Pocket Dimension</strong> is to streamline and simplify game server management. We understand that as a gamer, your primary focus should be on the game itself, not on the intricacies of managing game servers. With <strong>Pocket Dimension</strong>, you can keep your attention where it truly matters - on the game at hand.",
+	"about.difficulty": "The idea behind <strong>Pocket Dimension</strong> was born out of the recognition of the difficulties gamers often face when managing game servers. The founder, an avid gamer himself, recognized there had to be a better way.",
+	"about.simplified.gaming": "For game enthusiasts all over the world, <strong>Pocket Dimension</strong> is more than just an application; it's your gaming world simplified.",
+}
