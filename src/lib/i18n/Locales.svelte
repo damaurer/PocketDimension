@@ -30,7 +30,6 @@
 				<button on:click={()=>{
 					$locale = l;
 					showModal = false;
-					console.log("MODAL", showModal)
 				}}>
 					<img src={flags[l]} alt="Flag"/>
 					<Translate key={"local."+l}></Translate>

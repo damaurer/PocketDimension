@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import prisma from '$lib/server/config/prisma';
 import { validEmail, verify_email, verify_name, verify_password } from '$lib/server/security/validation';
 import type { User } from '@prisma/client';
-import { createToken } from '$lib/server/security/authenticate';
+import { createToken, hashPassword } from '$lib/server/security/authenticate';
 
 export async function register_user(
 	email: string,
@@ -28,8 +28,7 @@ export async function register_user(
 		return { error: name_error };
 	}
 
-	const salt_rounds = 10;
-	const hashed_password = await bcrypt.hash(password, salt_rounds);
+	const hashed_password = await hashPassword(password);
 
 	const user = prisma.user.create({
 		data: {
@@ -75,6 +74,7 @@ async function get_user(
 	}
 
 	const  user  = await prisma.user.findUnique({ where: { email } });
+
 
 	if (!user) {
 		return { error: "Email could not be found." };

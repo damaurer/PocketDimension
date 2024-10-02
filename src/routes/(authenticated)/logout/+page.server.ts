@@ -1,5 +1,5 @@
 import { redirect } from "@sveltejs/kit";
-import type { Actions } from "./$types";
+import type { Actions } from "../../../../.svelte-kit/types/src/routes";
 
 export const actions: Actions = {
 	default: async (event) => {
