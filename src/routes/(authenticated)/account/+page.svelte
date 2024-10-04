@@ -72,7 +72,7 @@
 
 <hr/>
 
-<div class="flex-row-space-between">
+<div class="flex-row-space-between align-center">
 	<h3>
 		<Translate key="account.admin.headline"></Translate>
 	</h3>
@@ -89,6 +89,10 @@
 
 
 <style>
+		h1 {
+				margin: 4px 0;
+		}
+
     .update-form {
         display: flex;
 				flex-direction: column;
