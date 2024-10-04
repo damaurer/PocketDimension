@@ -5,6 +5,30 @@
         <option name="imageTag" value="pocketdimension" />
         <option name="containerName" value="PocketDimension" />
         <option name="contextFolderPath" value="." />
+        <option name="envVars">
+          <list>
+            <DockerEnvVarImpl>
+              <option name="name" value="DB_ADMIN_EMAIL" />
+              <option name="value" value="admin@admin.de" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="DB_ADMIN_PASSWORD" />
+              <option name="value" value="123456789" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="DB_ADMIN_USER" />
+              <option name="value" value="admin" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="DOCKER_NETWORK" />
+              <option name="value" value="PocketDimension" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="SECRET_JWT_KEY" />
+              <option name="value" value="PocketDimensionServerKey" />
+            </DockerEnvVarImpl>
+          </list>
+        </option>
         <option name="portBindings">
           <list>
             <DockerPortBindingImpl>

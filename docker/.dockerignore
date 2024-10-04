@@ -1,0 +1,14 @@
+**/node_modules
+**/db
+**/.run
+**/.idea
+**/.github
+**/external
+**/prisma/migrations
+**/dist
+.git
+npm-debug.log
+.coverage
+.coverage.*
+.env
+.aws
