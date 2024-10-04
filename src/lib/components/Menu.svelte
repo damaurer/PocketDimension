@@ -1,5 +1,4 @@
 <script>
-	import {  locale } from '$lib/i18n/i18n.ts';
 	import { page } from '$app/stores';
 	import pdIcon from '$lib/images/reduced_icon.svg';
 	import Translate from '$lib/i18n/Translate.svelte';
@@ -24,7 +23,7 @@
 				<img src={pdIcon} alt="Home Button" />
 			</a>
 		</li>
-		<li aria-current={$page.url.pathname === "/about" ? 'page' : undefined}>
+		<li aria-current={$page.url.pathname === "/account" ? 'page' : undefined}>
 			<svg viewBox="0 0 2 3" aria-hidden="true">
 				<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 			</svg>
@@ -110,7 +109,7 @@
         padding: 0 0.5rem;
         color: var(--color-text);
         font-weight: 700;
-        font-size: 0.8rem;
+        font-size: 0.7rem;
         text-transform: uppercase;
         letter-spacing: 0.1em;
         text-decoration: none;

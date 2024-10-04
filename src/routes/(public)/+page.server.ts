@@ -1,7 +1,7 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from "./$types";
-import { login_user } from "$lib/server/services/user-service";
-import { cookie_options } from "$lib/server/utils";
+import { loginUser } from '$lib/server/services/user-service';
+import { cookie_options } from "$lib/utils";
 
 export const actions: Actions = {
 	default: async (event) => {
@@ -16,12 +16,12 @@ export const actions: Actions = {
 			return {error: "No Valid email"}
 		}
 
-		const user_data = await login_user(email, password);
+		const userData = await loginUser(email, password);
 
-		if ("error" in user_data) {
-			return fail(400, { email, error: user_data.error });
+		if ("status" in userData && "data" in userData) {
+			return userData;
 		} else {
-			const { token, user } = user_data;
+			const { token, user } = userData;
 
 			event.cookies.set("auth-token", token, cookie_options);
 			event.cookies.set("email", user.email, cookie_options);

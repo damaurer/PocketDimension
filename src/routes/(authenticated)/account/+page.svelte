@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-	import type { ActionData, PageData } from "../../../../.svelte-kit/types/src/routes";
+	import type { ActionData, PageData } from "./$types";
+	import Translate from '$lib/i18n/Translate.svelte';
+	import AccountCard from '$lib/components/AccountCard.svelte';
 
 	export let form: ActionData;
 	export let data: PageData;
@@ -13,7 +15,7 @@
 <h1>Account</h1>
 
 <form
-	action="?/name"
+	action="?/updateUser"
 	method="POST"
 	autocomplete="off"
 	use:enhance
@@ -28,16 +30,6 @@
 			value={data.name}
 		/>
 	</div>
-	<button aria-label="update name">Update</button>
-</form>
-
-<form
-	action="?/email"
-	method="POST"
-	autocomplete="off"
-	use:enhance
-	class="update-form"
->
 	<div>
 		<label for="email_input">Email</label>
 		<input
@@ -47,8 +39,9 @@
 			value={data.email}
 		/>
 	</div>
-	<button aria-label="update email">Update</button>
+	<button aria-label="update name">Update</button>
 </form>
+
 
 {#if form?.message}
 	<p class="success">
@@ -66,6 +59,24 @@
 	<button>Logout</button>
 </form>
 
+<hr/>
+
+<div class="flex-row-space-between">
+	<h3>
+		<Translate key="account.admin.headline"></Translate>
+	</h3>
+	<button>
+		<Translate key="account.admin.user.add"></Translate>
+	</button>
+</div>
+<div class="flex-row-wrap">
+	{#each data.users as user}
+		<AccountCard user={user}></AccountCard>
+	{/each}
+</div>
+
+
+
 <style>
     .update-form {
         display: grid;
@@ -76,4 +87,8 @@
     .logout-form {
         margin-top: 1.5rem;
     }
+
+		hr {
+				width: 100%;
+		}
 </style>

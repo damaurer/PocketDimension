@@ -1,100 +1,151 @@
-import bcrypt from 'bcrypt';
-
 import prisma from '$lib/server/config/prisma';
-import { validEmail, verify_email, verify_name, verify_password } from '$lib/server/security/validation';
+import { verify_email, verify_name, verify_password } from '$lib/server/security/validation';
 import type { User } from '@prisma/client';
-import { createToken, hashPassword } from '$lib/server/security/authenticate';
+import { authentication, createToken, hashPassword } from '$lib/server/security/authentication';
+import type { ActionFailure, Cookies } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 
-export async function register_user(
+const USER_SELECT = {
+	email: true,
+	name: true,
+	roles: true,
+	createdAt: true,
+	updatedAt: true
+}
+
+
+export async function getAllUsersWhereEmailIsNot(email: string) {
+	return prisma.user.findMany({
+		where: {
+			NOT: {
+				email
+			}
+		},
+		select: USER_SELECT
+	});
+}
+
+export async function registerUser(
 	email: string,
 	password: string,
 	name: string
-): Promise<{ error: string }> {
-	const email_error = await verify_email(email);
+): Promise<ActionFailure<{ message: string }> | User> {
+	const email_error = await verify_email(email, true);
 
 	if (email_error) {
-		return { error: email_error };
+		return fail(500, { message: email_error });
 	}
 
-	const password_error = verify_password(password);
+	const password_error = await verify_password(password);
 
 	if (password_error) {
-		return { error: password_error };
+		return fail(500, { message: password_error });
 	}
 
 	const name_error = verify_name(name);
 
 	if (name_error) {
-		return { error: name_error };
+		return fail(500, { message: name_error });
 	}
 
 	const hashed_password = await hashPassword(password);
 
-	const user = prisma.user.create({
-		data: {
-			email,
-			password: hashed_password,
-			name
-		}
-	});
-
 	try {
-		await user;
-		return { error: '' };
+		const user = await prisma.user.create({
+			data: {
+				email,
+				password: hashed_password,
+				name
+			}
+		});
+
+		return {
+			...user,
+			password: undefined
+		}
+
 	} catch (err) {
-		return { error: err?.toString() as string };
-	}
-}
-
-export async function login_user(
-	email: string ,
-	password: string
-): Promise<{ error: string } | { token: string; user: User }> {
-	const user = await get_user(email, password);
-
-	if ("error" in user) {
-		return { error: user.error };
+		console.error(err);
+		return fail(500, { message: 'error.user.create' });
 	}
 
-	const token = createToken(user);
-
-	return { token, user };
 }
 
-async function get_user(
+export async function loginUser(
 	email: string,
 	password: string
-): Promise<{ error: string } | User> {
-	if (!email) {
-		return { error: "Email is required." };
+): Promise<ActionFailure<{ message: string }> | { token: string; user: User }> {
+	const user = await getUser(email, password);
+
+	if ((user as ActionFailure).status && (user as ActionFailure<{ message: string }>).data?.message) {
+		return user;
 	}
 
-	if (!validEmail(email)) {
-		return { error: "Please enter a valid email." };
+	const token = createToken(user as User);
+
+	return { token, user: user as User };
+}
+
+async function getUser(
+	email: string,
+	password: string
+): Promise<ActionFailure<{ message: string }> | User> {
+
+	const email_error = await verify_email(email);
+
+	if (email_error) {
+		return fail(500, { message: email_error });
 	}
 
-	const  user  = await prisma.user.findUnique({ where: { email } });
-
+	const user = await prisma.user.findUnique({ where: { email } });
 
 	if (!user) {
-		return { error: "Email could not be found." };
+		return fail(500, { message: 'Email could not be found.' });
 	}
 
-	if (!password) {
-		return { error: "Password is required." };
+	const password_error = await verify_password(password, (user as User).password);
+	if (password_error) {
+		return fail(500, { message: password_error });
 	}
 
-	const password_is_correct = await bcrypt.compare(
-		password,
-		user.password
-	);
-
-	if (!password_is_correct) {
-		return { error: "Password is not correct." };
-	}
-
-
-	const name = user.name;
-
-	return { email, name };
+	return {
+		...user,
+		password: undefined
+	} as User;
 }
+
+export async function updateUser(
+	cookies: Cookies,
+	user: User
+): Promise<ActionFailure<{ message: string }> | { user: User }> {
+	const auth = authentication(cookies);
+
+	if (!auth) {
+		return fail(500, { message: 'You are not authorized.' });
+	}
+
+	const name_error = verify_name(user.name);
+
+	if (name_error) {
+		return fail(500, { message: name_error });
+	}
+
+	try {
+		const updatedUser = await prisma.user.update({
+			data: {
+				email: user.email,
+				name: user.name
+			},
+			where: {
+				email: user.email
+			},
+			select: USER_SELECT
+		});
+
+		return updatedUser as User;
+	} catch (err) {
+		console.error(err);
+		return fail(500, { message: 'error.user.update' });
+	}
+}
+

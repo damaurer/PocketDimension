@@ -105,3 +105,16 @@ button:focus:not(:focus-visible) {
 	width: 1px;
 	white-space: nowrap;
 }
+
+.flex-row-space-between {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.flex-row-wrap{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+

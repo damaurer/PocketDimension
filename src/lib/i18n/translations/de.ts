@@ -13,6 +13,8 @@ export default {
 	"login.but.why": "Warum diese App existiert findest du hier:",
 	"about": "Über diese App",
 	"games": "Spiele",
+	"account.admin.headline": "Administration",
+	"account.admin.user.add": "Benutzer hinzufügen",
 	"about.innovation": "<strong>Pocket Dimension</strong> ist eine innovative Anwendung, die mit den Bedürfnissen der Spieler im Kopf entworfen wurde. Sie nutzt Docker-Technologie, um Spieleserver zu verwalten, und bietet ein nahtloses Spielerlebnis, das sowohl robust als auch zuverlässig ist.",
 	"about.accessibility": "Die Anwendung ermöglicht das direkte Herunterladen von Spieleservern. Damit können Sie auf Ihre Lieblingsspieleserver zugreifen und diese mit nur wenigen Klicks auf Ihrem Gerät installieren. Diese benutzerfreundliche Schnittstelle ist so gestaltet, dass Bequemlichkeit und Effizienz unsere höchsten Prioritäten sind.",
 	"about.simplification": "Unsere Mission mit <strong>Pocket Dimension</strong> besteht darin, die Verwaltung von Spieleservern zu vereinfachen. Wir verstehen, dass sich Gamer vor allem auf das Spiel selbst konzentrieren sollten, und nicht auf die Komplexitäten der Serververwaltung. Mit <strong>Pocket Dimension</strong> können Sie Ihre Aufmerksamkeit genau dort halten, wo sie wirklich zählt - bei Ihrem Spiel.",
