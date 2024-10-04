@@ -1,10 +1,11 @@
 import prisma from '$lib/server/config/prisma';
 import { verify_email, verify_name, verify_password } from '$lib/server/security/validation';
 import type { User } from '@prisma/client';
-import {  createToken, hashPassword } from '$lib/server/security/authentication';
+import { createToken, hashPassword } from '$lib/server/security/authentication';
 import type { ActionFailure } from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
 import bcrypt from 'bcrypt';
+import { ROLE_ENUM } from '$lib/utils';
 
 const USER_SELECT = {
 	email: true,
@@ -12,7 +13,7 @@ const USER_SELECT = {
 	roles: true,
 	createdAt: true,
 	updatedAt: true
-}
+};
 
 
 export async function getAllUsersWhereEmailIsNot(email: string) {
@@ -27,9 +28,9 @@ export async function getAllUsersWhereEmailIsNot(email: string) {
 }
 
 export async function registerUser(
-	email: string,
-	password: string,
-	name: string
+	email?: string,
+	password?: string,
+	name?: string
 ): Promise<ActionFailure<{ message: string }> | User> {
 	const email_error = await verify_email(email, true);
 
@@ -49,21 +50,30 @@ export async function registerUser(
 		return fail(500, { message: name_error });
 	}
 
-	const hashed_password = await hashPassword(password);
+	const hashed_password = await hashPassword(password!);
 
 	try {
 		const user = await prisma.user.create({
 			data: {
-				email,
+				email: email!,
 				password: hashed_password,
-				name
+				name: name!,
+				roles: {
+					create: {
+						role: {
+							connect: {
+								name: ROLE_ENUM.USER_ROLE
+							}
+						}
+					}
+				}
 			}
 		});
 
 		return {
 			...user,
 			password: undefined
-		}
+		};
 
 	} catch (err) {
 		console.error(err);
@@ -129,7 +139,7 @@ async function getUser(
 
 export async function updateUser(
 	user: User
-): Promise<ActionFailure<{ message: string }> | User > {
+): Promise<ActionFailure<{ message: string }> | User> {
 	const name_error = verify_name(user.name);
 
 	if (name_error) {

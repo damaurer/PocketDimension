@@ -29,7 +29,7 @@ export async function verify_email(email: string | undefined, newUser: boolean =
 }
 
 
-export function verify_password(password: string): string | undefined {
+export function verify_password(password?: string): string | undefined {
 	if (!password) {
 		return 'Password is required.';
 	}
@@ -39,7 +39,7 @@ export function verify_password(password: string): string | undefined {
 	}
 }
 
-export function verify_name(name: string): string {
+export function verify_name(name?: string): string {
 	if (!name) {
 		return 'Name is required.';
 	}

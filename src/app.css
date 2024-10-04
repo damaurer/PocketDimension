@@ -140,15 +140,15 @@ form .form-field {
 	padding: 0.4rem 0.2rem;
 }
 
-form .form-field > label {
+.form-field > label {
 	margin-bottom: 0.5rem;
 }
 
-form .form-field > input {
+.form-field > input {
 	max-width: 100%;
 	box-sizing: border-box;
 }
 
-form .form-field > * {
+.form-field > * {
 	width: 100%;
 }
