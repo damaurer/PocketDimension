@@ -4,7 +4,7 @@ import type { Cookies } from "@sveltejs/kit";
 import type { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
 
-export function authenticate(cookies: Cookies): jsonwebtoken.JwtPayload |  string | undefined {
+export function authentication(cookies: Cookies): jsonwebtoken.JwtPayload |  string | undefined {
 	const token = cookies.get("auth-token");
 	if (!token) return undefined;
 	try {

@@ -32,6 +32,6 @@ model V_User_Role {
 }
 
 model Role {
-  name  String        @id
+  name  String        @id @unique
   users V_User_Role[]
 }

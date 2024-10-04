@@ -15,7 +15,8 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest"
+		"test:unit": "vitest",
+		"prisma:seed": "prisma db seed"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^5.0.0",

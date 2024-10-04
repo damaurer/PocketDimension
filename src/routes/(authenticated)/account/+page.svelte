@@ -1,9 +1,18 @@
 <script lang="ts">
-	import { enhance } from "$app/forms";
-	import type { ActionData, PageData } from "../../../../.svelte-kit/types/src/routes";
+
+	import type { ActionData, PageData } from './$types';
+	import Translate from '$lib/i18n/Translate.svelte';
+	import Modal from '$lib/components/Modal.svelte';
+	import UserForm from './UserForm.svelte';
 
 	export let form: ActionData;
+	export let formCreate: ActionData;
+	export let formUpdate: ActionData;
 	export let data: PageData;
+
+
+	let showModal = false;
+	let activeUser;
 </script>
 
 <svelte:head>
@@ -12,68 +21,97 @@
 
 <h1>Account</h1>
 
-<form
-	action="?/name"
-	method="POST"
-	autocomplete="off"
-	use:enhance
-	class="update-form"
->
-	<div>
-		<label for="name_input">Name</label>
-		<input
-			type="text"
-			id="name_input"
-			name="name"
-			value={data.name}
-		/>
-	</div>
-	<button aria-label="update name">Update</button>
-</form>
+<UserForm
+	action="?/updateAccount"
+	submitButtonText="label.update"
+	form={form}
+	idPrefix="account"
+	{...data}
+></UserForm>
 
-<form
-	action="?/email"
-	method="POST"
-	autocomplete="off"
-	use:enhance
-	class="update-form"
->
-	<div>
-		<label for="email_input">Email</label>
-		<input
-			type="email"
-			id="email_input"
-			name="email"
-			value={data.email}
-		/>
-	</div>
-	<button aria-label="update email">Update</button>
-</form>
-
-{#if form?.message}
-	<p class="success">
-		{form.message}
-	</p>
-{/if}
-
-{#if form?.error}
-	<p class="error">
-		{form.error}
-	</p>
-{/if}
 
 <form action="/logout" method="POST" class="logout-form">
-	<button>Logout</button>
+	<button>
+		<Translate key="account.user.button.logout"></Translate>
+	</button>
 </form>
 
+{#if data.isAdmin}
+	<hr />
+
+	<div class="flex-row-space-between align-center">
+		<h3>
+			<Translate key="account.admin.headline"></Translate>
+		</h3>
+		<button on:click={() => {showModal = true; activeUser = undefined}}>
+			<Translate key="account.admin.user.add"></Translate>
+		</button>
+	</div>
+	<div class="flex-row-wrap">
+		{#each data.users as user}
+			<div class="user-card">
+				<div class="user-data">
+					<span><Translate key="label.email"></Translate>: {user.email}</span>
+					<span><Translate key="label.name"></Translate>: {user.name}</span>
+				</div>
+				<div>
+					<button on:click={()=> {showModal = true; activeUser = user}} aria-label="Open User Modal">
+						<Translate key="account.user.button.edit"></Translate>
+					</button>
+				</div>
+			</div>
+		{/each}
+	</div>
+
+	<Modal bind:showModal showFooter={false}>
+		<h2 slot="header">
+			<Translate key="account.modal.header"></Translate>
+		</h2>
+		{#if activeUser}
+			<UserForm
+				action="?/updateUser"
+				submitButtonText="label.update"
+				form={formUpdate}
+				{...activeUser}
+			></UserForm>
+		{:else }
+			<UserForm
+				action="?/registerUser"
+				submitButtonText="label.create"
+				idPrefix="create"
+				form={formCreate}
+			></UserForm>
+		{/if}
+	</Modal>
+{/if}
+
+
 <style>
-    .update-form {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: end;
-        gap: 1rem;
+    .user-card {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-end;
+        border: 1px solid var(--color-theme-1);
+        width: 100%;
+        margin: 0.2rem;
+        padding: 0.2rem;
     }
+
+    .user-data {
+        display: flex;
+        flex-direction: column;
+    }
+
+    h1 {
+        margin: 4px 0;
+    }
+
     .logout-form {
         margin-top: 1.5rem;
+    }
+
+    hr {
+        width: 100%;
     }
 </style>

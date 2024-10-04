@@ -1,13 +1,11 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="dev" type="js.build_tools.npm" folderName="npm">
+  <configuration default="false" name="prisma:seed" type="js.build_tools.npm" folderName="prisma" nameIsGenerated="true">
     <package-json value="$PROJECT_DIR$/package.json" />
     <command value="run" />
     <scripts>
-      <script value="dev" />
+      <script value="prisma:seed" />
     </scripts>
-    <arguments value="--inspect " />
     <node-interpreter value="project" />
-    <node-options value="--inspect" />
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>

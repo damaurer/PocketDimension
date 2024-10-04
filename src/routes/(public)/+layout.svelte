@@ -2,6 +2,7 @@
 	import '../../app.css';
 	import github from '$lib/images/github.svg';
 	import Locales from '$lib/i18n/Locales.svelte';
+	import pdIcon from '$lib/images/reduced_icon.svg';
 
 
 </script>
@@ -14,7 +15,6 @@
 			</a>
 		</div>
 
-		<h1>Pocket Dimension</h1>
 
 		<div class="corner">
 			<Locales></Locales>
@@ -22,6 +22,11 @@
 	</header>
 
 	<main>
+		<div>
+			<a href="/"  class="icon-container" aria-label="Home Button">
+				<img src={pdIcon} alt="Home Button" />
+			</a>
+		</div>
 		<slot />
 	</main>
 </div>
@@ -40,9 +45,8 @@
         padding: 1rem;
         width: 100%;
         max-width: 64rem;
-        margin: 0 auto;
+        margin: -40px auto 0;
         box-sizing: border-box;
-				justify-content: center;
 				align-items: center;
     }
 
@@ -67,5 +71,10 @@
         object-fit: contain;
     }
 
+		.icon-container img{
+				max-height: 400px;
+        width: 100%;
+				margin-bottom: 20px;
+		}
 
 </style>
