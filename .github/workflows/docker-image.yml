@@ -2,7 +2,7 @@ name: Build Docker Image And Deploy latest CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "release" ]
 
 jobs:
   docker:
