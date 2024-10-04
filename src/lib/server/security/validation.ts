@@ -1,7 +1,5 @@
 import { email_regexp } from '$lib/utils';
 import prisma from '$lib/server/config/prisma';
-import bcrypt from 'bcrypt';
-
 
 export function validEmail(email: string): boolean {
 	return !!email.match(email_regexp);
@@ -30,20 +28,10 @@ export async function verify_email(email: string | undefined, newUser: boolean =
 
 }
 
-export async function verify_password(password: string, userPassword: string | undefined = undefined): Promise<string | undefined> {
+
+export function verify_password(password: string): string | undefined {
 	if (!password) {
 		return 'Password is required.';
-	}
-
-	if (userPassword) {
-		const password_is_correct = await bcrypt.compare(
-			password,
-			userPassword
-		);
-
-		if (!password_is_correct) {
-			return 'Password is not correct.';
-		}
 	}
 
 	if (password.length < 8) {

@@ -1,9 +1,10 @@
 import prisma from '$lib/server/config/prisma';
 import { verify_email, verify_name, verify_password } from '$lib/server/security/validation';
 import type { User } from '@prisma/client';
-import { authentication, createToken, hashPassword } from '$lib/server/security/authentication';
-import type { ActionFailure, Cookies } from '@sveltejs/kit';
+import {  createToken, hashPassword } from '$lib/server/security/authentication';
+import type { ActionFailure } from '@sveltejs/kit';
 import { fail } from '@sveltejs/kit';
+import bcrypt from 'bcrypt';
 
 const USER_SELECT = {
 	email: true,
@@ -97,15 +98,27 @@ async function getUser(
 		return fail(500, { message: email_error });
 	}
 
-	const user = await prisma.user.findUnique({ where: { email } });
+	const user = await prisma.user.findUnique({ where: { email } }) as User;
 
 	if (!user) {
 		return fail(500, { message: 'Email could not be found.' });
 	}
 
-	const password_error = await verify_password(password, (user as User).password);
+
+	const password_error = verify_password(password);
 	if (password_error) {
 		return fail(500, { message: password_error });
+	}
+
+	if (user.password) {
+		const password_is_correct = await bcrypt.compare(
+			password,
+			user.password
+		);
+
+		if (!password_is_correct) {
+			return fail(500, { message: 'Password is not correct.' });
+		}
 	}
 
 	return {
@@ -115,26 +128,25 @@ async function getUser(
 }
 
 export async function updateUser(
-	cookies: Cookies,
 	user: User
-): Promise<ActionFailure<{ message: string }> | { user: User }> {
-	const auth = authentication(cookies);
-
-	if (!auth) {
-		return fail(500, { message: 'You are not authorized.' });
-	}
-
+): Promise<ActionFailure<{ message: string }> | User > {
 	const name_error = verify_name(user.name);
 
 	if (name_error) {
 		return fail(500, { message: name_error });
 	}
 
+	const password_error = await verify_password(user.password);
+	if (password_error) {
+		return fail(500, { message: password_error });
+	}
+
 	try {
 		const updatedUser = await prisma.user.update({
 			data: {
 				email: user.email,
-				name: user.name
+				name: user.name,
+				password: user.password
 			},
 			where: {
 				email: user.email

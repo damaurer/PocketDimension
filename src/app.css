@@ -16,6 +16,10 @@
 	color: var(--color-text);
 }
 
+html, body, main {
+	width: 100%;
+}
+
 body {
 	min-height: 100vh;
 	margin: 0;
@@ -106,6 +110,12 @@ button:focus:not(:focus-visible) {
 	white-space: nowrap;
 }
 
+
+/** custom **/
+main {
+	width: 100%;
+}
+
 .flex-row-space-between {
 	display: flex;
 	flex-direction: row;
@@ -118,3 +128,23 @@ button:focus:not(:focus-visible) {
 	flex-wrap: wrap;
 }
 
+form .form-field {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: flex-start;
+	padding: 0.4rem 0.2rem;
+}
+
+form .form-field > label {
+	margin-bottom: 0.5rem;
+}
+
+form .form-field > input {
+	max-width: 100%;
+	box-sizing: border-box;
+}
+
+form .form-field > * {
+	width: 100%;
+}

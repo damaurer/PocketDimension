@@ -1,7 +1,7 @@
 import prisma from '$lib/server/config/prisma';
 import { verify_email } from '$lib/server/security/validation';
 import { ROLE_ENUM } from '$lib/utils';
-import type { Role, User } from '@prisma/client';
+import type {  User } from '@prisma/client';
 
 export async function userAuthorization(locals: App.Locals, email: string | undefined) {
 	const email_error = await verify_email(email);

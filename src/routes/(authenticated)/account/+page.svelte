@@ -21,7 +21,7 @@
 	use:enhance
 	class="update-form"
 >
-	<div>
+	<div class="form-field">
 		<label for="name_input">Name</label>
 		<input
 			type="text"
@@ -30,7 +30,7 @@
 			value={data.name}
 		/>
 	</div>
-	<div>
+	<div class="form-field">
 		<label for="email_input">Email</label>
 		<input
 			type="email"
@@ -39,7 +39,18 @@
 			value={data.email}
 		/>
 	</div>
-	<button aria-label="update name">Update</button>
+	<div class="form-field">
+		<label for="email_input">Password</label>
+		<input
+			type="password"
+			id="password_input"
+			name="password"
+			value={data.password}
+		/>
+	</div>
+	<div class="form-field">
+		<button aria-label="update name">Update</button>
+	</div>
 </form>
 
 
@@ -79,10 +90,9 @@
 
 <style>
     .update-form {
-        display: grid;
-        grid-template-columns: 1fr auto;
-        align-items: end;
-        gap: 1rem;
+        display: flex;
+				flex-direction: column;
+				width: 100%;
     }
     .logout-form {
         margin-top: 1.5rem;
