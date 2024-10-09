@@ -30,7 +30,8 @@ export async function getAllUsersWhereEmailIsNot(email: string) {
 export async function registerUser(
 	email?: string,
 	password?: string,
-	name?: string
+	name?: string,
+	role: string = ROLE_ENUM.USER_ROLE
 ): Promise<ActionFailure<{ message: string }> | User> {
 	const email_error = await verify_email(email, true);
 
@@ -62,7 +63,7 @@ export async function registerUser(
 					create: {
 						role: {
 							connect: {
-								name: ROLE_ENUM.USER_ROLE
+								name: role
 							}
 						}
 					}

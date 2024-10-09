@@ -2,9 +2,6 @@
 	"name": "pocketdimension",
 	"version": "0.0.1",
 	"author": "Michael Maurer",
-	"prisma": {
-		"seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.js"
-	},
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
@@ -15,8 +12,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
-		"test:unit": "vitest",
-		"prisma:seed": "prisma db seed"
+		"test:unit": "vitest"
 	},
 	"devDependencies": {
 		"@fontsource/fira-mono": "^5.0.0",

@@ -26,4 +26,5 @@ export async function userAuthorization(locals: App.Locals, email: string | unde
 		roles: user.roles,
 		isAdmin: ROLE_ENUM.isAdmin(user)
 	};
+	console.log("USER INFORMATION", locals.userInformation)
 }

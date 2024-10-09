@@ -1,10 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="docker/Dockerfile" type="docker-deploy" factoryName="dockerfile" folderName="docker" server-name="Docker">
+  <configuration default="false" name="Dockerfile" type="docker-deploy" factoryName="dockerfile" folderName="docker" server-name="Docker">
     <deployment type="dockerfile">
       <settings>
         <option name="imageTag" value="pocketdimension" />
         <option name="containerName" value="PocketDimension" />
-        <option name="contextFolderPath" value="." />
         <option name="envVars">
           <list>
             <DockerEnvVarImpl>
@@ -24,8 +23,16 @@
               <option name="value" value="PocketDimension" />
             </DockerEnvVarImpl>
             <DockerEnvVarImpl>
+              <option name="name" value="ORIGIN" />
+              <option name="value" value="http://localhost:3000" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
               <option name="name" value="SECRET_JWT_KEY" />
               <option name="value" value="PocketDimensionServerKey" />
+            </DockerEnvVarImpl>
+            <DockerEnvVarImpl>
+              <option name="name" value="DB_SHOW_ADMIN_PASSWORD" />
+              <option name="value" value="true" />
             </DockerEnvVarImpl>
           </list>
         </option>
@@ -37,12 +44,16 @@
             </DockerPortBindingImpl>
           </list>
         </option>
-        <option name="sourceFilePath" value="docker/Dockerfile" />
+        <option name="sourceFilePath" value="Dockerfile" />
         <option name="volumeBindings">
           <list>
             <DockerVolumeBindingImpl>
               <option name="containerPath" value="/var/run/docker.sock" />
               <option name="hostPath" value="/var/run/docker.sock" />
+            </DockerVolumeBindingImpl>
+            <DockerVolumeBindingImpl>
+              <option name="containerPath" value="/app/db" />
+              <option name="hostPath" value="C:\Users\xTCSx\IdeaProjects\docker_volumes\pocketdimension\" />
             </DockerVolumeBindingImpl>
           </list>
         </option>

@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-	import type { ActionData } from "../../.svelte-kit/types/src/routes";
+	import type { ActionData } from "./$types";
 	import Translate from '$lib/i18n/Translate.svelte';
 
 	export let form: ActionData;
@@ -20,7 +20,6 @@
 			type="email"
 			id="email_input"
 			name="email"
-			value={form?.email ?? ""}
 		/>
 	</div>
 	<div>
