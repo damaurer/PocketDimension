@@ -1,12 +1,12 @@
 node_modules
 .idea
-db
 
 # Output
 .output
 .vercel
 /.svelte-kit
 /build
+/db/
 
 # OS
 .DS_Store

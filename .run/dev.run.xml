@@ -6,8 +6,9 @@
       <script value="dev" />
     </scripts>
     <arguments value="--inspect " />
-    <node-interpreter value="project" />
+    <node-interpreter value="$USER_HOME$/.nvm/versions/node/v20.17.0/bin/node" />
     <node-options value="--inspect" />
+    <package-manager value="$USER_HOME$/.nvm/versions/node/v20.17.0/bin/npm" />
     <envs>
       <env name="NODE_ENV" value="development" />
     </envs>

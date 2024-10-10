@@ -1,4 +1,4 @@
-import prisma from '$lib/server/config/prisma';
+import database from '$lib/server/database/database';
 import { verify_email } from '$lib/server/security/validation';
 import { ROLE_ENUM } from '$lib/utils';
 import type {  User } from '@prisma/client';
@@ -14,7 +14,7 @@ export async function userAuthorization(locals: App.Locals, email: string | unde
 		return
 	}
 
-	const user = await prisma.user.findUnique({
+	const user = await database.user.findUnique({
 		where: { email: email as string },
 		include: {
 			roles: true

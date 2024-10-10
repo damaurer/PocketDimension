@@ -1,5 +1,5 @@
 import { email_regexp } from '$lib/utils';
-import prisma from '$lib/server/config/prisma';
+import database from '$lib/server/database/database';
 
 export function validEmail(email: string): boolean {
 	return !!email.match(email_regexp);
@@ -15,7 +15,7 @@ export async function verify_email(email: string | undefined, newUser: boolean =
 	}
 
 	if (newUser) {
-		const previous_user = await prisma.user.findUnique({
+		const previous_user = await database.user.findUnique({
 			where: {
 				email: email
 			}

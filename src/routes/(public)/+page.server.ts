@@ -1,7 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from "./$types";
-import { loginUser } from '$lib/server/services/user-service';
+import { getAllUsersWhereEmailIsNot, loginUser } from '$lib/server/services/user-service';
 import { cookie_options } from "$lib/utils";
+import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/(authenticated)/container/$types';
+import { getAllNetworks } from '$lib/server/services/docker-network-service';
+
+export const load: PageServerLoad = async ({ locals }) => {
+
+	return {
+		networks: await getAllNetworks()
+	}
+};
+
+
 
 export const actions: Actions = {
 	default: async (event) => {
