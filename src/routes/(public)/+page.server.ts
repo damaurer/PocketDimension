@@ -1,11 +1,11 @@
-import { fail, redirect } from '@sveltejs/kit';
+import { redirect } from '@sveltejs/kit';
 import type { Actions } from "./$types";
-import { getAllUsersWhereEmailIsNot, loginUser } from '$lib/server/services/user-service';
+import { loginUser } from '$lib/server/services/user-service';
 import { cookie_options } from "$lib/utils";
 import type { PageServerLoad } from '../../../.svelte-kit/types/src/routes/(authenticated)/container/$types';
 import { getAllNetworks } from '$lib/server/services/docker-network-service';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load: PageServerLoad = async () => {
 
 	return {
 		networks: await getAllNetworks()
@@ -18,16 +18,12 @@ export const actions: Actions = {
 	default: async (event) => {
 		const data = await event.request.formData();
 
-		const email = (data.get("email") as string)
-			?.toLowerCase()
-			?.trim();
+		const email_or_name = data.get("email_or_name") as string
 		const password = data.get("password") as string;
 
-		if(!email){
-			return {error: "No Valid email"}
-		}
 
-		const userData = await loginUser(email, password);
+
+		const userData = loginUser(email_or_name, password);
 
 		if ("status" in userData && "data" in userData) {
 			return userData;

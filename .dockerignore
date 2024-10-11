@@ -1,5 +1,5 @@
 **/node_modules
-**/db
+**/shared/PocketDimension/PocketDimension.db
 **/.run
 **/.idea
 **/.github

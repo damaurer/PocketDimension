@@ -6,7 +6,8 @@ node_modules
 .vercel
 /.svelte-kit
 /build
-/db/
+
+/shared/PocketDimension/**
 
 # OS
 .DS_Store

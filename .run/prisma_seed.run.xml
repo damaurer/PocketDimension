@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="database:seed" type="js.build_tools.npm" folderName="database" nameIsGenerated="true">
+  <configuration default="false" name="client:seed" type="js.build_tools.npm" folderName="client" nameIsGenerated="true">
     <package-json value="$PROJECT_DIR$/package.json" />
     <command value="run" />
     <scripts>
-      <script value="database:seed" />
+      <script value="client:seed" />
     </scripts>
     <node-interpreter value="project" />
     <envs>

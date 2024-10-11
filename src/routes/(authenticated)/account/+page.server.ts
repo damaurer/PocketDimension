@@ -1,18 +1,18 @@
 import type { Actions } from '@sveltejs/kit';
 import {
-	getAllUsersWhereEmailIsNot, registerUser, updateUser
+	getAllUsersWhereEmailIsNot, registerUser, updateUserData
 } from '$lib/server/services/user-service';
 import { cookie_options } from '$lib/utils';
 import type { PageServerLoad } from './$types';
 import bcrypt from 'bcrypt';
 import { hashPassword } from '$lib/server/security/authentication';
-import type { User } from '@prisma/client';
 import { fail } from '@sveltejs/kit';
+import type { User } from '$lib/types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals?.userInformation?.isAdmin && locals?.userInformation?.user?.email) {
 		return {
-			users: await getAllUsersWhereEmailIsNot(locals.userInformation.user.email),
+			users: getAllUsersWhereEmailIsNot(locals.userInformation.user.email),
 			isAdmin: true
 		};
 	}
@@ -31,7 +31,7 @@ export const actions: Actions = {
 		const email = (data.get('email') as string)?.toLowerCase()?.trim();
 		const password = (data.get('password') as string)?.trim();
 
-		const update: User = { ...userAuthData } as User;
+		const update: User = { ...userAuthData };
 
 		if (name && name !== userAuthData.name) {
 			update.name = name;
@@ -51,14 +51,16 @@ export const actions: Actions = {
 			}
 		}
 
-		const user = await updateUser(update) as User;
+		const user = await updateUserData(update) as User;
 
 		if ('status' in user && 'data' in user) {
 			return user;
 		}
 
 		cookies.set('email', user.email, cookie_options);
-		cookies.set('name', user.name, cookie_options);
+		if(user.name) {
+			cookies.set('name', user.name, cookie_options);
+		}
 
 		return {
 			...user,
@@ -74,8 +76,11 @@ export const actions: Actions = {
 		const name = (data.get('name') as string)?.trim();
     const email = (data.get('email') as string)?.toLowerCase()?.trim();
     const password = (data.get('password') as string)?.trim();
+    const isAdmin = (data.get('isAdmin') as boolean);
 
-		const user = await registerUser(email, password, name)
+
+
+		const user = await registerUser(email, password, name, isAdmin)
 		return { ...user, password: undefined }
 	},
 	updateUser: async ({ locals, request }) => {
@@ -108,7 +113,7 @@ export const actions: Actions = {
 			update.password = await hashPassword(password);
 		}
 
-		const user = await updateUser(update) as User;
+		const user = await updateUserData(update) as User;
 
 		if ('status' in user && 'data' in user) {
 			return user;

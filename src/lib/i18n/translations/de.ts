@@ -7,6 +7,7 @@ export default {
 	"nav.account": "Account",
 	"modal.close": "Modal schließen",
 	"label.name": "Name",
+	"label.emailorname": "E-Mail / Benutzer",
 	"label.email": "E-Mail",
 	"label.password": "Passwort",
 	"label.login": "Anmelden",

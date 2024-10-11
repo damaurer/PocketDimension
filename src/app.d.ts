@@ -2,7 +2,8 @@
 // for information about these interfaces
 
 
-import type { User, V_User_Role } from '@prisma/client';
+
+import type { Role, User } from '$lib/types';
 
 declare global {
 	namespace App {
@@ -10,7 +11,7 @@ declare global {
 		interface Locals {
 			userInformation: {
 				user: User,
-				roles: V_User_Role[],
+				roles: Role[],
 				isAdmin: boolean
 			}
 		}

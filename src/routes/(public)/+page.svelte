@@ -13,13 +13,13 @@
 
 <form method="POST" autocomplete="off" use:enhance>
 	<div>
-		<label for="email_input">
-			<Translate key="label.email"></Translate>
+		<label for="email_or_name_input">
+			<Translate key="label.emailorname"></Translate>
 		</label>
 		<input
 			type="email"
-			id="email_input"
-			name="email"
+			id="email_or_name_input"
+			name="email_or_name"
 		/>
 	</div>
 	<div>

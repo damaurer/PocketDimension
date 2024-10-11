@@ -1,24 +1,25 @@
+import type { ActionFailure } from '@sveltejs/kit';
 
 export interface User {
+	id: number,
 	email: string,
 	password: string,
-	name: string,
+	name?: string,
 	createdAt?: Date,
 	updatedAt?: Date,
-	roles: RoleEnum.Name[]
+	roles: Role[]
 }
 export interface V_User_Role {
-	roleName: string,
-	userEmail: string
+	role_name: string,
+	user_id: string
 }
 
-export namespace RoleEnum {
-	export type Name = 'ADMINISTRATOR_ROLE' | 'USER_ROLE'
-	export const Name = {
-		ADMINISTRATOR_ROLE: 'ADMINISTRATOR_ROLE',
-		USER_ROLE: 'USER_ROLE'
-	}
+export type Role = 'ADMINISTRATOR_ROLE' | 'USER_ROLE';
 
-	export const isAdmin = (role: Name): boolean => role === Name.ADMINISTRATOR_ROLE
-	export const isValid = (role: Name): boolean => Object.values(Name).includes(role)
-}
+export const Role = {
+	ADMINISTRATOR_ROLE: 'ADMINISTRATOR_ROLE' as Role,
+	USER_ROLE: 'USER_ROLE' as Role
+};
+
+
+export type Failure = ActionFailure<{ message: string }>

@@ -1,6 +1,6 @@
-import database from '$lib/server/database/database';
-import DockerClient from '$lib/server/config/docker';
+import DockerClient from '$lib/server/docker/config';
 
 export async function getAllNetworks() {
-	return DockerClient.listNetworks()
+	// return DockerClient.listNetworks()
+
 }

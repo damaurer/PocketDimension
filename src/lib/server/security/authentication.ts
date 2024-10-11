@@ -1,7 +1,7 @@
 import jsonwebtoken from 'jsonwebtoken';
 import type { Cookies } from "@sveltejs/kit";
-import type { User } from '@prisma/client';
 import bcrypt from 'bcrypt';
+import type { User } from '$lib/types';
 
 export function authentication(cookies: Cookies): jsonwebtoken.JwtPayload |  string | undefined {
 	const token = cookies.get("auth-token");
@@ -22,6 +22,6 @@ export function createToken(user: User) {
 	return jsonwebtoken.sign({ email: user.email }, SECRET_JWT_KEY);
 }
 
-export async function hashPassword(password: string) {
+export function hashPassword(password: string) {
 	return bcrypt.hash(password, 10)
 }
