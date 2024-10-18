@@ -48,19 +48,25 @@
 		</button>
 	</div>
 	<div class="flex-row-wrap">
-		{#each data.users as user}
-			<div class="user-card">
-				<div class="user-data">
-					<span><Translate key="label.email"></Translate>: {user.email}</span>
-					<span><Translate key="label.name"></Translate>: {user.name}</span>
+		{#await data.users}
+			<p>Loading Users...</p>
+		{:then users}
+			{#each users as user}
+				<div class="user-card">
+					<div class="user-data">
+						<span><Translate key="label.email"></Translate>: {user.email}</span>
+						<span><Translate key="label.name"></Translate>: {user.name}</span>
+					</div>
+					<div>
+						<button on:click={()=> {showModal = true; activeUser = user}} aria-label="Open User Modal">
+							<Translate key="account.user.button.edit"></Translate>
+						</button>
+					</div>
 				</div>
-				<div>
-					<button on:click={()=> {showModal = true; activeUser = user}} aria-label="Open User Modal">
-						<Translate key="account.user.button.edit"></Translate>
-					</button>
-				</div>
-			</div>
-		{/each}
+			{/each}
+		{:catch error}
+			<p>error loading users: {error.message}</p>
+		{/await}
 	</div>
 
 	<Modal bind:showModal showFooter={false}>

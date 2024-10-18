@@ -1,6 +1,5 @@
 import type { Actions } from '@sveltejs/kit';
 import { cookie_options } from '$lib/utils';
-import type { PageServerLoad } from './$types';
 import bcrypt from 'bcrypt';
 import { hashPassword } from '$lib/server/security/authentication';
 import { fail } from '@sveltejs/kit';
@@ -9,7 +8,8 @@ import { userRepository } from '$lib/server/database/database';
 import type { InsertValues, UpdateValues } from '$lib/server/database/types';
 import { Role } from '$lib/types';
 
-export const load: PageServerLoad = async ({ locals }) => {
+export const load = async ({ locals })=> {
+
 	if (locals.isAdmin && locals.user) {
 		return {
 			user: { ...locals.user, password: undefined },
