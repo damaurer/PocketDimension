@@ -9,13 +9,15 @@ declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			userInformation: {
-				user: User,
-				roles: Role[],
-				isAdmin: boolean
+			user: User,
+			isAdmin: boolean,
+		}
+		interface PageData {
+			user: {
+				isAdmin: boolean,
+				roles: Role[]
 			}
 		}
-		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
 	}

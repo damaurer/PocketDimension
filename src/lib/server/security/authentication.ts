@@ -22,6 +22,6 @@ export function createToken(user: User) {
 	return jsonwebtoken.sign({ email: user.email }, SECRET_JWT_KEY);
 }
 
-export function hashPassword(password: string) {
+export async function hashPassword(password: string) {
 	return bcrypt.hash(password, 10)
 }
