@@ -1,12 +1,13 @@
 node_modules
 .idea
-db
 
 # Output
 .output
 .vercel
 /.svelte-kit
 /build
+
+/shared/PocketDimension/**
 
 # OS
 .DS_Store

@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="prisma:seed" type="js.build_tools.npm" folderName="prisma" nameIsGenerated="true">
+  <configuration default="false" name="client:seed" type="js.build_tools.npm" folderName="client" nameIsGenerated="true">
     <package-json value="$PROJECT_DIR$/package.json" />
     <command value="run" />
     <scripts>
-      <script value="prisma:seed" />
+      <script value="client:seed" />
     </scripts>
     <node-interpreter value="project" />
     <envs>

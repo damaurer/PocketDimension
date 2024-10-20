@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from "$app/forms";
-	import type { ActionData } from "../../.svelte-kit/types/src/routes";
+	import type { ActionData } from "./$types";
 	import Translate from '$lib/i18n/Translate.svelte';
 
 	export let form: ActionData;
@@ -13,14 +13,13 @@
 
 <form method="POST" autocomplete="off" use:enhance>
 	<div>
-		<label for="email_input">
-			<Translate key="label.email"></Translate>
+		<label for="email_or_name_input">
+			<Translate key="label.emailorname"></Translate>
 		</label>
 		<input
 			type="email"
-			id="email_input"
-			name="email"
-			value={form?.email ?? ""}
+			id="email_or_name_input"
+			name="email_or_name"
 		/>
 	</div>
 	<div>

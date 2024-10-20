@@ -1,11 +1,10 @@
 import { email_regexp } from '$lib/utils';
-import prisma from '$lib/server/config/prisma';
 
 export function validEmail(email: string): boolean {
 	return !!email.match(email_regexp);
 }
 
-export async function verify_email(email: string | undefined, newUser: boolean = false): Promise<string | undefined> {
+export async function verify_email(email: string | undefined): Promise<string | undefined> {
 	if (!email) {
 		return 'Email is required.';
 	}
@@ -14,20 +13,7 @@ export async function verify_email(email: string | undefined, newUser: boolean =
 		return 'Please enter a valid email.';
 	}
 
-	if (newUser) {
-		const previous_user = await prisma.user.findUnique({
-			where: {
-				email: email
-			}
-		});
-
-		if (previous_user) {
-			return 'There is already an account with this email.';
-		}
-	}
-
 }
-
 
 export function verify_password(password?: string): string | undefined {
 	if (!password) {
@@ -39,7 +25,7 @@ export function verify_password(password?: string): string | undefined {
 	}
 }
 
-export function verify_name(name?: string): string {
+export function verify_name(name?: string): string | undefined{
 	if (!name) {
 		return 'Name is required.';
 	}
@@ -48,5 +34,4 @@ export function verify_name(name?: string): string {
 		return 'Name has to be at least 2 characters.';
 	}
 
-	return '';
 }
