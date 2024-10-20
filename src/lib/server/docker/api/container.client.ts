@@ -21,7 +21,6 @@ export class ContainerClient {
 						reject(error);
 						return;
 					} else {
-						console.log("List All Containers", result)
 						resolve(result);
 					}
 				});
