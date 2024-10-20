@@ -9,17 +9,14 @@ import type {
 import { SELECT_USER_GROUP_BY, SELECT_USER_ROLE } from '$lib/server/database/constante';
 import { Role } from '$lib/types';
 import type { VUserRoleRepository } from '$lib/server/database/repository/vUserRole.repository';
-import { vUserRoleRepository } from '$lib/server/database/database';
+import { hashPassword } from '$lib/server/security/authentication';
+
 
 export class UserRepository implements Repository<User> {
 
-	private database: Database;
 
-	private vUserRoleRepository: VUserRoleRepository;
+	constructor(private database: Database, private vUserRoleRepository: VUserRoleRepository) {
 
-	constructor(private db: Database, private vUserRoleRepository: VUserRoleRepository) {
-		this.database = db;
-		this.vUserRoleRepository = vUserRoleRepository;
 	}
 
 	private query(where?: string) {
@@ -110,7 +107,7 @@ export class UserRepository implements Repository<User> {
 		return this.update({ where, values }).then(async user => {
 			const rolesToRemove = user.roles.filter(role => !roles.includes(role))
 			if (rolesToRemove.length > 0) {
-				await new Promise.all(rolesToRemove.map(role => vUserRoleRepository.delete({
+				await new Promise.all(rolesToRemove.map(role => this.vUserRoleRepository.delete({
 					value: "role_name = $role_name and user_id = $user_id",
 					params: {
 						$role_name: role,
@@ -120,7 +117,7 @@ export class UserRepository implements Repository<User> {
 			}
 			const rolesToAdd = roles.filter(role => !user.roles.includes(role))
 			if(rolesToAdd.length > 0) {
-				await new Promise.all(rolesToAdd.map(role => vUserRoleRepository.insert({
+				await new Promise.all(rolesToAdd.map(role => this.vUserRoleRepository.insert({
 					values: {
 						$role_name: role,
 						$user_id: user.id
@@ -174,4 +171,43 @@ export class UserRepository implements Repository<User> {
 			});
 		})
 	}
+}
+
+let userRepository
+
+export const initUserRepository = async (database: Database, vUserRoleRepository: VUserRoleRepository) => {
+	if (userRepository) {
+		return userRepository
+	}
+	userRepository = new UserRepository(database, vUserRoleRepository);
+
+
+	const { DB_ADMIN_USER, DB_ADMIN_EMAIL, DB_ADMIN_PASSWORD } = process.env;
+
+	if (DB_ADMIN_EMAIL && DB_ADMIN_PASSWORD) {
+		let user = await userRepository.findBy({
+			value: 'email = $email',
+			params: { $email: DB_ADMIN_EMAIL }
+		});
+
+		if (!user) {
+			user = await userRepository.insertWithRole({
+				values: {
+					$email: DB_ADMIN_EMAIL,
+					$password: await hashPassword(DB_ADMIN_PASSWORD),
+					$name: DB_ADMIN_USER
+				},
+				where: {
+					value: 'email = $email',
+					params: {
+						$email: DB_ADMIN_EMAIL
+					}
+				}
+			}, [Role.ADMINISTRATOR_ROLE, Role.USER_ROLE]);
+
+			console.log("Admin User created: ", {...user, password: "***********"})
+		}
+	}
+
+	return userRepository;
 }

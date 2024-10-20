@@ -1,11 +1,10 @@
 import { email_regexp } from '$lib/utils';
-import { userRepository } from '$lib/server/database/database';
 
 export function validEmail(email: string): boolean {
 	return !!email.match(email_regexp);
 }
 
-export async function verify_email(email: string | undefined, newUser: boolean = false): Promise<string | undefined> {
+export async function verify_email(email: string | undefined): Promise<string | undefined> {
 	if (!email) {
 		return 'Email is required.';
 	}
@@ -14,18 +13,6 @@ export async function verify_email(email: string | undefined, newUser: boolean =
 		return 'Please enter a valid email.';
 	}
 
-	if (newUser) {
-		const previous_user = await userRepository.findBy({
-			value: "email = $email",
-			params: {
-				$email: email
-			}
-		})
-
-		if (previous_user) {
-			return 'There is already an account with this email.';
-		}
-	}
 }
 
 export function verify_password(password?: string): string | undefined {

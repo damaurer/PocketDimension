@@ -1,4 +1,3 @@
-import type { ActionFailure } from '@sveltejs/kit';
 
 export interface User {
 	id: number,
@@ -22,4 +21,10 @@ export const Role = {
 };
 
 
-export type Failure = ActionFailure<{ message: string }>
+export type ContainerStatus = 'START' | 'STOP' | 'RESTART'
+
+export const ContainerStatus = {
+	START: 'START' as ContainerStatus,
+	STOP: 'STOP' as ContainerStatus,
+	RESTART: 'RESTART' as ContainerStatus
+}

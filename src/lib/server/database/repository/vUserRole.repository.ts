@@ -9,10 +9,7 @@ import type {
 
 export class VUserRoleRepository implements Repository<V_User_Role>{
 
-	private database: Database
-
-	constructor(private db: Database) {
-		this.database = db
+	constructor(private database: Database) {
 	}
 
 	private query(where?: string) {
@@ -107,4 +104,15 @@ export class VUserRoleRepository implements Repository<V_User_Role>{
 			});
 		})
 	}
+}
+
+
+let vUserRoleRepository
+
+export const initVUserRoleRepository = (database: Database) => {
+	if(vUserRoleRepository) {
+		return vUserRoleRepository
+	}
+	vUserRoleRepository = new VUserRoleRepository(database);
+  return vUserRoleRepository;
 }

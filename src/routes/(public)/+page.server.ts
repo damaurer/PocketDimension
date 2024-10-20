@@ -5,12 +5,12 @@ import { validEmail, verify_email, verify_name, verify_password } from '$lib/ser
 import bcrypt from 'bcrypt';
 import { createToken } from '$lib/server/security/authentication';
 import type { User } from '$lib/types';
-import { userRepository } from '$lib/server/database/database';
 
 
 export const actions: Actions = {
 	default: async (event) => {
-		const data = await event.request.formData();
+		const { request, locals, cookies } = event;
+		const data = await request.formData();
 
 		const email_or_name = data.get('email_or_name') as string;
 		const password = data.get('password') as string;
@@ -34,13 +34,11 @@ export const actions: Actions = {
 			return fail(500, { message: password_error });
 		}
 
-		const users = await userRepository.findAll({
-			where: {
-				value: 'User.email = $email or User.name = $name',
-				params: {
-					$email: email_or_name,
-					$name: email_or_name
-				}
+		const users = await locals.repositories.user.findAll({
+			value: 'User.email = $email or User.name = $name',
+			params: {
+				$email: email_or_name,
+				$name: email_or_name
 			}
 		});
 
@@ -57,8 +55,8 @@ export const actions: Actions = {
 		const token = createToken(user as User);
 
 
-		event.cookies.set('auth-token', token, cookie_options);
-		event.cookies.set('email', user.email, cookie_options);
+		cookies.set('auth-token', token, cookie_options);
+		cookies.set('email', user.email, cookie_options);
 
 		redirect(302, '/container');
 	}

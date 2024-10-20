@@ -4,7 +4,6 @@ import bcrypt from 'bcrypt';
 import { hashPassword } from '$lib/server/security/authentication';
 import { fail } from '@sveltejs/kit';
 import { verify_email, verify_name, verify_password } from '$lib/server/security/validation';
-import { userRepository } from '$lib/server/database/database';
 import type { InsertValues, UpdateValues } from '$lib/server/database/types';
 import { Role } from '$lib/types';
 
@@ -14,7 +13,7 @@ export const load = async ({ locals })=> {
 		return {
 			user: { ...locals.user, password: undefined },
 			isAdmin: locals.isAdmin,
-			users: userRepository.findAll({
+			users: locals.repositories.user.findAll({
 				value: 'email != $email',
 				params: { $email: locals.user.email }
 			})
@@ -30,7 +29,8 @@ export const load = async ({ locals })=> {
 
 export const actions: Actions = {
 	updateAccount: async ({ locals, request, cookies }) => {
-		const userAuthData = locals.user;
+		const {user: userAuthData, repositories} = locals
+
 		const data = await request.formData();
 
 		const name = (data.get('name') as string)?.trim();
@@ -72,7 +72,7 @@ export const actions: Actions = {
 			}
 		}
 
-		const user = await userRepository.update({
+		const user = await repositories.user.update({
 			where: {
 				value: 'id = $id',
 				params: { $id: userAuthData.id }
@@ -91,7 +91,8 @@ export const actions: Actions = {
 		};
 	},
 	registerUser: async ({ locals, request }) => {
-		if (!locals.isAdmin) {
+		const {isAdmin: currentUserIsAdmin, repositories} = locals
+		if (!currentUserIsAdmin) {
 			return fail(500, { message: 'Only Admins can create other Accounts' });
 		}
 
@@ -125,7 +126,7 @@ export const actions: Actions = {
 		const roles = [Role.USER_ROLE];
 		if (isAdmin) roles.push(Role.ADMINISTRATOR_ROLE);
 
-		const user = await userRepository.insertWithRole({
+		const user = await repositories.user.insertWithRole({
 			values: insert,
 			where: {
 				value: 'email = $email',
@@ -137,7 +138,8 @@ export const actions: Actions = {
 		return { ...user, password: undefined };
 	},
 	updateUser: async ({ locals, request }) => {
-		if (!locals.isAdmin) {
+		const {isAdmin: currentUserIsAdmin, repositories} = locals
+		if (!currentUserIsAdmin) {
 			return fail(500, { message: 'Only Admins can change other Accounts' });
 		}
 
@@ -153,7 +155,7 @@ export const actions: Actions = {
 			return fail(500, { message: 'Missing Id' });
 		}
 
-		let user = await userRepository.findBy({
+		let user = await repositories.user.findBy({
 			value: 'id = $id',
 			params: {
 				$id: id
@@ -186,7 +188,7 @@ export const actions: Actions = {
 			roles.push(Role.ADMINISTRATOR_ROLE);
 		}
 
-		user = await userRepository.updateWithRole({
+		user = await repositories.user.updateWithRole({
 			where: {
 				value: 'id = $id',
 				params: { $id: user.id }
