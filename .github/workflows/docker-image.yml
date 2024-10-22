@@ -1,7 +1,8 @@
 name: Build Docker Image And Deploy latest CI
 
 on:
-  workflow_dispatch
+  push:
+    branches: [ "release" ]
 
 jobs:
   docker:

@@ -1,0 +1,13 @@
+**/node_modules
+**/shared/PocketDimension/PocketDimension.db
+**/.run
+**/.idea
+**/.github
+**/external
+**/dist
+.git
+npm-debug.log
+.coverage
+.coverage.*
+.env
+.aws

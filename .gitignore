@@ -7,6 +7,8 @@ node_modules
 /.svelte-kit
 /build
 
+/shared/PocketDimension/**
+
 # OS
 .DS_Store
 Thumbs.db
