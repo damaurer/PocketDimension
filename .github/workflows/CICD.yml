@@ -11,21 +11,20 @@ jobs:
   Build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Compile
         run: echo Hello, world!
 
   DeployDev:
-    name: Deploy to Dev
+    name: Test Dev
     if: github.event_name == 'pull_request'
     needs: [Build]
     runs-on: ubuntu-latest
     environment:
       name: Development
-      url: 'http://dev.myapp.com'
     steps:
-      - name: Deploy
+      - name: Test
         run: echo I am deploying!
 
   DeployStaging:
@@ -35,7 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Staging
-      url: 'http://test.myapp.com'
+      url: 'https://github.com/damaurer?tab=packages&repo_name=PocketDimension'
     steps:
       - name: Deploy
         run: echo I am deploying!
@@ -46,7 +45,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Production
-      url: 'http://www.myapp.com'
+      url: 'https://hub.docker.com/repository/docker/mimau/pocket-dimension'
     steps:
       - name: Deploy
         run: echo I am deploying!
