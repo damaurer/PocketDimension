@@ -1,0 +1,6 @@
+name: Playwright Test
+
+on:
+  workflow_run:
+
+jobs:
