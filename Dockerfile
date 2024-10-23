@@ -4,7 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-
 RUN npm install
 RUN npm run build
 
@@ -18,6 +17,8 @@ COPY --from=build /app/package.json ./package.json
 COPY --from=build /app/src/lib/server/database/migration/ ./src/lib/server/database/migration/
 RUN npm install --omit=dev
 RUN mkdir "shared"
+RUN useradd appuser && chown -R appuser shared
+USER appuser
 
 ENV NODE_ENV=production
 ENTRYPOINT ["node", "build"]

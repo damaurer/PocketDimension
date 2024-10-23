@@ -14,6 +14,7 @@ export const connectDatabaseClient = () => {
 	client = new sqliteDb.Database('shared/PocketDimension/PocketDimension.db', (err) => {
 		if (err) {
 			console.error(err.message);
+			return
 		}
 		console.log('Connected to the database.');
 	});
