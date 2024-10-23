@@ -14,11 +14,13 @@ WORKDIR /app
 
 COPY --from=build /app/build ./build
 COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/docker ./docker
+COPY --from=build /app/volume ./volume
 RUN npm install --omit=dev
 
-RUN useradd appuser && chown -R appuser docker
+RUN mkdir -p volume/shared/pocketdimension
+RUN useradd appuser && chown -R appuser volume
 USER appuser
+
 
 ENV NODE_ENV=production
 ENTRYPOINT ["node", "build"]

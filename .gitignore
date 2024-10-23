@@ -7,7 +7,7 @@ node_modules
 /.svelte-kit
 /build
 
-/docker/shared/pocketdimension/**
+/volume/shared/pocketdimension/**
 
 # OS
 .DS_Store
