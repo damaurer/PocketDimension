@@ -14,10 +14,10 @@ WORKDIR /app
 
 COPY --from=build /app/build ./build
 COPY --from=build /app/package.json ./package.json
-COPY --from=build /app/src/lib/server/database/migration/ ./src/lib/server/database/migration/
+COPY --from=build /app/docker ./docker
 RUN npm install --omit=dev
-RUN mkdir "shared"
-RUN useradd appuser && chown -R appuser shared
+
+RUN useradd appuser && chown -R appuser docker
 USER appuser
 
 ENV NODE_ENV=production

@@ -51,10 +51,6 @@
               <option name="containerPath" value="/var/run/docker.sock" />
               <option name="hostPath" value="/var/run/docker.sock" />
             </DockerVolumeBindingImpl>
-            <DockerVolumeBindingImpl>
-              <option name="containerPath" value="/app/shared" />
-              <option name="hostPath" value="C:\Users\xTCSx\IdeaProjects\docker_volumes\pocketdimension\" />
-            </DockerVolumeBindingImpl>
           </list>
         </option>
       </settings>

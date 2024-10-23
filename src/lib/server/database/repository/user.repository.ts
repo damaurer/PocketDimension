@@ -44,16 +44,16 @@ export class UserRepository implements Repository<User> {
 		});
 	}
 
-	async findBy({ value, params }: QueryWhere): Promise<User> {
+	async findBy({ value, params }: QueryWhere): Promise<User | undefined> {
 		return new Promise<User>((resolve, reject) => {
-			this.database.get(this.query(value), params, (err: Error | null, row: User) => {
+			this.database.get(this.query(value), params, (err: Error | null, row: User | undefined) => {
 				if (err) {
 					reject(err);
 					return;
 				}
-				if(row.roles) {
+				if(row && row.roles) {
 					row.roles = (row.roles as string).split(",") as Role[]
-				}else {
+				}else if(row) {
 					row.roles = []
 				}
 

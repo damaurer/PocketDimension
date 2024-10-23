@@ -31,11 +31,14 @@ const handleCurrentUser = async (event: RequestEvent) => {
 		const email_error = await verify_email(email);
 
 		if (email && !email_error) {
-			locals.user = await locals.repositories.user.findBy({
+			const user = await locals.repositories.user.findBy({
 				value: 'email = $email',
 				params: { $email: email }
 			});
-			locals.isAdmin = isAdmin(locals.user.roles);
+			if (user) {
+				locals.user = user;
+				locals.isAdmin = user && user.roles && isAdmin(user.roles);
+			}
 		}
 	} catch (e) {
 		console.error('Current User: ', e);
@@ -50,8 +53,8 @@ const handleDatabase = async (event: RequestEvent) => {
 		const user = await initUserRepository(database, vUserRole);
 
 		locals.repositories = {
-			user,vUserRole
-		}
+			user, vUserRole
+		};
 	} catch (e) {
 		console.error('Database:', e);
 	}
@@ -66,7 +69,7 @@ const handleDockerApi = async (event: RequestEvent) => {
 
 		locals.docker = {
 			network, container
-		}
+		};
 	} catch (e) {
 		console.error('Docker:', e);
 	}

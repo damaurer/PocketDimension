@@ -30,7 +30,7 @@ export interface InsertQueryParams extends QueryParams {
 
 export interface Repository<T> {
 	findAll: (queryParam: QueryWhere) => Promise<T[]>
-	findBy: (queryParam: QueryWhere) => Promise<T>
+	findBy: (queryParam: QueryWhere) => Promise<T | undefined>
 	insert: (queryParam: InsertQueryParams) => Promise<T>
 	update: (queryParam: UpdateQueryParams) => Promise<T>
 	delete: (queryParam: QueryWhere) => Promise<void>
