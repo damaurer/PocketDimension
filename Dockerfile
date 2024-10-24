@@ -18,8 +18,6 @@ COPY --from=build /app/volume ./volume
 RUN npm install --omit=dev
 
 RUN mkdir -p volume/shared/pocketdimension
-RUN useradd appuser && chown -R appuser volume
-USER appuser
 
 
 ENV NODE_ENV=production
