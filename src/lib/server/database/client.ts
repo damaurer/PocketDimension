@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 const isDev = process.env.NODE_ENV === 'development';
 const sqliteDb = isDev ? sqlite3.verbose() : sqlite3;
-const SCHEMA = fs.readFileSync('volume/migration/initial.sql', 'utf8');
+const SCHEMA = fs.readFileSync('database/initial.sql', 'utf8');
 
 let client;
 
@@ -11,7 +11,7 @@ export const connectDatabaseClient = () => {
 	if (client) {
 		return client;
 	}
-	client = new sqliteDb.Database('volume/shared/pocketdimension/pocketdimension.db', (err) => {
+	client = new sqliteDb.Database('shared/pocketdimension.db', (err) => {
 		if (err) {
 			console.error(err.message);
 			return
