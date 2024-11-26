@@ -6,11 +6,17 @@
       <script value="dev" />
     </scripts>
     <arguments value="--inspect " />
-    <node-interpreter value="$USER_HOME$/.nvm/versions/node/v20.17.0/bin/node" />
+    <node-interpreter value="project" />
     <node-options value="--inspect" />
-    <package-manager value="$USER_HOME$/.nvm/versions/node/v20.17.0/bin/npm" />
     <envs>
+      <env name="DB_ADMIN_EMAIL" value="admin@admin.de" />
+      <env name="DB_ADMIN_PASSWORD" value="123456789" />
+      <env name="DB_ADMIN_USER" value="admin" />
+      <env name="DB_SHOW_ADMIN_PASSWORD" value="true" />
+      <env name="DOCKER_NETWORK" value="PocketDimension" />
       <env name="NODE_ENV" value="development" />
+      <env name="ORIGIN" value="http://localhost:3000" />
+      <env name="SECRET_JWT_KEY" value="PocketDimensionServerKey" />
     </envs>
     <method v="2" />
   </configuration>

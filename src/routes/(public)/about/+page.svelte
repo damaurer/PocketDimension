@@ -1,4 +1,4 @@
-<script>
+<script  lang="ts">
 	import Translate from '$lib/i18n/Translate.svelte';
 </script>
 

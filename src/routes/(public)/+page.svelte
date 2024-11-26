@@ -40,9 +40,9 @@
 	</p>
 {/if}
 
-{#if form?.status}
+{#if form?.message}
 	<p class="error">
-		{form?.data?.message}
+		{form?.message}
 	</p>
 {/if}
 

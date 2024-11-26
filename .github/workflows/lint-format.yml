@@ -1,6 +1,0 @@
-name: lint & format
-
-on:
-  workflow_run:
-
-jobs:

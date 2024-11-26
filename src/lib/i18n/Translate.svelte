@@ -1,8 +1,8 @@
-<script>
+<script lang="ts">
 	import {t} from '$lib/i18n/i18n.ts'
 
-	export let key;
-	export let variables;
+	export let key: string;
+	export let variables: object | undefined = undefined;
 
 </script>
 
