@@ -1,6 +1,11 @@
 name: Playwright Test
 
-on:
-  workflow_run:
+on: [push]
+
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Hello World
+        run: echo Hello, World!

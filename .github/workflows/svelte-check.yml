@@ -1,6 +1,6 @@
 name: Svelte Check
-on:
 
+on: [push]
 
 jobs:
   build:
