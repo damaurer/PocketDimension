@@ -7,6 +7,7 @@ import {
 	verifyPassword
 } from '#lib/server/security/authentication.ts';
 import {
+	formPassword,
 	formString,
 	verify_email,
 	verify_name,
@@ -33,7 +34,7 @@ function readProfile(data: FormData) {
 	return {
 		name: formString(data, 'name'),
 		email: formString(data, 'email').toLowerCase(),
-		password: formString(data, 'password')
+		password: formPassword(data, 'password')
 	};
 }
 
@@ -44,7 +45,7 @@ export const actions: Actions = {
 
 		const data = await request.formData();
 		const { name, email, password } = readProfile(data);
-		const currentPassword = formString(data, 'currentPassword');
+		const currentPassword = formPassword(data, 'currentPassword');
 
 		const changes: UserChanges = {};
 

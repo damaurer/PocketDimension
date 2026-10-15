@@ -53,6 +53,11 @@ export function verify_name(name?: string): string | undefined {
 
 /** Reads a trimmed string field from form data; files and missing fields become ''. */
 export function formString(data: FormData, key: string): string {
+	return formPassword(data, key).trim();
+}
+
+/** Reads a field as is. Passwords are never trimmed. */
+export function formPassword(data: FormData, key: string): string {
 	const value = data.get(key);
-	return typeof value === 'string' ? value.trim() : '';
+	return typeof value === 'string' ? value : '';
 }

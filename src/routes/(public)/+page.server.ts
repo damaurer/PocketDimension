@@ -1,6 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { formString } from '#lib/server/security/validation.ts';
+import { formPassword, formString } from '#lib/server/security/validation.ts';
 import {
 	createToken,
 	setSessionCookie,
@@ -24,8 +24,7 @@ export const actions: Actions = {
 	default: async ({ request, locals, cookies, url, getClientAddress }) => {
 		const data = await request.formData();
 		const emailOrName = formString(data, 'email_or_name');
-		const password =
-			typeof data.get('password') === 'string' ? (data.get('password') as string) : '';
+		const password = formPassword(data, 'password');
 
 		if (!emailOrName || !password) {
 			return fail(400, { message: 'Email/name and password are required.' });
