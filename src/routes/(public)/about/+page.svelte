@@ -1,5 +1,5 @@
 <script  lang="ts">
-	import Translate from '$lib/i18n/Translate.svelte';
+	import Translate from '#lib/i18n/Translate.svelte';
 </script>
 
 <svelte:head>

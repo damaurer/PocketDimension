@@ -1,63 +1,57 @@
 import { fail, redirect } from '@sveltejs/kit';
-import type { Actions } from './$types';
-import { cookie_options } from '$lib/utils';
-import { validEmail, verify_email, verify_name, verify_password } from '$lib/server/security/validation';
-import bcrypt from 'bcrypt';
-import { createToken } from '$lib/server/security/authentication';
-import type { User } from '$lib/types';
+import type { Actions, PageServerLoad } from './$types';
+import { formString } from '#lib/server/security/validation.ts';
+import { createToken, setSessionCookie, verifyPassword } from '#lib/server/security/authentication.ts';
+import { loginLimiter } from '#lib/server/security/rateLimit.ts';
+import { isAdmin } from '#lib/utils.ts';
 
+const LOGIN_FAILED = 'Email/name or password is not correct.';
+
+const homeFor = (roles: Parameters<typeof isAdmin>[0]) => (isAdmin(roles) ? '/container' : '/games');
+
+export const load: PageServerLoad = async ({ locals }) => {
+	if (locals.user) {
+		redirect(303, homeFor(locals.user.roles));
+	}
+};
 
 export const actions: Actions = {
-	default: async (event) => {
-		const { request, locals, cookies } = event;
+	default: async ({ request, locals, cookies, url, getClientAddress }) => {
 		const data = await request.formData();
+		const emailOrName = formString(data, 'email_or_name');
+		const password = typeof data.get('password') === 'string' ? (data.get('password') as string) : '';
 
-		const email_or_name = data.get('email_or_name') as string;
-		const password = data.get('password') as string;
-
-		if (email_or_name && validEmail(email_or_name)) {
-			const email_error = await verify_email(email_or_name);
-
-			if (email_error) {
-				return fail(500, { message: email_error });
-			}
-		} else {
-			const name_error = verify_name(email_or_name);
-
-			if (name_error) {
-				return fail(500, { message: name_error });
-			}
+		if (!emailOrName || !password) {
+			return fail(400, { message: 'Email/name and password are required.' });
 		}
 
-		const password_error = verify_password(password);
-		if (password_error) {
-			return fail(500, { message: password_error });
+		const limiterKey = `${getClientAddress()}|${emailOrName.toLowerCase()}`;
+		const retryAfter = loginLimiter.hit(limiterKey);
+		if (retryAfter > 0) {
+			return fail(429, {
+				message: `Too many login attempts. Try again in ${Math.ceil(retryAfter / 60)} minutes.`
+			});
 		}
 
-		const users = await locals.repositories.user.findAll({
-			value: 'User.email = $email or User.name = $name',
-			params: {
-				$email: email_or_name,
-				$name: email_or_name
+		const candidates = await locals.repositories.user.findByEmailOrName(emailOrName);
+
+		let user;
+		if (candidates.length === 0) {
+			await verifyPassword(password, undefined);
+		}
+		for (const candidate of candidates) {
+			if (await verifyPassword(password, candidate.password)) {
+				user = candidate;
+				break;
 			}
-		});
-
-		if (!users || users.length === 0) {
-			return fail(500, { message: 'User could not be found.' });
 		}
-
-		const user = users.find(async user => await bcrypt.compare(password, user.password));
 
 		if (!user) {
-			return fail(500, { message: 'Password is not correct.' });
+			return fail(400, { message: LOGIN_FAILED });
 		}
 
-		const token = createToken(user as User);
-
-
-		cookies.set('auth-token', token, cookie_options);
-		cookies.set('email', user.email, cookie_options);
-
-		redirect(302, '/container');
+		loginLimiter.reset(limiterKey);
+		setSessionCookie(cookies, url, createToken(user));
+		redirect(303, homeFor(user.roles));
 	}
 };

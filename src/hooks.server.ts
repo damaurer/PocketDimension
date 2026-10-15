@@ -1,86 +1,70 @@
-import { authentication } from '$lib/server/security/authentication';
-import { type Handle, redirect, RequestEvent } from '@sveltejs/kit';
-import { connectDatabaseClient } from '$lib/server/database/client';
-import { verify_email } from '$lib/server/security/validation';
-import { isAdmin } from '$lib/utils';
-import { initUserRepository } from '$lib/server/database/repository/user.repository';
-import { initVUserRoleRepository } from '$lib/server/database/repository/vUserRole.repository';
-import { initContainerFetchClient } from '$lib/server/docker/api/container.client';
-import { initDockerClient, initDockerNetwork } from '$lib/server/docker/client';
+import { error, redirect, type RequestEvent } from '@sveltejs/kit';
+import type { Handle } from '@sveltejs/kit/hooks';
+import { building } from '$app/env';
+import { clearSessionCookie, AUTH_COOKIE, verifyToken } from '#lib/server/security/authentication.ts';
+import { getRepositories } from '#lib/server/services.ts';
+import { toPublicUser } from '#lib/server/database/repository/user.repository.ts';
+import { isAdmin } from '#lib/utils.ts';
 
-
-const handleAuthentication = (event: RequestEvent) => {
-	const { route, cookies } = event;
-	const is_protected = route.id?.startsWith('/(authenticated)');
-
-	const auth = authentication(event.cookies);
-
-	if (is_protected && !auth) {
-		cookies.delete('email', { path: '' });
-		throw redirect(307, '/');
-	}
+const SECURITY_HEADERS: Record<string, string> = {
+	'X-Content-Type-Options': 'nosniff',
+	'X-Frame-Options': 'DENY',
+	'Referrer-Policy': 'same-origin',
+	'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
+	'Cross-Origin-Opener-Policy': 'same-origin'
 };
 
+async function loadCurrentUser(event: RequestEvent) {
+	const { locals, cookies, url } = event;
+	locals.user = undefined;
+	locals.isAdmin = false;
 
-const handleCurrentUser = async (event: RequestEvent) => {
-	const { locals, cookies } = event;
+	const token = cookies.get(AUTH_COOKIE);
+	if (!token) return;
 
-	try {
-		const email = cookies.get('email')?.toString().toLowerCase().trim();
+	const claims = verifyToken(token);
+	const record = claims && (await locals.repositories.user.findById(Number(claims.sub)));
 
-		const email_error = await verify_email(email);
-
-		if (email && !email_error) {
-			const user = await locals.repositories.user.findBy({
-				value: 'email = $email',
-				params: { $email: email }
-			});
-			if (user) {
-				locals.user = user;
-				locals.isAdmin = user && user.roles && isAdmin(user.roles);
-			}
-		}
-	} catch (e) {
-		console.error('Current User: ', e);
+	// Unknown user or a session issued before the last password change.
+	if (!claims || !record || record.sessionVersion !== claims.ver) {
+		clearSessionCookie(cookies, url);
+		return;
 	}
-};
 
-const handleDatabase = async (event: RequestEvent) => {
-	const { locals } = event;
-	try {
-		const database = connectDatabaseClient();
-		const vUserRole = initVUserRoleRepository(database);
-		const user = await initUserRepository(database, vUserRole);
+	locals.user = toPublicUser(record);
+	locals.isAdmin = isAdmin(record.roles);
+}
 
-		locals.repositories = {
-			user, vUserRole
-		};
-	} catch (e) {
-		console.error('Database:', e);
-	}
-};
-
-const handleDockerApi = async (event: RequestEvent) => {
-	const { locals } = event;
-	try {
-		const client = initDockerClient();
-		const network = await initDockerNetwork(client);
-		const container = initContainerFetchClient(client, network);
-
-		locals.docker = {
-			network, container
-		};
-	} catch (e) {
-		console.error('Docker:', e);
-	}
-};
+function isProtected({ route, url }: RequestEvent) {
+	return route.id?.startsWith('/(authenticated)') || url.pathname.startsWith('/api/');
+}
 
 export const handle: Handle = async ({ event, resolve }) => {
-	handleAuthentication(event);
-	await handleDatabase(event);
-	await handleDockerApi(event);
-	await handleCurrentUser(event);
+	if (building) {
+		return resolve(event);
+	}
 
-	return resolve(event);
+	event.locals.repositories = await getRepositories();
+	await loadCurrentUser(event);
+
+	if (isProtected(event) && !event.locals.user) {
+		if (event.url.pathname.startsWith('/api/')) {
+			error(401, 'Not authenticated');
+		}
+		redirect(303, '/');
+	}
+
+	const response = await resolve(event);
+
+	for (const [header, value] of Object.entries(SECURITY_HEADERS)) {
+		response.headers.set(header, value);
+	}
+	if (event.url.protocol === 'https:') {
+		response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+	}
+	if (event.locals.user) {
+		response.headers.set('Cache-Control', 'private, no-store');
+	}
+
+	return response;
 };
-

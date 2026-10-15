@@ -1,14 +1,14 @@
-<script>
-	import { locales, locale } from '$lib/i18n/i18n.ts';
+<script lang="ts">
+	import { locales, locale } from '#lib/i18n/i18n.ts';
 
-	import flagEn from '$lib/i18n/flags/gb.svg';
-	import flagDe from '$lib/i18n/flags/de.svg';
-	import Modal from '$lib/components/Modal.svelte';
-	import Translate from '$lib/i18n/Translate.svelte';
+	import flagEn from '#lib/i18n/flags/gb.svg';
+	import flagDe from '#lib/i18n/flags/de.svg';
+	import Modal from '#lib/components/Modal.svelte';
+	import Translate from '#lib/i18n/Translate.svelte';
 
 	let showModal = false;
 
-	let flags = {
+	let flags: Record<string, string> = {
 		en: flagEn,
 		de: flagDe
 	};
@@ -25,7 +25,7 @@
 		<Translate key="local.modal.header"></Translate>
 	</h2>
 	<ul>
-		{#each locales as l}
+		{#each locales as l (l)}
 			<li>
 				<button on:click={()=>{
 					$locale = l;

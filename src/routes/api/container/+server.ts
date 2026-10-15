@@ -1,30 +1,38 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { ContainerStatus } from '$lib/types';
-import { fail, json, text } from '@sveltejs/kit';
+import { error, json, type RequestHandler } from '@sveltejs/kit';
+import { ContainerStatus } from '#lib/types.ts';
+import { getContainerClient } from '#lib/server/services.ts';
+import { ContainerNotFoundError, isContainerId } from '#lib/server/docker/api/container.client.ts';
 
-export const POST: RequestHandler = async ({request, locals}) => {
-	const {docker} = locals
-	const {id, status} = await request.json()
+const STATUSES = Object.values(ContainerStatus);
 
-	let container
-	switch (status) {
-		case ContainerStatus.START:
-			container = docker.container.startContainer(id)
-			break;
-		case ContainerStatus.STOP:
-			container = docker.container.stopContainer(id)
-			break;
-		case ContainerStatus.RESTART:
-			container = docker.container.restartContainer(id)
-			break;
-		default:
-			fail(500, {message: 'NO SUCH CONTAINER STATUS' })
+export const POST: RequestHandler = async ({ request, locals, url }) => {
+	if (!locals.isAdmin) {
+		error(403, 'Only administrators can manage containers.');
 	}
 
+	// Cookies are SameSite=Lax, but make cross-site requests fail explicitly as well.
+	const origin = request.headers.get('origin');
+	if (origin && origin !== url.origin) {
+		error(403, 'Cross-site request blocked.');
+	}
 
-	return json({ id: container.Id })
-}
+	const body = await request.json().catch(() => undefined);
+	const { id, status } = (body ?? {}) as { id?: unknown; status?: unknown };
 
-export const fallback: RequestHandler = async ({ request }) => {
-	return text(`I caught your ${request.method} request!`);
+	if (!isContainerId(id) || !STATUSES.includes(status as ContainerStatus)) {
+		error(400, 'Invalid container id or status.');
+	}
+
+	try {
+		const client = await getContainerClient();
+		await client.changeStatus(id, status as ContainerStatus);
+	} catch (e) {
+		if (e instanceof ContainerNotFoundError) {
+			error(404, e.message);
+		}
+		console.error('Docker:', e);
+		error(502, 'Docker request failed.');
+	}
+
+	return json({ id, status });
 };

@@ -24,3 +24,7 @@ Thumbs.db
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 /.run/
+
+# Test output
+/test-results
+/playwright-report

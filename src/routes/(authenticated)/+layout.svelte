@@ -1,8 +1,8 @@
 <script>
 	import '../../app.css';
-	import github from '$lib/images/github.svg';
-	import Menu from '$lib/components/Menu.svelte';
-	import Locales from '$lib/i18n/Locales.svelte';
+	import github from '#lib/images/github.svg';
+	import Menu from '#lib/components/Menu.svelte';
+	import Locales from '#lib/i18n/Locales.svelte';
 
 
 </script>

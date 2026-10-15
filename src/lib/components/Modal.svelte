@@ -1,22 +1,22 @@
-<script>
-	import Translate from '$lib/i18n/Translate.svelte';
+<script lang="ts">
+	import Translate from '#lib/i18n/Translate.svelte';
 
-	export let showModal; // boolean
+	export let showModal: boolean;
 	export let showFooter = true;
 
-	let dialog; // HTMLDialogElement
+	let dialog: HTMLDialogElement;
 
 	$: if (dialog && showModal) dialog.showModal();
 	else if (dialog && !showModal) dialog.close();
 </script>
 
-<!-- svelte-ignore a11y-click-events-have-key-events a11y-no-noninteractive-element-interactions -->
+<!-- svelte-ignore a11y_click_events_have_key_events -->
 <dialog
 	bind:this={dialog}
 	on:close={() => (showModal = false)}
 	on:click|self={() => dialog.close()}
 >
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
 	<div on:click|stopPropagation>
 		<slot name="header" />
 		<hr />
@@ -24,7 +24,7 @@
 		{#if showFooter}
 		<hr />
 			<div class="dialog-footer">
-				<!-- svelte-ignore a11y-autofocus -->
+				<!-- svelte-ignore a11y_autofocus -->
 				<button autofocus on:click={() => dialog.close()}>
 					<Translate key="modal.close" />
 				</button>
