@@ -15,7 +15,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 				Names,
 				State,
 				Status,
-				Ports: Ports.map((p) => ({ PrivatePort: p.PrivatePort, PublicPort: p.PublicPort, Type: p.Type }))
+				Ports: Ports.map((p) => ({
+					PrivatePort: p.PrivatePort,
+					PublicPort: p.PublicPort,
+					Type: p.Type
+				}))
 			}))
 		)
 		.catch((e) => {

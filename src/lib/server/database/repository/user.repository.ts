@@ -39,7 +39,9 @@ export class UserRepository {
 	constructor(private db: Database) {}
 
 	async findById(id: number): Promise<UserRecord | undefined> {
-		const row = await this.db.get<UserRow>(`${SELECT_USER} WHERE User.id = ? GROUP BY User.id`, [id]);
+		const row = await this.db.get<UserRow>(`${SELECT_USER} WHERE User.id = ? GROUP BY User.id`, [
+			id
+		]);
 		return row && toRecord(row);
 	}
 

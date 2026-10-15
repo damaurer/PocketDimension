@@ -31,10 +31,10 @@ npm install
 npm run dev
 ```
 
-| Command                    | What it does                          |
-| -------------------------- | ------------------------------------- |
-| `npm run lint`             | Prettier and ESLint                   |
-| `npm run check`            | Type check (svelte-check)             |
-| `npm run test:unit`        | Unit tests (Vitest)                   |
-| `npm run test:integration` | Browser tests against a build (Playwright) |
+| Command                    | What it does                                  |
+| -------------------------- | --------------------------------------------- |
+| `npm run lint`             | Prettier and ESLint                           |
+| `npm run check`            | Type check (svelte-check)                     |
+| `npm run test:unit`        | Unit tests (Vitest)                           |
+| `npm run test:integration` | Browser tests against a build (Playwright)    |
 | `npm run build`            | Production build, start with `node server.js` |

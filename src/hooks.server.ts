@@ -1,7 +1,11 @@
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit/hooks';
 import { building } from '$app/env';
-import { clearSessionCookie, AUTH_COOKIE, verifyToken } from '#lib/server/security/authentication.ts';
+import {
+	clearSessionCookie,
+	AUTH_COOKIE,
+	verifyToken
+} from '#lib/server/security/authentication.ts';
 import { getRepositories } from '#lib/server/services.ts';
 import { toPublicUser } from '#lib/server/database/repository/user.repository.ts';
 import { isAdmin } from '#lib/utils.ts';

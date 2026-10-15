@@ -22,7 +22,9 @@ export class Database {
 
 	all<T>(sql: string, params: Params = []): Promise<T[]> {
 		return new Promise((resolve, reject) => {
-			this.db.all(sql, params, (err: Error | null, rows: T[]) => (err ? reject(err) : resolve(rows)));
+			this.db.all(sql, params, (err: Error | null, rows: T[]) =>
+				err ? reject(err) : resolve(rows)
+			);
 		});
 	}
 

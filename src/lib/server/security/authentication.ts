@@ -36,7 +36,11 @@ export function verifyToken(token: string | undefined): SessionClaims | undefine
 			algorithms: [ALGORITHM],
 			issuer: ISSUER
 		});
-		if (typeof claims !== 'object' || typeof claims.sub !== 'string' || typeof claims.ver !== 'number') {
+		if (
+			typeof claims !== 'object' ||
+			typeof claims.sub !== 'string' ||
+			typeof claims.ver !== 'number'
+		) {
 			return undefined;
 		}
 		return { sub: claims.sub, ver: claims.ver };

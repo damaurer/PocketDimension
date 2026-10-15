@@ -1,13 +1,18 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { formString } from '#lib/server/security/validation.ts';
-import { createToken, setSessionCookie, verifyPassword } from '#lib/server/security/authentication.ts';
+import {
+	createToken,
+	setSessionCookie,
+	verifyPassword
+} from '#lib/server/security/authentication.ts';
 import { loginLimiter } from '#lib/server/security/rateLimit.ts';
 import { isAdmin } from '#lib/utils.ts';
 
 const LOGIN_FAILED = 'Email/name or password is not correct.';
 
-const homeFor = (roles: Parameters<typeof isAdmin>[0]) => (isAdmin(roles) ? '/container' : '/games');
+const homeFor = (roles: Parameters<typeof isAdmin>[0]) =>
+	isAdmin(roles) ? '/container' : '/games';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {
@@ -19,7 +24,8 @@ export const actions: Actions = {
 	default: async ({ request, locals, cookies, url, getClientAddress }) => {
 		const data = await request.formData();
 		const emailOrName = formString(data, 'email_or_name');
-		const password = typeof data.get('password') === 'string' ? (data.get('password') as string) : '';
+		const password =
+			typeof data.get('password') === 'string' ? (data.get('password') as string) : '';
 
 		if (!emailOrName || !password) {
 			return fail(400, { message: 'Email/name and password are required.' });

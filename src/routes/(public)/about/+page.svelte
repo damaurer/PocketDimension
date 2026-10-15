@@ -1,4 +1,4 @@
-<script  lang="ts">
+<script lang="ts">
 	import Translate from '#lib/i18n/Translate.svelte';
 </script>
 
@@ -8,7 +8,7 @@
 </svelte:head>
 
 <div class="text-column">
-	<h1><Translate key="about"/></h1>
+	<h1><Translate key="about" /></h1>
 
 	<p>
 		<Translate key="about.innovation"></Translate>

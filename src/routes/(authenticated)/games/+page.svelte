@@ -8,6 +8,5 @@
 </svelte:head>
 
 <div class="text-column">
-	<h1><Translate key="games"/></h1>
-
+	<h1><Translate key="games" /></h1>
 </div>

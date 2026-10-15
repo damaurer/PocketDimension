@@ -10,10 +10,9 @@
 	);
 </script>
 
-
 <nav>
 	<ul>
-		<li aria-current={page.url.pathname === "/games" ? 'page' : undefined}>
+		<li aria-current={page.url.pathname === '/games' ? 'page' : undefined}>
 			<svg viewBox="0 0 2 3" aria-hidden="true">
 				<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 			</svg>
@@ -29,7 +28,7 @@
 				<img src={pdIcon} alt="Home Button" />
 			</a>
 		</li>
-		<li aria-current={page.url.pathname === "/account" ? 'page' : undefined}>
+		<li aria-current={page.url.pathname === '/account' ? 'page' : undefined}>
 			<svg viewBox="0 0 2 3" aria-hidden="true">
 				<path d="M0,0 L1,2 C1.5,3 1.5,3 2,3 L2,0 Z" />
 			</svg>
@@ -44,89 +43,88 @@
 </nav>
 
 <style>
-    img {
-        width: 60px;
-    }
+	img {
+		width: 60px;
+	}
 
-    nav {
-        display: flex;
-        justify-content: center;
-        --background: rgba(255, 255, 255, 0.7);
-    }
+	nav {
+		display: flex;
+		justify-content: center;
+		--background: rgba(255, 255, 255, 0.7);
+	}
 
-    svg {
-        width: 2em;
-        height: 3em;
-        display: block;
-    }
+	svg {
+		width: 2em;
+		height: 3em;
+		display: block;
+	}
 
-    path {
-        fill: var(--background);
-    }
+	path {
+		fill: var(--background);
+	}
 
-    ul {
-        position: relative;
-        padding: 0;
-        margin: 0;
-        height: 3em;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        list-style: none;
-        background-size: contain;
-    }
+	ul {
+		position: relative;
+		padding: 0;
+		margin: 0;
+		height: 3em;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		list-style: none;
+		background-size: contain;
+	}
 
-		li > a:not(.icon-container) {
-        background: var(--background);
-		}
+	li > a:not(.icon-container) {
+		background: var(--background);
+	}
 
-    li {
-        position: relative;
-        height: 100%;
-				display: flex;
-				flex-direction: row;
-    }
+	li {
+		position: relative;
+		height: 100%;
+		display: flex;
+		flex-direction: row;
+	}
 
-    li[aria-current='page']::before {
-        --size: 6px;
-        content: '';
-        width: 0;
-        height: 0;
-        position: absolute;
-        top: 0;
-        left: calc(50% - var(--size));
-        border: var(--size) solid transparent;
-        border-top: var(--size) solid var(--color-theme-1);
-    }
+	li[aria-current='page']::before {
+		--size: 6px;
+		content: '';
+		width: 0;
+		height: 0;
+		position: absolute;
+		top: 0;
+		left: calc(50% - var(--size));
+		border: var(--size) solid transparent;
+		border-top: var(--size) solid var(--color-theme-1);
+	}
 
-		li a.icon-container {
-				margin-top: 10px;
-				transition: 1s;
-		}
+	li a.icon-container {
+		margin-top: 10px;
+		transition: 1s;
+	}
 
-    li[aria-current='page'] a.icon-container {
-				margin-top: 20px;
-    }
+	li[aria-current='page'] a.icon-container {
+		margin-top: 20px;
+	}
 
-    nav a {
-        display: flex;
-        height: 100%;
-        align-items: center;
-        padding: 0 0.5rem;
-        color: var(--color-text);
-        font-weight: 700;
-        font-size: 0.7rem;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        text-decoration: none;
-        transition: color 0.2s linear;
-    }
+	nav a {
+		display: flex;
+		height: 100%;
+		align-items: center;
+		padding: 0 0.5rem;
+		color: var(--color-text);
+		font-weight: 700;
+		font-size: 0.7rem;
+		text-transform: uppercase;
+		letter-spacing: 0.1em;
+		text-decoration: none;
+		transition: color 0.2s linear;
+	}
 
-    a:hover {
-        color: var(--color-theme-1);
-    }
+	a:hover {
+		color: var(--color-theme-1);
+	}
 
-		@media screen {
-
-    }
+	@media screen {
+	}
 </style>

@@ -4,8 +4,6 @@
 	import github from '#lib/images/github.svg';
 	import Locales from '#lib/i18n/Locales.svelte';
 	import pdIcon from '#lib/images/reduced_icon.svg';
-
-
 </script>
 
 <div class="app">
@@ -15,7 +13,6 @@
 				<img src={github} alt="GitHub" />
 			</a>
 		</div>
-
 
 		<div class="corner">
 			<Locales></Locales>
@@ -33,49 +30,48 @@
 </div>
 
 <style>
-    .app {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
+	.app {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
 
-    main {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        padding: 1rem;
-        width: 100%;
-        max-width: 64rem;
-        margin: -40px auto 0;
-        box-sizing: border-box;
-				align-items: center;
-    }
+	main {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		padding: 1rem;
+		width: 100%;
+		max-width: 64rem;
+		margin: -40px auto 0;
+		box-sizing: border-box;
+		align-items: center;
+	}
 
-    header {
-        position: sticky;
-        top: 0;
-        display: flex;
-        justify-content: space-between;
-    }
+	header {
+		position: sticky;
+		top: 0;
+		display: flex;
+		justify-content: space-between;
+	}
 
-    .corner {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 3em;
-        height: 3em;
-    }
+	.corner {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 3em;
+		height: 3em;
+	}
 
-    .corner img {
-        width: 2em;
-        height: 2em;
-        object-fit: contain;
-    }
+	.corner img {
+		width: 2em;
+		height: 2em;
+		object-fit: contain;
+	}
 
-		.icon-container img{
-				max-height: 400px;
-        width: 100%;
-				margin-bottom: 20px;
-		}
-
+	.icon-container img {
+		max-height: 400px;
+		width: 100%;
+		margin-bottom: 20px;
+	}
 </style>
