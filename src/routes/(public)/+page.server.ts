@@ -7,16 +7,14 @@ import {
 	verifyPassword
 } from '#lib/server/security/authentication.ts';
 import { loginLimiter } from '#lib/server/security/rateLimit.ts';
-import { isAdmin } from '#lib/utils.ts';
 
 const LOGIN_FAILED = 'Email/name or password is not correct.';
 
-const homeFor = (roles: Parameters<typeof isAdmin>[0]) =>
-	isAdmin(roles) ? '/container' : '/games';
+const HOME = '/servers';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (locals.user) {
-		redirect(303, homeFor(locals.user.roles));
+		redirect(303, HOME);
 	}
 };
 
@@ -57,6 +55,6 @@ export const actions: Actions = {
 
 		loginLimiter.reset(limiterKey);
 		setSessionCookie(cookies, url, createToken(user));
-		redirect(303, homeFor(user.roles));
+		redirect(303, HOME);
 	}
 };

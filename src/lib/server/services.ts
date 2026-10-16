@@ -3,22 +3,32 @@ import {
 	ensureAdminUser,
 	UserRepository
 } from '#lib/server/database/repository/user.repository.ts';
+import { GameRepository } from '#lib/server/database/repository/game.repository.ts';
 import { initDockerClient, initDockerNetwork } from '#lib/server/docker/client.ts';
 import {
 	initContainerClient,
 	type ContainerClient
 } from '#lib/server/docker/api/container.client.ts';
+import { ServerManager } from '#lib/server/games/servers.ts';
+import { BUILTIN_TEMPLATES } from '#lib/server/games/catalog.ts';
 import { hashPassword } from '#lib/server/security/authentication.ts';
 import { config } from '#lib/server/config.ts';
 
-let repositories: Promise<{ user: UserRepository }> | undefined;
+export interface Repositories {
+	user: UserRepository;
+	games: GameRepository;
+}
 
-export function getRepositories() {
+let repositories: Promise<Repositories> | undefined;
+
+export function getRepositories(): Promise<Repositories> {
 	repositories ??= (async () => {
 		const database = await connectDatabaseClient();
 		const user = new UserRepository(database);
+		const games = new GameRepository(database);
 		await ensureAdminUser(user, config.admin, hashPassword);
-		return { user };
+		await games.syncBuiltinTemplates(BUILTIN_TEMPLATES);
+		return { user, games };
 	})();
 	repositories.catch(() => (repositories = undefined));
 	return repositories;
@@ -28,4 +38,17 @@ export async function getContainerClient(): Promise<ContainerClient> {
 	const client = initDockerClient();
 	const network = await initDockerNetwork(client);
 	return initContainerClient(client, network);
+}
+
+let serverManager: Promise<ServerManager> | undefined;
+
+export function getServerManager(): Promise<ServerManager> {
+	serverManager ??= (async () => {
+		const { games } = await getRepositories();
+		const manager = new ServerManager(games, initDockerClient(), await getContainerClient());
+		await manager.resumeInterrupted();
+		return manager;
+	})();
+	serverManager.catch(() => (serverManager = undefined));
+	return serverManager;
 }

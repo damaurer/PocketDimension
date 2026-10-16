@@ -2,7 +2,7 @@
 // for information about these interfaces
 
 import type { User } from '#lib/types.ts';
-import type { UserRepository } from '#lib/server/database/repository/user.repository.ts';
+import type { Repositories } from '#lib/server/services.ts';
 
 declare global {
 	namespace App {
@@ -10,9 +10,7 @@ declare global {
 		interface Locals {
 			user: User | undefined;
 			isAdmin: boolean;
-			repositories: {
-				user: UserRepository;
-			};
+			repositories: Repositories;
 		}
 		// interface PageData {}
 		// interface PageState {}
