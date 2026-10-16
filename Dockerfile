@@ -1,36 +1,35 @@
-FROM node:20.17 AS build
+FROM node:24-trixie-slim AS build
 
 WORKDIR /app
 
-# copy everything to the container
-COPY . .
-
-# clean install all dependencies
+# install dependencies first so they are cached between source changes
+COPY package.json package-lock.json ./
 RUN npm ci
 
-# build SvelteKit app
-RUN npm run build
+COPY . .
+RUN npm run build && npm prune --omit=dev
 
-FROM node:20.17 AS run
+
+FROM node:24-trixie-slim AS run
 
 WORKDIR /app
 
-# copy dependency list
-COPY --from=build /app/package*.json ./
+ENV NODE_ENV=production \
+    PORT=3000 \
+    DB_PATH=/app/shared/pocketdimension.db
 
-# clean install dependencies, no devDependencies, no prepare script
-RUN npm install --omit dev
-
-# copy built SvelteKit app to /app
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/build ./build
-
-# copy database files
 COPY --from=build /app/database ./database
+COPY --from=build /app/server.js ./server.js
 
-# create locale db folder
 RUN mkdir -p shared
 
-
-ENV NODE_ENV=production
+VOLUME ["/app/shared"]
 EXPOSE 3000
-ENTRYPOINT ["node", "build"]
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s \
+    CMD node -e "fetch('http://127.0.0.1:'+(process.env.PORT||3000)+'/about').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+
+ENTRYPOINT ["node", "server.js"]

@@ -1,206 +1,161 @@
-import type { Actions } from '@sveltejs/kit';
-import { cookie_options } from '$lib/utils';
-import bcrypt from 'bcrypt';
-import { hashPassword } from '$lib/server/security/authentication';
-import { fail } from '@sveltejs/kit';
-import { verify_email, verify_name, verify_password } from '$lib/server/security/validation';
-import type { InsertValues, UpdateValues } from '$lib/server/database/types';
-import { Role } from '$lib/types';
+import { error, fail, type Actions } from '@sveltejs/kit';
+import type { PageServerLoad } from './$types';
+import {
+	createToken,
+	hashPassword,
+	setSessionCookie,
+	verifyPassword
+} from '#lib/server/security/authentication.ts';
+import {
+	formPassword,
+	formString,
+	verify_email,
+	verify_name,
+	verify_password
+} from '#lib/server/security/validation.ts';
+import { toPublicUser, type UserChanges } from '#lib/server/database/repository/user.repository.ts';
+import { Role } from '#lib/types.ts';
 
-export const load = async ({ locals })=> {
+export const load: PageServerLoad = async ({ locals }) => {
+	const user = locals.user!;
+	const users = locals.isAdmin
+		? (await locals.repositories.user.findAllExcept(user.id)).map(toPublicUser)
+		: [];
 
-	if (locals.isAdmin && locals.user) {
-		return {
-			user: { ...locals.user, password: undefined },
-			isAdmin: locals.isAdmin,
-			users: locals.repositories.user.findAll({
-				value: 'email != $email',
-				params: { $email: locals.user.email }
-			})
-		};
-	}
-
-	return {
-		user: { ...locals.user, password: undefined },
-		isAdmin: locals.isAdmin,
-		users: []
-	};
+	return { user, isAdmin: locals.isAdmin, users };
 };
 
+/** True for a UNIQUE violation, i.e. the email is already taken. */
+function isConstraintError(e: unknown) {
+	return (e as { code?: string })?.code === 'SQLITE_CONSTRAINT';
+}
+
+function readProfile(data: FormData) {
+	return {
+		name: formString(data, 'name'),
+		email: formString(data, 'email').toLowerCase(),
+		password: formPassword(data, 'password')
+	};
+}
+
 export const actions: Actions = {
-	updateAccount: async ({ locals, request, cookies }) => {
-		const {user: userAuthData, repositories} = locals
+	updateAccount: async ({ locals, request, cookies, url }) => {
+		const repository = locals.repositories.user;
+		const current = (await repository.findById(locals.user!.id))!;
 
 		const data = await request.formData();
+		const { name, email, password } = readProfile(data);
+		const currentPassword = formPassword(data, 'currentPassword');
 
-		const name = (data.get('name') as string)?.trim();
-		const email = (data.get('email') as string)?.toLowerCase()?.trim();
-		const password = (data.get('password') as string)?.trim();
+		const changes: UserChanges = {};
 
-		const update: UpdateValues = {};
-
-		if (name && name !== userAuthData.name) {
-			const name_error = verify_name(name);
-
-			if (name_error) {
-				return fail(500, { message: name_error });
-			}
-			update['$name'] = name;
+		if (name && name !== current.name) {
+			const message = verify_name(name);
+			if (message) return fail(400, { message });
+			changes.name = name;
 		}
-		if (email && email !== userAuthData.email) {
 
-			const email_error = await verify_email(email);
-			if (email_error) {
-				return fail(500, { message: email_error });
-			}
-
-			update['$email'] = email;
+		if (email && email !== current.email) {
+			const message = verify_email(email);
+			if (message) return fail(400, { message });
+			changes.email = email;
 		}
 
 		if (password) {
-			const password_error = verify_password(password);
-			if (password_error) {
-				return fail(500, { message: password_error });
-			}
-			const password_is_correct = await bcrypt.compare(
-				password,
-				userAuthData.password
-			);
+			const message = verify_password(password);
+			if (message) return fail(400, { message });
+			changes.passwordHash = await hashPassword(password);
+		}
 
-			if (password && !password_is_correct) {
-				update['$password'] = await hashPassword(password);
+		if (changes.email || changes.passwordHash) {
+			if (!(await verifyPassword(currentPassword, current.password))) {
+				return fail(400, { message: 'Current password is required to change email or password.' });
 			}
 		}
 
-		const user = await repositories.user.update({
-			where: {
-				value: 'id = $id',
-				params: { $id: userAuthData.id }
-			},
-			values: update
-		});
-
-		cookies.set('email', user.email, cookie_options);
-		if (user.name) {
-			cookies.set('name', user.name, cookie_options);
+		try {
+			const updated = (await repository.update(current.id, changes))!;
+			if (changes.passwordHash) {
+				// The password change invalidated all sessions; keep this one signed in.
+				setSessionCookie(cookies, url, createToken(updated));
+			}
+			return { success: true, message: 'Account updated.' };
+		} catch (e) {
+			if (isConstraintError(e)) return fail(400, { message: 'This email is already in use.' });
+			throw e;
 		}
-
-		return {
-			...user,
-			password: undefined
-		};
 	},
+
 	registerUser: async ({ locals, request }) => {
-		const {isAdmin: currentUserIsAdmin, repositories} = locals
-		if (!currentUserIsAdmin) {
-			return fail(500, { message: 'Only Admins can create other Accounts' });
+		if (!locals.isAdmin) {
+			error(403, 'Only administrators can create accounts.');
 		}
 
 		const data = await request.formData();
-		const name = (data.get('name') as string)?.trim();
-		const email = (data.get('email') as string)?.toLowerCase()?.trim();
-		const password = (data.get('password') as string)?.trim();
-		const isAdmin = (data.get('isAdmin') as boolean);
+		const { name, email, password } = readProfile(data);
 
-		const name_error = verify_name(name);
-
-		const insert: InsertValues = {};
-
-		if (name_error) {
-			return fail(500, { message: name_error });
-		}
-		insert['$name'] = name;
-
-		const email_error = await verify_email(email);
-		if (email_error) {
-			return fail(500, { message: email_error });
-		}
-		insert['$email'] = email;
-
-		const password_error = verify_password(password);
-		if (password_error) {
-			return fail(500, { message: password_error });
-		}
-		insert['$password'] = await hashPassword(password!);
+		const message = verify_name(name) ?? verify_email(email) ?? verify_password(password);
+		if (message) return fail(400, { message });
 
 		const roles = [Role.USER_ROLE];
-		if (isAdmin) roles.push(Role.ADMINISTRATOR_ROLE);
+		if (data.get('isAdmin') === 'on') roles.push(Role.ADMINISTRATOR_ROLE);
 
-		const user = await repositories.user.insertWithRole({
-			values: insert,
-			where: {
-				value: 'email = $email',
-				params: {
-					$email: email
-				}
-			}
-		}, roles);
-		return { ...user, password: undefined };
+		try {
+			await locals.repositories.user.create(
+				{ name, email, passwordHash: await hashPassword(password) },
+				roles
+			);
+			return { success: true, message: 'User created.' };
+		} catch (e) {
+			if (isConstraintError(e)) return fail(400, { message: 'This email is already in use.' });
+			throw e;
+		}
 	},
+
 	updateUser: async ({ locals, request }) => {
-		const {isAdmin: currentUserIsAdmin, repositories} = locals
-		if (!currentUserIsAdmin) {
-			return fail(500, { message: 'Only Admins can change other Accounts' });
+		if (!locals.isAdmin) {
+			error(403, 'Only administrators can change other accounts.');
 		}
 
 		const data = await request.formData();
+		const id = Number(formString(data, 'id'));
+		const { name, email, password } = readProfile(data);
 
-		const id = (data.get('id') as string).trim();
-		const name = (data.get('name') as string).trim();
-		const email = (data.get('email') as string).trim();
-		const password = (data.get('password') as string).trim();
-		const isAdmin = (data.get('isAdmin') as boolean);
-
-		if (!id) {
-			return fail(500, { message: 'Missing Id' });
+		if (!Number.isInteger(id) || id === locals.user!.id) {
+			return fail(400, { message: 'Invalid user.' });
 		}
 
-		let user = await repositories.user.findBy({
-			value: 'id = $id',
-			params: {
-				$id: id
-			}
-		});
-
+		const user = await locals.repositories.user.findById(id);
 		if (!user) {
-			return fail(500, { message: 'No User to update found' });
+			return fail(404, { message: 'User not found.' });
 		}
 
-		const update: UpdateValues = {};
-
-		if (name !== user.name) {
-			update['$name'] = name;
+		const changes: UserChanges = {};
+		if (name && name !== user.name) {
+			const message = verify_name(name);
+			if (message) return fail(400, { message });
+			changes.name = name;
 		}
-		if (email !== user.email) {
-			update['$email'] = email;
+		if (email && email !== user.email) {
+			const message = verify_email(email);
+			if (message) return fail(400, { message });
+			changes.email = email;
 		}
-		const password_is_correct = await bcrypt.compare(
-			password,
-			user.password
-		);
-
-		if (password && !password_is_correct) {
-			update['$password'] = await hashPassword(password);
+		if (password) {
+			const message = verify_password(password);
+			if (message) return fail(400, { message });
+			changes.passwordHash = await hashPassword(password);
 		}
 
 		const roles = [Role.USER_ROLE];
-		if (isAdmin) {
-			roles.push(Role.ADMINISTRATOR_ROLE);
+		if (data.get('isAdmin') === 'on') roles.push(Role.ADMINISTRATOR_ROLE);
+
+		try {
+			await locals.repositories.user.update(id, changes, roles);
+			return { success: true, message: 'User updated.' };
+		} catch (e) {
+			if (isConstraintError(e)) return fail(400, { message: 'This email is already in use.' });
+			throw e;
 		}
-
-		user = await repositories.user.updateWithRole({
-			where: {
-				value: 'id = $id',
-				params: { $id: user.id }
-			},
-			values: update
-		}, roles);
-
-
-		return {
-			...user,
-			password: undefined
-		};
 	}
-
 };

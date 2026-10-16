@@ -1,5 +1,5 @@
 <script>
-	import Translate from '$lib/i18n/Translate.svelte';
+	import Translate from '#lib/i18n/Translate.svelte';
 </script>
 
 <svelte:head>
@@ -8,6 +8,5 @@
 </svelte:head>
 
 <div class="text-column">
-	<h1><Translate key="games"/></h1>
-
+	<h1><Translate key="games" /></h1>
 </div>

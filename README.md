@@ -1,38 +1,40 @@
-# create-svelte
+# PocketDimension
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+Self-hosted web app to start and manage game servers as Docker containers.
 
-## Creating a project
-
-If you're seeing this, you've probably already done this step. Congrats!
+## Run with Docker
 
 ```bash
-# create a new project in the current directory
-npm create svelte@latest
-
-# create a new project in my-app
-npm create svelte@latest my-app
+docker run -d --name pocketdimension \
+  -p 3000:3000 \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -v pocketdimension-data:/app/shared \
+  -e SECRET_JWT_KEY="$(openssl rand -base64 48)" \
+  -e DB_ADMIN_EMAIL=admin@example.com \
+  -e DB_ADMIN_PASSWORD=change-me-please \
+  mimau/pocket-dimension
 ```
 
-## Developing
+Then open http://localhost:3000 and log in with the admin email (or the name `admin`) and password.
+All settings are listed in [`.env.example`](.env.example).
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+PocketDimension only sees containers it created (label `pocketdimension.managed=true`) and
+containers attached to the `POCKET_DIMENSION_NETWORK` network. Access to the Docker socket is
+equivalent to root on the host: for internet-facing installs, run it behind an HTTPS reverse proxy
+and consider a [docker-socket-proxy](https://github.com/Tecnativa/docker-socket-proxy) via `DOCKER_HOST`.
+
+## Development
 
 ```bash
+cp .env.example .env   # fill in DB_ADMIN_* (SECRET_JWT_KEY is optional in dev)
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+| Command                    | What it does                                  |
+| -------------------------- | --------------------------------------------- |
+| `npm run lint`             | Prettier and ESLint                           |
+| `npm run check`            | Type check (svelte-check)                     |
+| `npm run test:unit`        | Unit tests (Vitest)                           |
+| `npm run test:integration` | Browser tests against a build (Playwright)    |
+| `npm run build`            | Production build, start with `node server.js` |

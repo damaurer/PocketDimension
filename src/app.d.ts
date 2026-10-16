@@ -1,35 +1,20 @@
-// See https://kit.svelte.dev/docs/types#app
+// See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 
-
-
-import type { Role, User } from '$lib/types';
-import type { VUserRoleRepository } from '$lib/server/database/repository/vUserRole.repository';
-import type { UserRepository } from '$lib/server/database/repository/user.repository';
-import type { ContainerClient } from '$lib/server/docker/api/container.client';
-import type { Network } from 'dockerode';
+import type { User } from '#lib/types.ts';
+import type { UserRepository } from '#lib/server/database/repository/user.repository.ts';
 
 declare global {
 	namespace App {
 		// interface Error {}
 		interface Locals {
-			user: User,
-			isAdmin: boolean,
+			user: User | undefined;
+			isAdmin: boolean;
 			repositories: {
-				vUserRole: VUserRoleRepository,
-				user: UserRepository
-			},
-			docker: {
-				network: Network,
-				container: ContainerClient
-			}
+				user: UserRepository;
+			};
 		}
-		interface PageData {
-			user: {
-				isAdmin: boolean,
-				roles: Role[]
-			}
-		}
+		// interface PageData {}
 		// interface PageState {}
 		// interface Platform {}
 	}

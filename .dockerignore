@@ -11,3 +11,8 @@ npm-debug.log
 .coverage.*
 .env
 .aws
+**/shared
+build
+.svelte-kit
+test-results
+playwright-report

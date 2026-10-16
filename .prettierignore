@@ -2,3 +2,10 @@
 package-lock.json
 pnpm-lock.yaml
 yarn.lock
+
+# Generated
+/build
+/.svelte-kit
+/test-results
+/playwright-report
+/shared

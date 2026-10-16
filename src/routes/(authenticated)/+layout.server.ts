@@ -1,11 +1,5 @@
+import type { LayoutServerLoad } from './$types';
 
-import type { LayoutServerLoad } from "./$types";
-export const load: LayoutServerLoad = async ({ cookies }) => {
-
-
-
-	const name = cookies.get("name") ?? "";
-	const email = cookies.get("email") ?? "";
-
-	return { name, email };
+export const load: LayoutServerLoad = async ({ locals }) => {
+	return { user: locals.user!, isAdmin: locals.isAdmin };
 };

@@ -1,109 +1,80 @@
-import type { Network, ContainerInfo, Container, ContainerCreateOptions, EndpointsConfig } from 'dockerode';
-import Dockerode from 'dockerode';
+import type Docker from 'dockerode';
+import type { ContainerCreateOptions, ContainerInfo, Network } from 'dockerode';
+import { MANAGED_LABEL, NETWORK_NAME } from '#lib/server/docker/constante.ts';
+import { ContainerStatus } from '#lib/types.ts';
 
+const CONTAINER_ID = /^[a-f0-9]{12,64}$/;
+
+export function isContainerId(id: unknown): id is string {
+	return typeof id === 'string' && CONTAINER_ID.test(id);
+}
+
+export class ContainerNotFoundError extends Error {
+	constructor(id: string) {
+		super(`Container ${id} is not managed by PocketDimension.`);
+	}
+}
+
+/**
+ * Access to the containers PocketDimension may manage: containers it created
+ * (labelled) and containers an operator attached to the PocketDimension network.
+ * Every other container on the host is invisible to the app.
+ */
 export class ContainerClient {
+	constructor(
+		private client: Docker,
+		private network: Network
+	) {}
 
-	private readonly networkConfig: { EndpointsConfig: EndpointsConfig }
-	constructor(private client: Dockerode, private network: Network) {
-		this.networkConfig = {
-			EndpointsConfig: {
-				pocket_dimension: {
-					NetworkID: network.id,
-				}
+	async listManagedContainers(): Promise<ContainerInfo[]> {
+		const [labelled, attached] = await Promise.all([
+			this.client.listContainers({ all: true, filters: { label: [`${MANAGED_LABEL}=true`] } }),
+			this.client.listContainers({ all: true, filters: { network: [NETWORK_NAME] } })
+		]);
+		const byId = new Map<string, ContainerInfo>();
+		for (const container of [...labelled, ...attached]) {
+			byId.set(container.Id, container);
+		}
+		return [...byId.values()];
+	}
+
+	async createContainer(options: ContainerCreateOptions) {
+		return this.client.createContainer({
+			...options,
+			Labels: { ...options.Labels, [MANAGED_LABEL]: 'true' },
+			NetworkingConfig: {
+				EndpointsConfig: { [NETWORK_NAME]: { NetworkID: this.network.id } }
 			}
+		});
+	}
+
+	async changeStatus(id: string, status: ContainerStatus): Promise<void> {
+		await this.assertManaged(id);
+		const container = this.client.getContainer(id);
+		switch (status) {
+			case ContainerStatus.START:
+				await container.start();
+				break;
+			case ContainerStatus.STOP:
+				await container.stop();
+				break;
+			case ContainerStatus.RESTART:
+				await container.restart();
+				break;
 		}
 	}
 
-	async listAllContainers(): Promise<ContainerInfo> {
-		return new Promise((resolve, reject) => {
-				this.client.listContainers({ all: true }, (error, result) => {
-					if (error) {
-						reject(error);
-						return;
-					} else {
-						resolve(result);
-					}
-				});
-			}
-		);
-	}
-
-	async createContainer(options: ContainerCreateOptions): Promise<Container> {
-		return new Promise((resolve, reject) => {
-        this.client.createContainer({...options, NetworkingConfig: this.networkConfig}, (error, container) => {
-            if (error) {
-                reject(error);
-                return;
-            } else {
-                resolve(container);
-            }
-        });
-    });
-	}
-
-	async getContainer(id: string): Promise<Container> {
-		return new Promise((resolve, reject) => {
-			this.client.getContainer(id).inspect((error, data) => {
-				if (error) {
-					reject(error);
-					return;
-				} else {
-					resolve(data);
-				}
-			});
-		});
-	}
-
-	async startContainer(id: string): Promise<Container> {
-		return new Promise((resolve, reject) => {
-			const container = this.client.getContainer(id);
-			container.start((error, data) => {
-				if (error) {
-					reject(error);
-					return;
-				} else {
-					resolve(data);
-				}
-			});
-		});
-	}
-
-	async stopContainer(id: string): Promise<Container> {
-		return new Promise((resolve, reject) => {
-			const container = this.client.getContainer(id);
-			container.stop((error, data) => {
-				if (error) {
-					reject(error);
-					return;
-				} else {
-					resolve(data);
-				}
-			});
-		});
-	}
-
-	async restartContainer(id: string): Promise<Container> {
-		return new Promise((resolve, reject) => {
-			const container = this.client.getContainer(id);
-			container.restart((error, data) => {
-				if (error) {
-					reject(error);
-					return;
-				} else {
-					resolve(data);
-				}
-			});
-		});
+	private async assertManaged(id: string) {
+		const containers = await this.listManagedContainers();
+		if (!containers.some((c) => c.Id === id || c.Id.startsWith(id))) {
+			throw new ContainerNotFoundError(id);
+		}
 	}
 }
 
-let containerFetchClient
+let containerClient: ContainerClient | undefined;
 
-export const initContainerFetchClient = (client: Dockerode, network: Network) => {
-	if(containerFetchClient) {
-		return containerFetchClient
-	}
-
-	containerFetchClient = new ContainerClient(client, network)
-	return containerFetchClient
-}
+export const initContainerClient = (client: Docker, network: Network): ContainerClient => {
+	containerClient ??= new ContainerClient(client, network);
+	return containerClient;
+};

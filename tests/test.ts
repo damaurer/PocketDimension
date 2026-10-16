@@ -1,6 +1,30 @@
 import { expect, test } from '@playwright/test';
 
-test('home page has expected h1', async ({ page }) => {
+test('protected pages redirect to the login page', async ({ page }) => {
+	await page.goto('/account');
+	await expect(page).toHaveURL('/');
+	await expect(page.locator('#email_or_name_input')).toBeVisible();
+});
+
+test('wrong credentials show an error', async ({ page }) => {
 	await page.goto('/');
-	await expect(page.locator('h1')).toBeVisible();
+	await page.fill('#email_or_name_input', 'admin');
+	await page.fill('#password_input', 'not-the-password');
+	await page.getByRole('button', { name: /login/i }).click();
+	await expect(page.locator('.error')).toContainText('not correct');
+});
+
+test('admin can log in and log out', async ({ page }) => {
+	await page.goto('/');
+	await page.fill('#email_or_name_input', 'admin');
+	await page.fill('#password_input', 'playwright-password');
+	await page.getByRole('button', { name: /login/i }).click();
+	await expect(page).toHaveURL('/container');
+
+	await page.goto('/account');
+	await page.getByRole('button', { name: /logout/i }).click();
+	await expect(page).toHaveURL('/');
+
+	await page.goto('/account');
+	await expect(page).toHaveURL('/');
 });

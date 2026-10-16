@@ -1,24 +1,29 @@
 <script lang="ts">
+	import type { PageData } from './$types';
+	import Translate from '#lib/i18n/Translate.svelte';
+	import { ContainerStatus } from '#lib/types.ts';
+	import { invalidateAll } from '$app/navigation';
 
-	import type {  PageData } from './$types';
-	import Translate from '$lib/i18n/Translate.svelte';
-	import { ContainerStatus } from '$lib/types';
-	export let data: PageData;
+	let { data }: { data: PageData } = $props();
+
+	let message = $state('');
 
 	async function containerStatus(id: string, status: ContainerStatus) {
+		message = '';
 		const response = await fetch('/api/container', {
 			method: 'POST',
-			body: JSON.stringify({id, status}),
+			body: JSON.stringify({ id, status }),
 			headers: {
-				'content-type': 'application/json',
-			},
-		})
+				'content-type': 'application/json'
+			}
+		});
 
-		const result = await response.json()
-
-		console.log("UPDATE", result)
+		if (!response.ok) {
+			const body = await response.json().catch(() => ({}));
+			message = body.message ?? `Request failed (${response.status})`;
+		}
+		await invalidateAll();
 	}
-
 </script>
 
 <svelte:head>
@@ -27,68 +32,83 @@
 </svelte:head>
 
 <section>
-	{data.network}
+	{#if message}
+		<p class="error">{message}</p>
+	{/if}
 	<div class="flex-row-wrap">
 		{#await data.containers}
 			<p>Loading Containers...</p>
 		{:then containers}
-			{#each containers as container}
+			{#each containers as container (container.Id)}
 				<div class="container-card">
 					<div class="container-data">
-						<span>ID: {container.Id}</span>
-						<span>Names: {container.Names}</span>
-						<span>State : {container.State }</span>
+						<span>ID: {container.Id.slice(0, 12)}</span>
+						<span>Names: {container.Names.join(', ')}</span>
+						<span>State: {container.State}</span>
 						<span>Status: {container.Status}</span>
-						<span>Ip: {data.originIp}:{container.Ports}</span>
+						<span>
+							Ports: {container.Ports.filter((p) => p.PublicPort)
+								.map((p) => `${p.PublicPort}/${p.Type}`)
+								.join(', ')}
+						</span>
 					</div>
 					<div class="container-button-group">
-						<button on:click={()=>containerStatus(container.Id, ContainerStatus.START)} aria-label="Start Container">
-							<Translate key="container.button.start"></Translate>
+						<button
+							onclick={() => containerStatus(container.Id, ContainerStatus.START)}
+							aria-label="Start Container"
+						>
+							<Translate key="container.button.start" />
 						</button>
-						<button on:click={()=>containerStatus(container.Id, ContainerStatus.STOP)} aria-label="Stop Container">
-							<Translate key="container.button.stop"></Translate>
+						<button
+							onclick={() => containerStatus(container.Id, ContainerStatus.STOP)}
+							aria-label="Stop Container"
+						>
+							<Translate key="container.button.stop" />
 						</button>
-						<button on:click={()=>containerStatus(container.Id, ContainerStatus.RESTART)} aria-label="Restart Container">
-							<Translate key="container.button.restart"></Translate>
+						<button
+							onclick={() => containerStatus(container.Id, ContainerStatus.RESTART)}
+							aria-label="Restart Container"
+						>
+							<Translate key="container.button.restart" />
 						</button>
 					</div>
 				</div>
+			{:else}
+				<p>No managed containers yet.</p>
 			{/each}
 		{:catch error}
-			<p>error loading container: {error.message}</p>
+			<p class="error">Error loading containers: {error.message}</p>
 		{/await}
 	</div>
 </section>
 
 <style>
-    section {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        flex: 0.6;
-    }
+	section {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		flex: 0.6;
+	}
 
-		.container-card {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: flex-end;
-        border: 1px solid var(--color-theme-1);
-        width: 100%;
-        margin: 0.2rem;
-        padding: 0.2rem;
+	.container-card {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		align-items: flex-end;
+		border: 1px solid var(--color-theme-1);
+		width: 100%;
+		margin: 0.2rem;
+		padding: 0.2rem;
+	}
 
-		}
+	.container-data {
+		display: flex;
+		flex-direction: column;
+	}
 
-		.container-data {
-				display: flex;
-				flex-direction: column;
-		}
-
-		.container-button-group {
-				display: flex;
-				flex-direction: column;
-		}
-
+	.container-button-group {
+		display: flex;
+		flex-direction: column;
+	}
 </style>

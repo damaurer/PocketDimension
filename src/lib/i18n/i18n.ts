@@ -1,30 +1,40 @@
-import { derived, writable } from "svelte/store";
-import translations from "./translations";
+import { derived, writable } from 'svelte/store';
+import translations from './translations';
 
-export const locale = writable("en");
-export const locales = Object.keys(translations);
+export type Locale = keyof typeof translations;
 
-function translate(locale, key, vars) {
-	// Let's throw some errors if we're trying to use keys/locales that don't exist.
-	// We could improve this by using Typescript and/or fallback values.
-	if (!key) throw new Error("no key provided to $t()");
-	if (!locale) throw new Error(`no translation for key "${key}"`);
+export const locale = writable<Locale>('en');
+export const locales = Object.keys(translations) as Locale[];
 
+const HTML_ESCAPES: Record<string, string> = {
+	'&': '&amp;',
+	'<': '&lt;',
+	'>': '&gt;',
+	'"': '&quot;',
+	"'": '&#39;'
+};
 
-	// Grab the translation from the translations object.
-	let text = translations[locale][key];
+/** Variables can contain user input (names, emails), so they are escaped before insertion. */
+export function escapeHtml(value: unknown): string {
+	return String(value).replace(/[&<>"']/g, (c) => HTML_ESCAPES[c]);
+}
 
+export function translate(locale: Locale, key: string, vars: Record<string, unknown> = {}): string {
+	if (!key) throw new Error('no key provided to $t()');
+
+	let text: string | undefined = (translations[locale] as Record<string, string>)[key];
 	if (!text) throw new Error(`no translation found for ${locale}.${key}`);
 
-	// Replace any passed in variables in the translation string.
-	Object.keys(vars).map((k) => {
-		const regex = new RegExp(`{{${k}}}`, "g");
-		text = text.replace(regex, vars[k]);
-	});
+	for (const [name, value] of Object.entries(vars)) {
+		text = text.replaceAll(`{{${name}}}`, escapeHtml(value));
+	}
 
 	return text;
 }
 
-export const t = derived(locale, ($locale) => (key, vars = {}) =>
-	translate($locale, key, vars)
+export const t = derived(
+	locale,
+	($locale) =>
+		(key: string, vars: Record<string, unknown> = {}) =>
+			translate($locale, key, vars)
 );
