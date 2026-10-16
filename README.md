@@ -18,6 +18,14 @@ docker run -d --name pocketdimension \
 Then open http://localhost:3000 and log in with the admin email (or the name `admin`) and password.
 All settings are listed in [`.env.example`](.env.example).
 
+## Games
+
+The catalog ships with Minecraft (Java), Valheim, Terraria, Factorio, Counter-Strike 2, Palworld,
+Satisfactory, Rust, Core Keeper and Project Zomboid. Administrators can disable these and add any
+other game that runs in Docker under **Games → New game template** (image, ports, data directories
+and the variables players may set). Each server gets its own Docker volumes; a second server of the
+same game gets its ports shifted (e.g. 25575 instead of 25565).
+
 PocketDimension only sees containers it created (label `pocketdimension.managed=true`) and
 containers attached to the `POCKET_DIMENSION_NETWORK` network. Access to the Docker socket is
 equivalent to root on the host: for internet-facing installs, run it behind an HTTPS reverse proxy

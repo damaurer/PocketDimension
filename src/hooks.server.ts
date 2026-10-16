@@ -1,12 +1,12 @@
 import { error, redirect, type RequestEvent } from '@sveltejs/kit';
-import type { Handle } from '@sveltejs/kit/hooks';
+import type { Handle, ServerInit } from '@sveltejs/kit/hooks';
 import { building } from '$app/env';
 import {
 	clearSessionCookie,
 	AUTH_COOKIE,
 	verifyToken
 } from '#lib/server/security/authentication.ts';
-import { getRepositories } from '#lib/server/services.ts';
+import { getRepositories, getServerManager } from '#lib/server/services.ts';
 import { toPublicUser } from '#lib/server/database/repository/user.repository.ts';
 import { isAdmin } from '#lib/utils.ts';
 
@@ -42,6 +42,13 @@ async function loadCurrentUser(event: RequestEvent) {
 function isProtected({ route, url }: RequestEvent) {
 	return route.id?.startsWith('/(authenticated)') || url.pathname.startsWith('/api/');
 }
+
+export const init: ServerInit = () => {
+	if (building) return;
+	// Finish servers whose creation was interrupted by a restart. Docker may be
+	// unavailable at this point; the servers page retries on demand.
+	getServerManager().catch((e) => console.error('Docker:', e));
+};
 
 export const handle: Handle = async ({ event, resolve }) => {
 	if (building) {

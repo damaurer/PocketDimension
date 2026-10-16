@@ -4,10 +4,8 @@
 	import pdIcon from '#lib/images/reduced_icon.svg';
 	import Translate from '#lib/i18n/Translate.svelte';
 
-	const home = $derived(page.data.isAdmin ? '/container' : '/games');
-	const homeRoute = $derived(
-		page.data.isAdmin ? '/(authenticated)/container' : '/(authenticated)/games'
-	);
+	const home = '/servers';
+	const homeRoute = '/(authenticated)/servers';
 </script>
 
 <nav>
@@ -24,7 +22,7 @@
 			</svg>
 		</li>
 		<li aria-current={page.url.pathname === home ? 'page' : undefined}>
-			<a href={resolve(homeRoute)} class="icon-container" aria-label="Home Button">
+			<a href={resolve(homeRoute)} class="icon-container" aria-label="Servers">
 				<img src={pdIcon} alt="Home Button" />
 			</a>
 		</li>

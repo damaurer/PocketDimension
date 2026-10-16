@@ -19,7 +19,7 @@ test('admin can log in and log out', async ({ page }) => {
 	await page.fill('#email_or_name_input', 'admin');
 	await page.fill('#password_input', 'playwright-password');
 	await page.getByRole('button', { name: /login/i }).click();
-	await expect(page).toHaveURL('/container');
+	await expect(page).toHaveURL('/servers');
 
 	await page.goto('/account');
 	await page.getByRole('button', { name: /logout/i }).click();
@@ -27,4 +27,20 @@ test('admin can log in and log out', async ({ page }) => {
 
 	await page.goto('/account');
 	await expect(page).toHaveURL('/');
+});
+
+test('game catalog lists the built-in games', async ({ page }) => {
+	await page.goto('/');
+	await page.fill('#email_or_name_input', 'admin');
+	await page.fill('#password_input', 'playwright-password');
+	await page.getByRole('button', { name: /login/i }).click();
+	await expect(page).toHaveURL('/servers');
+
+	await page.goto('/games');
+	await expect(page.getByRole('heading', { name: 'Minecraft: Java Edition' })).toBeVisible();
+	await page
+		.getByRole('link', { name: /create server/i })
+		.first()
+		.click();
+	await expect(page.locator('#server_name')).toBeVisible();
 });
