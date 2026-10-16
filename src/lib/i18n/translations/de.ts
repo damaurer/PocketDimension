@@ -88,5 +88,14 @@ export default {
 	'servers.state.restarting': 'Startet neu',
 	'servers.state.paused': 'Pausiert',
 	'servers.state.dead': 'Abgestürzt',
-	'servers.state.removing': 'Wird entfernt'
+	'servers.state.removing': 'Wird entfernt',
+	'servers.live.players': 'Spieler',
+	'servers.live.map': 'Karte',
+	'servers.live.version': 'Version',
+	'servers.live.ping': 'Ping',
+	'servers.live.memory': 'Arbeitsspeicher',
+	'servers.live.uptime': 'Läuft seit',
+	'servers.live.playerList': 'Wer ist online?',
+	'servers.live.unreachable':
+		'Der Server antwortet noch nicht. Große Spiele brauchen beim ersten Start oft einige Minuten.'
 };

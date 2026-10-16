@@ -71,3 +71,37 @@ export interface GameServerView {
 	ports: { host: number; protocol: Protocol; label?: string }[];
 	createdAt: string;
 }
+
+/** What the game server itself reports (via GameDig). */
+export interface ServerQueryInfo {
+	name: string;
+	map: string;
+	version: string;
+	players: number;
+	maxPlayers: number;
+	/** Names of connected players, when the game reports them. */
+	playerNames: string[];
+	passwordProtected: boolean;
+	/** Round trip time of the query in milliseconds. */
+	ping: number;
+}
+
+/** Resource usage of the server's container. */
+export interface ServerResources {
+	cpuPercent: number;
+	memoryBytes: number;
+	/** Memory limit of the container, null when unlimited. */
+	memoryLimitBytes: number | null;
+}
+
+export interface ServerLiveStatus {
+	/**
+	 * ok: the game answered. unreachable: it did not answer (yet), e.g. while
+	 * it is still starting. unsupported: the game has no query protocol.
+	 */
+	queryState: 'ok' | 'unreachable' | 'unsupported';
+	query: ServerQueryInfo | null;
+	resources: ServerResources | null;
+	/** When the container was last started (ISO time). */
+	startedAt: string | null;
+}

@@ -18,6 +18,21 @@
 		return () => clearInterval(timer);
 	});
 
+	function formatBytes(bytes: number) {
+		return bytes >= 1024 ** 3
+			? `${(bytes / 1024 ** 3).toFixed(1)} GB`
+			: `${Math.round(bytes / 1024 ** 2)} MB`;
+	}
+
+	function formatUptime(startedAt: string) {
+		const minutes = Math.max(0, Math.floor((Date.now() - Date.parse(startedAt)) / 60000));
+		const days = Math.floor(minutes / 1440);
+		const hours = Math.floor((minutes % 1440) / 60);
+		if (days) return `${days} d ${hours} h`;
+		if (hours) return `${hours} h ${minutes % 60} min`;
+		return `${minutes} min`;
+	}
+
 	function statusKey(server: PageData['servers'][number]) {
 		if (server.status !== 'ready') return `servers.status.${server.status}`;
 		return `servers.state.${server.state ?? 'exited'}`;
@@ -65,6 +80,68 @@
 			</p>
 			{#if server.statusMessage}
 				<p class="error">{server.statusMessage}</p>
+			{/if}
+			{#if data.live[server.id] && server.state === 'running'}
+				{@const live = data.live[server.id]}
+				{#if live.queryState === 'unreachable'}
+					<p class="hint"><Translate key="servers.live.unreachable" /></p>
+				{/if}
+				<dl class="live">
+					{#if live.query}
+						<div>
+							<dt><Translate key="servers.live.players" /></dt>
+							<dd class="players">
+								{live.query.players}{live.query.maxPlayers ? ` / ${live.query.maxPlayers}` : ''}
+							</dd>
+						</div>
+						{#if live.query.map}
+							<div>
+								<dt><Translate key="servers.live.map" /></dt>
+								<dd>{live.query.map}</dd>
+							</div>
+						{/if}
+						{#if live.query.version}
+							<div>
+								<dt><Translate key="servers.live.version" /></dt>
+								<dd>{live.query.version}</dd>
+							</div>
+						{/if}
+						<div>
+							<dt><Translate key="servers.live.ping" /></dt>
+							<dd>{live.query.ping} ms</dd>
+						</div>
+					{/if}
+					{#if live.resources}
+						<div>
+							<dt>CPU</dt>
+							<dd>{live.resources.cpuPercent.toFixed(1)} %</dd>
+						</div>
+						<div>
+							<dt><Translate key="servers.live.memory" /></dt>
+							<dd>
+								{formatBytes(live.resources.memoryBytes)}{live.resources.memoryLimitBytes
+									? ` / ${formatBytes(live.resources.memoryLimitBytes)}`
+									: ''}
+							</dd>
+						</div>
+					{/if}
+					{#if live.startedAt}
+						<div>
+							<dt><Translate key="servers.live.uptime" /></dt>
+							<dd>{formatUptime(live.startedAt)}</dd>
+						</div>
+					{/if}
+				</dl>
+				{#if live.query?.playerNames.length}
+					<details class="player-list">
+						<summary><Translate key="servers.live.playerList" /></summary>
+						<ul>
+							{#each live.query.playerNames as player, i (i)}
+								<li>{player}</li>
+							{/each}
+						</ul>
+					</details>
+				{/if}
 			{/if}
 			{#if server.ports.length}
 				<p class="connect">
@@ -162,6 +239,37 @@
 	.status-error,
 	.status-dead {
 		background: #f3b9b9;
+	}
+
+	.live {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.5rem;
+		margin: 0.5rem 0;
+	}
+
+	.live dt {
+		font-size: 0.75rem;
+		opacity: 0.7;
+	}
+
+	.live dd {
+		margin: 0;
+		font-weight: 600;
+	}
+
+	.players {
+		font-size: 1.2rem;
+	}
+
+	.hint {
+		font-size: 0.9rem;
+		opacity: 0.8;
+	}
+
+	.player-list ul {
+		margin: 0.25rem 0;
+		padding-left: 1.25rem;
 	}
 
 	.actions {

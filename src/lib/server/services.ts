@@ -10,6 +10,7 @@ import {
 	type ContainerClient
 } from '#lib/server/docker/api/container.client.ts';
 import { ServerManager } from '#lib/server/games/servers.ts';
+import { StatusMonitor } from '#lib/server/games/status.ts';
 import { BUILTIN_TEMPLATES } from '#lib/server/games/catalog.ts';
 import { hashPassword } from '#lib/server/security/authentication.ts';
 import { config } from '#lib/server/config.ts';
@@ -51,4 +52,15 @@ export function getServerManager(): Promise<ServerManager> {
 	})();
 	serverManager.catch(() => (serverManager = undefined));
 	return serverManager;
+}
+
+let statusMonitor: Promise<StatusMonitor> | undefined;
+
+export function getStatusMonitor(): Promise<StatusMonitor> {
+	statusMonitor ??= (async () => {
+		const { games } = await getRepositories();
+		return new StatusMonitor(games, initDockerClient());
+	})();
+	statusMonitor.catch(() => (statusMonitor = undefined));
+	return statusMonitor;
 }

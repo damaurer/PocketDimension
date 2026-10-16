@@ -1,18 +1,22 @@
 import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad, RequestEvent } from './$types';
 import { config } from '#lib/server/config.ts';
-import { getServerManager } from '#lib/server/services.ts';
+import { getServerManager, getStatusMonitor } from '#lib/server/services.ts';
 import type { ServerAction } from '#lib/server/games/servers.ts';
-import type { GameServerView } from '#lib/games/types.ts';
+import type { GameServerView, ServerLiveStatus } from '#lib/games/types.ts';
 
 export const load: PageServerLoad = async ({ locals, url }) => {
 	const { games } = locals.repositories;
 	const records = await games.listServers(locals.isAdmin ? undefined : locals.user!.id);
 
 	let servers: GameServerView[] = [];
+	let live: Record<number, ServerLiveStatus> = {};
 	let dockerError = false;
 	try {
-		servers = await (await getServerManager()).views(records);
+		[servers, live] = await Promise.all([
+			(await getServerManager()).views(records),
+			(await getStatusMonitor()).live(records)
+		]);
 	} catch (e) {
 		console.error('Docker:', e);
 		dockerError = true;
@@ -20,6 +24,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 
 	return {
 		servers,
+		live,
 		dockerError,
 		host: config.games.publicHost || url.hostname
 	};
@@ -40,6 +45,7 @@ function serverAction(action: ServerAction) {
 	return async (event: RequestEvent) => {
 		const server = await ownedServer(event);
 		if (!server) return fail(404, { message: 'Server not found.' });
+		(await getStatusMonitor()).forget(server.id);
 		try {
 			await (await getServerManager()).action(server, action);
 		} catch (e) {

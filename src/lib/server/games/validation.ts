@@ -6,6 +6,7 @@ import type {
 	TemplateQuery,
 	TemplateVolume
 } from '#lib/games/types.ts';
+import { games as gamedigGames } from 'gamedig';
 
 type Result<T> = { value: T; error?: undefined } | { value?: undefined; error: string };
 
@@ -152,6 +153,9 @@ export function validateTemplate(input: {
 			return {
 				error: 'Query type must be a GameDig id and the query port an index into the ports.'
 			};
+		}
+		if (!Object.hasOwn(gamedigGames, input.queryType)) {
+			return { error: `"${input.queryType}" is not a game GameDig knows.` };
 		}
 		query = { type: input.queryType, port };
 	}
