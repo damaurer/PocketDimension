@@ -1,8 +1,9 @@
 <script lang="ts">
+	import { invalidateAll } from '$app/navigation';
 	import type { PageData } from './$types';
 	import Translate from '#lib/i18n/Translate.svelte';
+	import { msg, t } from '#lib/i18n/i18n.ts';
 	import { ContainerStatus } from '#lib/types.ts';
-	import { invalidateAll } from '$app/navigation';
 
 	let { data }: { data: PageData } = $props();
 
@@ -13,9 +14,7 @@
 		const response = await fetch('/api/container', {
 			method: 'POST',
 			body: JSON.stringify({ id, status }),
-			headers: {
-				'content-type': 'application/json'
-			}
+			headers: { 'content-type': 'application/json' }
 		});
 
 		if (!response.ok) {
@@ -24,91 +23,97 @@
 		}
 		await invalidateAll();
 	}
+
+	const tone = (state: string) =>
+		state === 'running' ? 'badge-success' : state === 'dead' ? 'badge-danger' : '';
 </script>
 
 <svelte:head>
-	<title>Pocket Dimension</title>
-	<meta name="description" content="Pocket Dimension: Game Server Management" />
+	<title>{$t('nav.containers')} · Pocket Dimension</title>
 </svelte:head>
 
-<section>
-	{#if message}
-		<p class="error">{message}</p>
-	{/if}
-	<div class="flex-row-wrap">
-		{#await data.containers}
-			<p>Loading Containers...</p>
-		{:then containers}
-			{#each containers as container (container.Id)}
-				<div class="container-card">
-					<div class="container-data">
-						<span>ID: {container.Id.slice(0, 12)}</span>
-						<span>Names: {container.Names.join(', ')}</span>
-						<span>State: {container.State}</span>
-						<span>Status: {container.Status}</span>
-						<span>
-							Ports: {container.Ports.filter((p) => p.PublicPort)
-								.map((p) => `${p.PublicPort}/${p.Type}`)
-								.join(', ')}
-						</span>
-					</div>
-					<div class="container-button-group">
-						<button
-							onclick={() => containerStatus(container.Id, ContainerStatus.START)}
-							aria-label="Start Container"
-						>
-							<Translate key="container.button.start" />
-						</button>
-						<button
-							onclick={() => containerStatus(container.Id, ContainerStatus.STOP)}
-							aria-label="Stop Container"
-						>
-							<Translate key="container.button.stop" />
-						</button>
-						<button
-							onclick={() => containerStatus(container.Id, ContainerStatus.RESTART)}
-							aria-label="Restart Container"
-						>
-							<Translate key="container.button.restart" />
-						</button>
-					</div>
-				</div>
-			{:else}
-				<p>No managed containers yet.</p>
-			{/each}
-		{:catch error}
-			<p class="error">Error loading containers: {error.message}</p>
-		{/await}
+<div class="page-header">
+	<div>
+		<h1><Translate key="containers.title" /></h1>
+		<p class="subtitle"><Translate key="containers.intro" /></p>
 	</div>
-</section>
+</div>
+
+{#if message}
+	<p class="alert error" role="alert">{$msg(message)}</p>
+{/if}
+
+<div class="card table-wrap">
+	{#await data.containers}
+		<p class="muted"><Translate key="containers.loading" /></p>
+	{:then containers}
+		{#if containers.length}
+			<table>
+				<thead>
+					<tr>
+						<th><Translate key="containers.name" /></th>
+						<th><Translate key="containers.state" /></th>
+						<th><Translate key="games.ports" /></th>
+						<th><span class="visually-hidden"><Translate key="containers.actions" /></span></th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each containers as container (container.Id)}
+						<tr>
+							<td>
+								<strong>{container.Names.map((n) => n.replace(/^\//, '')).join(', ')}</strong>
+								<div class="muted small mono">{container.Id.slice(0, 12)}</div>
+							</td>
+							<td>
+								<span class="badge {tone(container.State)}">{container.State}</span>
+								<div class="muted small">{container.Status}</div>
+							</td>
+							<td class="mono small">
+								{container.Ports.filter((p) => p.PublicPort)
+									.map((p) => `${p.PublicPort}/${p.Type}`)
+									.join(', ') || '–'}
+							</td>
+							<td>
+								<div class="actions">
+									<button
+										class="btn-small"
+										onclick={() => containerStatus(container.Id, ContainerStatus.START)}
+									>
+										<Translate key="container.button.start" />
+									</button>
+									<button
+										class="btn-small"
+										onclick={() => containerStatus(container.Id, ContainerStatus.STOP)}
+									>
+										<Translate key="container.button.stop" />
+									</button>
+									<button
+										class="btn-small"
+										onclick={() => containerStatus(container.Id, ContainerStatus.RESTART)}
+									>
+										<Translate key="container.button.restart" />
+									</button>
+								</div>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		{:else}
+			<p class="muted"><Translate key="containers.empty" /></p>
+		{/if}
+	{:catch error}
+		<p class="alert error">{$msg(error.message)}</p>
+	{/await}
+</div>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
+	.small {
+		font-size: 0.8rem;
 	}
 
-	.container-card {
-		display: flex;
-		flex-direction: row;
-		justify-content: space-between;
-		align-items: flex-end;
-		border: 1px solid var(--color-theme-1);
-		width: 100%;
-		margin: 0.2rem;
-		padding: 0.2rem;
-	}
-
-	.container-data {
-		display: flex;
-		flex-direction: column;
-	}
-
-	.container-button-group {
-		display: flex;
-		flex-direction: column;
+	.actions {
+		justify-content: flex-end;
+		flex-wrap: nowrap;
 	}
 </style>

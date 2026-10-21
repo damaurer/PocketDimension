@@ -4,15 +4,17 @@
 	import { resolve } from '$app/paths';
 	import type { ActionData, PageData } from './$types';
 	import Translate from '#lib/i18n/Translate.svelte';
-	import { t } from '#lib/i18n/i18n.ts';
+	import CopyText from '#lib/components/CopyText.svelte';
+	import { msg, t } from '#lib/i18n/i18n.ts';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
-	const busy = $derived(
-		data.servers.some((s) => ['pending', 'pulling', 'creating'].includes(s.status))
-	);
+	type Server = PageData['servers'][number];
 
-	// Refresh while servers are being created, otherwise now and then for state changes.
+	const BUSY = ['pending', 'pulling', 'creating'];
+	const busy = $derived(data.servers.some((s) => BUSY.includes(s.status)));
+
+	// Refresh while servers are being created, otherwise now and then for state and players.
 	$effect(() => {
 		const timer = setInterval(() => invalidateAll(), busy ? 3000 : 15000);
 		return () => clearInterval(timer);
@@ -33,90 +35,123 @@
 		return `${minutes} min`;
 	}
 
-	function statusKey(server: PageData['servers'][number]) {
+	function statusKey(server: Server) {
 		if (server.status !== 'ready') return `servers.status.${server.status}`;
 		return `servers.state.${server.state ?? 'exited'}`;
 	}
+
+	function statusTone(server: Server) {
+		if (server.status === 'error') return 'badge-danger';
+		if (server.status !== 'ready') return 'badge-warning';
+		if (server.state === 'running') return 'badge-success';
+		if (server.state === 'restarting') return 'badge-warning';
+		if (server.state === 'dead') return 'badge-danger';
+		return '';
+	}
+
+	const isRunning = (server: Server) =>
+		server.status === 'ready' && (server.state === 'running' || server.state === 'restarting');
 </script>
 
 <svelte:head>
-	<title>Servers</title>
+	<title>{$t('servers.title')} · Pocket Dimension</title>
 </svelte:head>
 
-<h1><Translate key="servers.title" /></h1>
-
-{#if data.isAdmin}
-	<p class="empty"><a href={resolve('/(authenticated)/container')}>Docker containers</a></p>
-{/if}
+<div class="page-header">
+	<div>
+		<h1><Translate key="servers.title" /></h1>
+		{#if data.maxServers !== null}
+			<p class="subtitle">
+				<Translate
+					key="games.limit"
+					variables={{ count: data.servers.length, max: data.maxServers }}
+				/>
+			</p>
+		{/if}
+	</div>
+	<a class="btn btn-primary" href={resolve('/(authenticated)/games')}>
+		+ <Translate key="servers.new" />
+	</a>
+</div>
 
 {#if data.dockerError}
-	<p class="error">Docker is not reachable.</p>
+	<p class="alert error"><Translate key="servers.dockerError" /></p>
 {/if}
 
 {#if form?.message}
-	<p class="error">{form.message}</p>
+	<p class="alert error" role="alert">{$msg(form.message)}</p>
 {/if}
 
-{#if data.servers.length === 0}
-	<p class="empty">
-		<a href={resolve('/(authenticated)/games')}><Translate key="servers.empty" /></a>
-	</p>
+{#if data.servers.length === 0 && !data.dockerError}
+	<div class="card empty-state">
+		<h2><Translate key="servers.empty.title" /></h2>
+		<p><Translate key="servers.empty" /></p>
+		<a class="btn btn-primary" href={resolve('/(authenticated)/games')}>
+			<Translate key="servers.empty.action" />
+		</a>
+	</div>
 {/if}
 
 <div class="list">
 	{#each data.servers as server (server.id)}
-		<article class="server">
+		{@const live = isRunning(server) ? data.live[server.id] : undefined}
+		<article class="card server">
 			<header>
-				<h2>{server.name}</h2>
-				<span class="status status-{server.status === 'ready' ? server.state : server.status}">
-					<Translate key={statusKey(server)} />
-				</span>
+				<div>
+					<h2>{server.name}</h2>
+					<p class="muted meta">
+						{server.template.name}
+						{#if data.isAdmin}
+							&middot; <Translate key="servers.owner" />: {server.ownerName ?? server.ownerId}
+						{/if}
+					</p>
+				</div>
+				<span class="badge {statusTone(server)}"><Translate key={statusKey(server)} /></span>
 			</header>
-			<p class="meta">
-				{server.template.name}
-				{#if data.isAdmin}
-					&middot; <Translate key="servers.owner" />: {server.ownerName ?? server.ownerId}
-				{/if}
-			</p>
-			{#if server.statusMessage}
-				<p class="error">{server.statusMessage}</p>
+
+			{#if BUSY.includes(server.status)}
+				<p class="hint"><Translate key="servers.creatingHint" /></p>
 			{/if}
-			{#if data.live[server.id] && server.state === 'running'}
-				{@const live = data.live[server.id]}
+
+			{#if server.statusMessage}
+				<p class="alert error">{$msg(server.statusMessage)}</p>
+			{/if}
+
+			{#if live}
 				{#if live.queryState === 'unreachable'}
 					<p class="hint"><Translate key="servers.live.unreachable" /></p>
 				{/if}
-				<dl class="live">
+				<dl class="stats">
 					{#if live.query}
-						<div>
+						<div class="stat highlight">
 							<dt><Translate key="servers.live.players" /></dt>
-							<dd class="players">
+							<dd>
 								{live.query.players}{live.query.maxPlayers ? ` / ${live.query.maxPlayers}` : ''}
 							</dd>
 						</div>
 						{#if live.query.map}
-							<div>
+							<div class="stat">
 								<dt><Translate key="servers.live.map" /></dt>
 								<dd>{live.query.map}</dd>
 							</div>
 						{/if}
 						{#if live.query.version}
-							<div>
+							<div class="stat">
 								<dt><Translate key="servers.live.version" /></dt>
 								<dd>{live.query.version}</dd>
 							</div>
 						{/if}
-						<div>
+						<div class="stat">
 							<dt><Translate key="servers.live.ping" /></dt>
 							<dd>{live.query.ping} ms</dd>
 						</div>
 					{/if}
 					{#if live.resources}
-						<div>
+						<div class="stat">
 							<dt>CPU</dt>
 							<dd>{live.resources.cpuPercent.toFixed(1)} %</dd>
 						</div>
-						<div>
+						<div class="stat">
 							<dt><Translate key="servers.live.memory" /></dt>
 							<dd>
 								{formatBytes(live.resources.memoryBytes)}{live.resources.memoryLimitBytes
@@ -126,14 +161,14 @@
 						</div>
 					{/if}
 					{#if live.startedAt}
-						<div>
+						<div class="stat">
 							<dt><Translate key="servers.live.uptime" /></dt>
 							<dd>{formatUptime(live.startedAt)}</dd>
 						</div>
 					{/if}
 				</dl>
 				{#if live.query?.playerNames.length}
-					<details class="player-list">
+					<details class="players">
 						<summary><Translate key="servers.live.playerList" /></summary>
 						<ul>
 							{#each live.query.playerNames as player, i (i)}
@@ -143,18 +178,26 @@
 					</details>
 				{/if}
 			{/if}
+
 			{#if server.ports.length}
-				<p class="connect">
-					<Translate key="servers.connect" />:
-					{#each server.ports as port, i (i)}
-						<code>{data.host}:{port.host}</code>
-						<small>{port.protocol}{port.label ? ` · ${port.label}` : ''}</small>&nbsp;
-					{/each}
-				</p>
+				<div class="connect">
+					<span class="field-label"><Translate key="servers.connect" /></span>
+					<ul>
+						{#each server.ports as port, i (i)}
+							<li>
+								<CopyText text={`${data.host}:${port.host}`} />
+								<span class="muted small"
+									>{port.protocol}{port.label ? ` · ${port.label}` : ''}</span
+								>
+							</li>
+						{/each}
+					</ul>
+				</div>
 			{/if}
+
 			<div class="actions">
 				{#if server.status === 'ready'}
-					{#if server.state === 'running' || server.state === 'restarting'}
+					{#if isRunning(server)}
 						<form method="POST" action="?/stop" use:enhance>
 							<input type="hidden" name="id" value={server.id} />
 							<button><Translate key="servers.stop" /></button>
@@ -166,13 +209,13 @@
 					{:else}
 						<form method="POST" action="?/start" use:enhance>
 							<input type="hidden" name="id" value={server.id} />
-							<button><Translate key="servers.start" /></button>
+							<button class="btn-primary"><Translate key="servers.start" /></button>
 						</form>
 					{/if}
 				{:else if server.status === 'error'}
 					<form method="POST" action="?/retry" use:enhance>
 						<input type="hidden" name="id" value={server.id} />
-						<button><Translate key="servers.retry" /></button>
+						<button class="btn-primary"><Translate key="servers.retry" /></button>
 					</form>
 				{/if}
 				<form
@@ -183,102 +226,128 @@
 					}}
 				>
 					<input type="hidden" name="id" value={server.id} />
-					<button class="danger"><Translate key="servers.delete" /></button>
+					<button class="btn-danger btn-ghost push-right">
+						<Translate key="servers.delete" />
+					</button>
 				</form>
 			</div>
 		</article>
 	{/each}
 </div>
 
-<style>
-	.empty {
-		text-align: center;
-	}
+{#if data.isAdmin}
+	<p class="muted admin-link">
+		<a href={resolve('/(authenticated)/container')}><Translate key="servers.containers" /></a>
+	</p>
+{/if}
 
+<style>
 	.list {
-		display: flex;
-		flex-direction: column;
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 30rem), 1fr));
 		gap: 1rem;
 	}
 
 	.server {
-		padding: 1rem;
-		background: rgba(255, 255, 255, 0.6);
-		border: 1px solid var(--color-theme-1);
-		border-radius: 0.5rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.server > * {
+		margin: 0;
 	}
 
 	header {
 		display: flex;
 		justify-content: space-between;
-		align-items: center;
+		align-items: flex-start;
 		gap: 1rem;
 	}
 
 	h2 {
 		margin: 0;
-		font-size: 1.2rem;
+		overflow-wrap: anywhere;
 	}
 
 	.meta {
-		margin: 0.25rem 0;
-		opacity: 0.8;
+		margin: 0.15rem 0 0;
+		font-size: 0.9rem;
 	}
 
-	.status {
-		font-size: 0.8rem;
-		padding: 0.15rem 0.5rem;
-		border-radius: 1rem;
-		background: var(--color-bg-0);
-	}
-
-	.status-running {
-		background: #b8e6c1;
-	}
-
-	.status-error,
-	.status-dead {
-		background: #f3b9b9;
-	}
-
-	.live {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 0.5rem 1.5rem;
-		margin: 0.5rem 0;
-	}
-
-	.live dt {
-		font-size: 0.75rem;
-		opacity: 0.7;
-	}
-
-	.live dd {
+	.stats {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+		gap: 0.5rem;
 		margin: 0;
+	}
+
+	.stat {
+		padding: 0.5rem 0.75rem;
+		border-radius: var(--radius-sm);
+		background: var(--surface-2);
+	}
+
+	.stat dt {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+	}
+
+	.stat dd {
+		margin: 0;
+		font-weight: 600;
+		overflow-wrap: anywhere;
+	}
+
+	.stat.highlight {
+		background: var(--accent-soft);
+	}
+
+	.stat.highlight dd {
+		color: var(--accent);
+		font-size: 1.25rem;
+	}
+
+	.players summary {
+		cursor: pointer;
 		font-weight: 600;
 	}
 
-	.players {
-		font-size: 1.2rem;
-	}
-
-	.hint {
-		font-size: 0.9rem;
-		opacity: 0.8;
-	}
-
-	.player-list ul {
-		margin: 0.25rem 0;
+	.players ul {
+		columns: 2;
+		margin: 0.5rem 0 0;
 		padding-left: 1.25rem;
 	}
 
-	.actions {
-		display: flex;
-		gap: 0.5rem;
-		flex-wrap: wrap;
+	.connect ul {
+		list-style: none;
+		margin: 0.25rem 0 0;
+		padding: 0;
 	}
 
-	.danger {
-		color: #a11;
+	.connect li {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.small {
+		font-size: 0.85rem;
+	}
+
+	.actions {
+		margin-top: auto;
+		padding-top: 0.5rem;
+		border-top: 1px solid var(--border);
+	}
+
+	.push-right {
+		margin-left: auto;
+	}
+
+	.admin-link {
+		margin-top: 1.5rem;
+		text-align: center;
 	}
 </style>

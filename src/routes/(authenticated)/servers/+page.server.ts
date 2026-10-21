@@ -26,6 +26,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 		servers,
 		live,
 		dockerError,
+		maxServers: locals.isAdmin ? null : config.games.maxServersPerUser,
 		host: config.games.publicHost || url.hostname
 	};
 };

@@ -1,32 +1,26 @@
 <script lang="ts">
 	import { resolve } from '$app/paths';
-	import '../../app.css';
-	import github from '#lib/images/github.svg';
-	import Locales from '#lib/i18n/Locales.svelte';
-	import pdIcon from '#lib/images/reduced_icon.svg';
+	import type { Snippet } from 'svelte';
+	import Logo from '#lib/components/Logo.svelte';
+	import Footer from '#lib/components/Footer.svelte';
+	import LanguageSwitch from '#lib/i18n/LanguageSwitch.svelte';
+
+	let { children }: { children: Snippet } = $props();
 </script>
 
 <div class="app">
 	<header>
-		<div class="corner">
-			<a href="https://github.com/damaurer/PocketDimension/issues" aria-label="Github Issue Board">
-				<img src={github} alt="GitHub" />
-			</a>
-		</div>
-
-		<div class="corner">
-			<Locales></Locales>
-		</div>
+		<a href={resolve('/(public)')} class="brand" aria-label="Pocket Dimension">
+			<Logo size={32} />
+		</a>
+		<LanguageSwitch />
 	</header>
 
 	<main>
-		<div>
-			<a href={resolve('/(public)')} class="icon-container" aria-label="Home Button">
-				<img src={pdIcon} alt="Home Button" />
-			</a>
-		</div>
-		<slot />
+		{@render children()}
 	</main>
+
+	<Footer />
 </div>
 
 <style>
@@ -34,44 +28,32 @@
 		display: flex;
 		flex-direction: column;
 		min-height: 100vh;
+		background:
+			radial-gradient(60rem 30rem at 50% -10%, var(--accent-soft), transparent 70%), var(--bg);
+	}
+
+	header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		width: 100%;
+		max-width: var(--content-width);
+		margin: 0 auto;
+		padding: 0.75rem 1rem;
+	}
+
+	.brand {
+		text-decoration: none;
 	}
 
 	main {
 		flex: 1;
 		display: flex;
 		flex-direction: column;
-		padding: 1rem;
-		width: 100%;
-		max-width: 64rem;
-		margin: -40px auto 0;
-		box-sizing: border-box;
 		align-items: center;
-	}
-
-	header {
-		position: sticky;
-		top: 0;
-		display: flex;
-		justify-content: space-between;
-	}
-
-	.corner {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 3em;
-		height: 3em;
-	}
-
-	.corner img {
-		width: 2em;
-		height: 2em;
-		object-fit: contain;
-	}
-
-	.icon-container img {
-		max-height: 400px;
 		width: 100%;
-		margin-bottom: 20px;
+		max-width: var(--content-width);
+		margin: 0 auto;
+		padding: 2rem 1rem 0;
 	}
 </style>

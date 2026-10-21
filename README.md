@@ -20,6 +20,9 @@ docker run -d --name pocketdimension \
 Then open http://localhost:3000 and log in with the admin email (or the name `admin`) and password.
 All settings are listed in [`.env.example`](.env.example).
 
+The full manual (in German) covers installation, running behind a reverse proxy with HTTPS, local
+use, backups and everyday use: [`docs/handbuch.md`](docs/handbuch.md).
+
 ## Games
 
 The catalog ships with Minecraft (Java), Valheim, Terraria, Factorio, Counter-Strike 2, Palworld,
