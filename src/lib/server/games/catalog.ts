@@ -184,6 +184,7 @@ export const BUILTIN_TEMPLATES: GameTemplateInput[] = [
 		env: [{ key: 'MAXPLAYERS', label: 'Max players', default: '4' }],
 		volumes: [{ container: '/config' }],
 		memoryMb: 8192,
+		query: { type: 'satisfactory', port: 0 },
 		docsUrl: 'https://github.com/wolveix/satisfactory-server'
 	},
 	{

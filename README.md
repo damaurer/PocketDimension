@@ -9,6 +9,8 @@ docker run -d --name pocketdimension \
   -p 3000:3000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v pocketdimension-data:/app/shared \
+  --add-host host.docker.internal:host-gateway \
+  -e QUERY_HOST=host.docker.internal \
   -e SECRET_JWT_KEY="$(openssl rand -base64 48)" \
   -e DB_ADMIN_EMAIL=admin@example.com \
   -e DB_ADMIN_PASSWORD=change-me-please \
@@ -25,6 +27,18 @@ Satisfactory, Rust, Core Keeper and Project Zomboid. Administrators can disable 
 other game that runs in Docker under **Games → New game template** (image, ports, data directories
 and the variables players may set). Each server gets its own Docker volumes; a second server of the
 same game gets its ports shifted (e.g. 25575 instead of 25565).
+
+### Live status
+
+The server list shows CPU and memory of every running server. For games with a query protocol
+([GameDig](https://github.com/gamedig/node-gamedig/blob/master/GAMES_LIST.md) id in the template)
+it also shows connected players, map and version. The app asks each game directly in the
+`POCKET_DIMENSION_NETWORK` network and, at the same time, on its published port at `QUERY_HOST`
+(default `127.0.0.1`). When the app itself runs in Docker, the `--add-host` and `QUERY_HOST` lines
+above let it reach the published ports. Games without a query protocol show only CPU, memory and
+whether they are running.
+
+### Access to Docker
 
 PocketDimension only sees containers it created (label `pocketdimension.managed=true`) and
 containers attached to the `POCKET_DIMENSION_NETWORK` network. Access to the Docker socket is

@@ -1,3 +1,4 @@
+import { games as gamedigGames } from 'gamedig';
 import { describe, expect, it } from 'vitest';
 import {
 	allocatePortOffset,
@@ -69,6 +70,12 @@ describe('template parsing', () => {
 		expect(
 			validateTemplate({ ...base, queryType: 'minecraft', queryPort: '3' }).error
 		).toBeDefined();
+		expect(
+			validateTemplate({ ...base, queryType: 'minecraft', queryPort: '0' }).value?.query
+		).toEqual({ type: 'minecraft', port: 0 });
+		expect(
+			validateTemplate({ ...base, queryType: 'nosuchgame', queryPort: '0' }).error
+		).toBeDefined();
 		expect(validateTemplate({ ...base, docsUrl: 'javascript:alert(1)' }).error).toBeDefined();
 		expect(validateTemplate({ ...base, memoryMb: '10' }).error).toBeDefined();
 	});
@@ -80,7 +87,10 @@ describe('template parsing', () => {
 				expect(parseVolumes(volume.container).error, template.slug).toBeUndefined();
 			}
 			expect(parseEnvDefinition(JSON.stringify(template.env)).error, template.slug).toBeUndefined();
-			if (template.query) expect(template.ports[template.query.port], template.slug).toBeDefined();
+			if (template.query) {
+				expect(template.ports[template.query.port], template.slug).toBeDefined();
+				expect(Object.hasOwn(gamedigGames, template.query.type), template.slug).toBe(true);
+			}
 		}
 	});
 });

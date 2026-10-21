@@ -42,7 +42,16 @@ export const config = {
 		/** Applies each game's memory limit to its container. */
 		enforceMemoryLimits: process.env.ENFORCE_MEMORY_LIMITS !== 'false',
 		/** Address shown to players; defaults to the host name the app is opened with. */
-		publicHost: process.env.PUBLIC_HOST || ''
+		publicHost: process.env.PUBLIC_HOST || '',
+		/**
+		 * Address the app reaches published game ports on for live status, used
+		 * when a server cannot be reached directly in the PocketDimension network.
+		 */
+		queryHost:
+			process.env.QUERY_HOST ||
+			(process.env.PORT_BIND_IP && process.env.PORT_BIND_IP !== '0.0.0.0'
+				? process.env.PORT_BIND_IP
+				: '127.0.0.1')
 	},
 	admin: {
 		name: process.env.DB_ADMIN_USER,

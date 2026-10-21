@@ -90,5 +90,14 @@ export default {
 	'servers.state.restarting': 'Restarting',
 	'servers.state.paused': 'Paused',
 	'servers.state.dead': 'Dead',
-	'servers.state.removing': 'Removing'
+	'servers.state.removing': 'Removing',
+	'servers.live.players': 'Players',
+	'servers.live.map': 'Map',
+	'servers.live.version': 'Version',
+	'servers.live.ping': 'Ping',
+	'servers.live.memory': 'Memory',
+	'servers.live.uptime': 'Up for',
+	'servers.live.playerList': 'Who is online?',
+	'servers.live.unreachable':
+		'The server is not answering yet. Big games often need a few minutes on first start.'
 };
