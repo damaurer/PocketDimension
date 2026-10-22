@@ -1,0 +1,63 @@
+{
+	"version": 1,
+	"slug": "counter-strike-2",
+	"name": "Counter-Strike 2",
+	"description": "Needs a Game Server Login Token from steamcommunity.com/dev/managegameservers. Downloads about 60 GB on first start.",
+	"image": "joedwards32/cs2:latest",
+	"ports": [
+		{
+			"container": 27015,
+			"protocol": "tcp",
+			"label": "Game (TCP)"
+		},
+		{
+			"container": 27015,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 27020,
+			"protocol": "udp",
+			"label": "SourceTV"
+		}
+	],
+	"env": [
+		{
+			"key": "SRCDS_TOKEN",
+			"label": "Game Server Login Token",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "CS2_SERVERNAME",
+			"label": "Server name",
+			"default": "PocketDimension CS2"
+		},
+		{
+			"key": "CS2_PW",
+			"label": "Server password",
+			"secret": true
+		},
+		{
+			"key": "CS2_RCONPW",
+			"label": "RCON password",
+			"secret": true
+		},
+		{
+			"key": "CS2_MAXPLAYERS",
+			"label": "Max players",
+			"default": "10"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/home/steam/cs2-dedicated"
+		}
+	],
+	"memoryMb": 4096,
+	"query": {
+		"type": "counterstrike2",
+		"port": 1
+	},
+	"docsUrl": "https://github.com/joedwards32/CS2"
+}

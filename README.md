@@ -31,6 +31,16 @@ other game that runs in Docker under **Games → New game template** (image, por
 and the variables players may set). Each server gets its own Docker volumes; a second server of the
 same game gets its ports shifted (e.g. 25575 instead of 25565).
 
+### Shared game catalog
+
+The games come from [`catalog/`](catalog/), a catalog shared by every PocketDimension installation.
+Each instance ships with the catalog as it was at build time and fetches
+`catalog/catalog.json` from this repository once a day, read-only and without any account or key.
+New games arrive disabled until an administrator enables them; own templates are never touched.
+Set `CATALOG_URL` to point at a fork, or to an empty value to stay offline. To add a game for
+everyone, export it from its edit page and open a pull request, see
+[`catalog/README.md`](catalog/README.md).
+
 ### Live status
 
 The server list shows CPU and memory of every running server. For games with a query protocol
@@ -63,3 +73,5 @@ npm run dev
 | `npm run test:unit`        | Unit tests (Vitest)                           |
 | `npm run test:integration` | Browser tests against a build (Playwright)    |
 | `npm run build`            | Production build, start with `node server.js` |
+| `npm run catalog:check`    | Validate the shared game catalog              |
+| `npm run catalog:build`    | Rebuild `catalog/catalog.json` from the games |

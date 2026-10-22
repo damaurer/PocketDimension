@@ -1,0 +1,72 @@
+{
+	"version": 1,
+	"slug": "minecraft-java",
+	"name": "Minecraft: Java Edition",
+	"description": "Vanilla, Paper, Fabric, Forge and more. Downloads the server on first start. By creating the server you accept the Minecraft EULA.",
+	"image": "itzg/minecraft-server:latest",
+	"ports": [
+		{
+			"container": 25565,
+			"protocol": "tcp",
+			"label": "Game"
+		}
+	],
+	"env": [
+		{
+			"key": "EULA",
+			"label": "Accept the Minecraft EULA",
+			"options": ["TRUE"],
+			"default": "TRUE",
+			"required": true
+		},
+		{
+			"key": "TYPE",
+			"label": "Server type",
+			"options": ["VANILLA", "PAPER", "FABRIC", "FORGE", "NEOFORGE", "PURPUR"],
+			"default": "VANILLA"
+		},
+		{
+			"key": "VERSION",
+			"label": "Minecraft version",
+			"default": "LATEST"
+		},
+		{
+			"key": "MEMORY",
+			"label": "Java memory",
+			"default": "2G"
+		},
+		{
+			"key": "MOTD",
+			"label": "Message of the day",
+			"default": "A PocketDimension server"
+		},
+		{
+			"key": "DIFFICULTY",
+			"label": "Difficulty",
+			"options": ["peaceful", "easy", "normal", "hard"],
+			"default": "normal"
+		},
+		{
+			"key": "MAX_PLAYERS",
+			"label": "Max players",
+			"default": "10"
+		},
+		{
+			"key": "ONLINE_MODE",
+			"label": "Check accounts with Mojang",
+			"options": ["TRUE", "FALSE"],
+			"default": "TRUE"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/data"
+		}
+	],
+	"memoryMb": 3072,
+	"query": {
+		"type": "minecraft",
+		"port": 0
+	},
+	"docsUrl": "https://docker-minecraft-server.readthedocs.io/"
+}

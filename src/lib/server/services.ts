@@ -12,6 +12,7 @@ import {
 import { ServerManager } from '#lib/server/games/servers.ts';
 import { StatusMonitor } from '#lib/server/games/status.ts';
 import { BUILTIN_TEMPLATES } from '#lib/server/games/catalog.ts';
+import { CatalogSync } from '#lib/server/games/catalogSync.ts';
 import { hashPassword } from '#lib/server/security/authentication.ts';
 import { config } from '#lib/server/config.ts';
 
@@ -28,7 +29,7 @@ export function getRepositories(): Promise<Repositories> {
 		const user = new UserRepository(database);
 		const games = new GameRepository(database);
 		await ensureAdminUser(user, config.admin, hashPassword);
-		await games.syncBuiltinTemplates(BUILTIN_TEMPLATES);
+		await games.syncCatalog(BUILTIN_TEMPLATES, { enableNew: true });
 		return { user, games };
 	})();
 	repositories.catch(() => (repositories = undefined));
@@ -63,4 +64,15 @@ export function getStatusMonitor(): Promise<StatusMonitor> {
 	})();
 	statusMonitor.catch(() => (statusMonitor = undefined));
 	return statusMonitor;
+}
+
+let catalogSync: Promise<CatalogSync> | undefined;
+
+export function getCatalogSync(): Promise<CatalogSync> {
+	catalogSync ??= (async () => {
+		const { games } = await getRepositories();
+		return new CatalogSync(games, config.catalog.url);
+	})();
+	catalogSync.catch(() => (catalogSync = undefined));
+	return catalogSync;
 }

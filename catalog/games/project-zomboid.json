@@ -1,0 +1,61 @@
+{
+	"version": 1,
+	"slug": "project-zomboid",
+	"name": "Project Zomboid",
+	"description": "Zombie survival.",
+	"image": "renegademaster/zomboid-dedicated-server:latest",
+	"ports": [
+		{
+			"container": 16261,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 16262,
+			"protocol": "udp",
+			"label": "Direct"
+		}
+	],
+	"env": [
+		{
+			"key": "SERVER_NAME",
+			"label": "Server name",
+			"default": "PocketDimension"
+		},
+		{
+			"key": "ADMIN_PASSWORD",
+			"label": "Admin password (letters and digits)",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "SERVER_PASSWORD",
+			"label": "Server password",
+			"secret": true
+		},
+		{
+			"key": "MAX_PLAYERS",
+			"label": "Max players",
+			"default": "16"
+		},
+		{
+			"key": "MAX_RAM",
+			"label": "Java memory",
+			"default": "4096m"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/home/steam/Zomboid"
+		},
+		{
+			"container": "/home/steam/ZomboidDedicatedServer"
+		}
+	],
+	"memoryMb": 6144,
+	"query": {
+		"type": "projectzomboid",
+		"port": 0
+	},
+	"docsUrl": "https://github.com/Renegade-Master/zomboid-dedicated-server"
+}

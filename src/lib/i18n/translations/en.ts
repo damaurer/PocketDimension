@@ -108,7 +108,19 @@ export default {
 	'games.admin.delete': 'Delete template',
 	'games.admin.deleteConfirm': 'Delete this game template?',
 	'games.admin.builtin':
-		'Built-in templates are updated with the app. Changes made here are overwritten on the next start.',
+		'Games from the shared catalog are updated from there. Changes made here are overwritten when a newer version of the game arrives.',
+	'games.admin.export': 'Export for the catalog',
+	'games.admin.exportHint':
+		'Downloads this game as a catalog entry. To share it with everyone who runs PocketDimension, propose it as a pull request to catalog/games in the PocketDimension repository.',
+	'games.catalog.update': 'Update catalog',
+	'games.catalog.updating': 'Updating…',
+	'games.catalog.never': 'The shared game catalog has not been checked yet.',
+	'games.catalog.result':
+		'Catalog checked {{time}}: {{added}} new, {{updated}} updated. New games stay disabled until you enable them.',
+	'games.catalog.skipped':
+		'Not taken over because one of your own games uses the short name: {{slugs}}.',
+	'games.catalog.invalid': 'Invalid entries left out: {{count}}.',
+	'games.catalog.off': 'The shared game catalog is switched off (CATALOG_URL is empty).',
 
 	'template.intro': 'Any game that runs as a Docker container can be added here.',
 	'template.section.general': 'General',

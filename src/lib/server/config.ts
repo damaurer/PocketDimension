@@ -2,6 +2,9 @@ import { randomBytes } from 'node:crypto';
 
 const MIN_SECRET_LENGTH = 32;
 
+const DEFAULT_CATALOG_URL =
+	'https://raw.githubusercontent.com/damaurer/PocketDimension/main/catalog/catalog.json';
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 function resolveJwtSecret(): string {
@@ -52,6 +55,12 @@ export const config = {
 			(process.env.PORT_BIND_IP && process.env.PORT_BIND_IP !== '0.0.0.0'
 				? process.env.PORT_BIND_IP
 				: '127.0.0.1')
+	},
+	catalog: {
+		/** Shared game catalog fetched read-only; empty = only the games shipped with the app. */
+		url: process.env.CATALOG_URL ?? DEFAULT_CATALOG_URL,
+		/** Hours between automatic catalog updates; 0 = only when an admin asks. */
+		syncHours: Number(process.env.CATALOG_SYNC_HOURS ?? 24)
 	},
 	admin: {
 		name: process.env.DB_ADMIN_USER,

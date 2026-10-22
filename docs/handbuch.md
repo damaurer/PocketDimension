@@ -269,9 +269,11 @@ Alle Einstellungen sind Umgebungsvariablen. Eine Vorlage mit Kommentaren liegt i
 | `MAX_SERVERS_PER_USER`    | `2`                              | So viele Server darf ein Spieler ohne Adminrechte besitzen. Administratoren haben kein Limit.     |
 | `PUBLIC_HOST`             | Adresse der Seite                | Adresse, die Spielern zum Verbinden angezeigt wird.                                               |
 | `PORT_BIND_IP`            | alle Netzwerkkarten              | Netzwerkkarte, auf der Spiel-Ports veröffentlicht werden.                                         |
-| `QUERY_HOST`              | `127.0.0.1`                      | Adresse, unter der die App veröffentlichte Spiel-Ports für den Live-Status erreicht (siehe 11.4). |
+| `QUERY_HOST`              | `127.0.0.1`                      | Adresse, unter der die App veröffentlichte Spiel-Ports für den Live-Status erreicht (siehe 11.5). |
 | `PORT_OFFSET_STEP`        | `10`                             | Abstand, um den die Ports eines weiteren Servers desselben Spiels verschoben werden.              |
 | `ENFORCE_MEMORY_LIMITS`   | `true`                           | `false` startet Spiele ohne das Speicherlimit ihrer Vorlage.                                      |
+| `CATALOG_URL`             | Katalog im GitHub-Repository     | Adresse des gemeinsamen Spielekatalogs (siehe 11.4). Leer = nur die mitgelieferten Spiele.        |
+| `CATALOG_SYNC_HOURS`      | `24`                             | Abstand der automatischen Katalog-Abfrage in Stunden. `0` = nur per Knopf.                        |
 
 ## 6. Update, Backup und Logs
 
@@ -406,9 +408,9 @@ können sie steuern und löschen. Für Administratoren gilt kein Serverlimit.
 Auf jeder Spielkarte gibt es für Administratoren **Bearbeiten** und **Deaktivieren**. Ein
 deaktiviertes Spiel sehen Spieler nicht mehr; bestehende Server laufen weiter.
 
-Mitgelieferte Spiele werden mit jedem Update der App aktualisiert. Eigene Änderungen daran werden
-beim nächsten Start überschrieben. Um ein mitgeliefertes Spiel anzupassen, lege lieber eine eigene
-Vorlage an.
+Spiele aus dem gemeinsamen Katalog (siehe 11.4) werden von dort aktualisiert. Eigene Änderungen
+daran werden überschrieben, sobald eine neuere Version des Spiels kommt. Um ein solches Spiel
+anzupassen, lege lieber eine eigene Vorlage an.
 
 **Eigenes Spiel hinzufügen** mit **Spiele → Neue Spielvorlage**. Jedes Spiel, für das es ein
 Docker-Image gibt, lässt sich hinzufügen. Die Angaben findest du meist in der Beschreibung des Images
@@ -453,7 +455,38 @@ Die **Einstellungen** sind eine Liste von Umgebungsvariablen des Images:
 Spieler können nur die hier aufgeführten Variablen setzen. Ports, Image und Datenverzeichnisse legt
 allein der Administrator fest.
 
-### 11.4 Spieleranzeige (Live-Status)
+### 11.4 Gemeinsamer Spielekatalog
+
+Alle PocketDimension-Installationen teilen sich einen Spielekatalog. Er liegt öffentlich im
+Ordner [`catalog/`](../catalog/) des GitHub-Repositorys. Die App lädt ihn nur lesend herunter:
+ohne Konto, ohne Schlüssel und ohne Kosten. Es werden keine Daten über deine Installation gesendet.
+
+- **Mitgeliefert:** Die Spiele des Katalogs stecken beim Bauen der App auch im Image. Ohne
+  Internet oder mit leerem `CATALOG_URL` stehen also immer die mitgelieferten Spiele bereit.
+- **Aktualisieren:** Die App fragt den Katalog beim Start und danach alle `CATALOG_SYNC_HOURS`
+  Stunden ab. Administratoren können oben auf der Seite **Spiele** jederzeit **Katalog
+  aktualisieren** drücken; dort steht auch, was zuletzt passiert ist.
+- **Neue Spiele** aus dem Katalog erscheinen **deaktiviert**. Erst wenn ein Administrator sie
+  aktiviert, können Spieler Server damit erstellen. So entscheidest du selbst, welche Images auf
+  deinem Rechner laufen.
+- **Neuere Versionen** bekannter Spiele (z. B. ein anderes Image oder neue Einstellungen) werden
+  übernommen; ob ein Spiel aktiviert ist, bleibt dabei erhalten.
+- **Eigene Spiele** werden nie überschrieben. Hat ein Katalogspiel denselben Kurznamen wie ein
+  eigenes Spiel, wird es übersprungen und als solches angezeigt.
+- Jeder Eintrag wird mit denselben Regeln geprüft wie das Formular für eigene Spiele; ungültige
+  Einträge werden ausgelassen.
+
+**Ein Spiel für alle beisteuern:** Lege das Spiel zuerst bei dir als eigene Vorlage an und teste
+es. Auf der Bearbeiten-Seite lädt **Für den Katalog exportieren** die Datei `<kurzname>.json`
+herunter. Lege sie per Pull Request in `catalog/games/` ab und führe vorher `npm run catalog:build`
+aus (das aktualisiert `catalog/catalog.json`). Details stehen in
+[`catalog/README.md`](../catalog/README.md).
+
+**Eigener Katalog:** Wer eine eigene Auswahl pflegen will, forkt das Repository und setzt
+`CATALOG_URL` auf die eigene `catalog.json`, z. B.
+`https://raw.githubusercontent.com/<name>/PocketDimension/main/catalog/catalog.json`.
+
+### 11.5 Spieleranzeige (Live-Status)
 
 Für die Spieleranzeige fragt die App die Gameserver mit [GameDig](https://github.com/gamedig/node-gamedig)
 ab. Die passende Spiel-ID steht in der
@@ -468,7 +501,7 @@ Läuft die App selbst in Docker, braucht sie für den zweiten Weg `QUERY_HOST=ho
 und `--add-host host.docker.internal:host-gateway` (bzw. `extra_hosts` in Compose). Beides ist in den
 Beispielen aus Abschnitt 2 schon enthalten.
 
-### 11.5 Container
+### 11.6 Container
 
 **Container** zeigt alle Docker-Container, die Pocket Dimension verwaltet, mit Zustand und Ports.
 Dort kannst du Container direkt starten, stoppen und neu starten, zum Beispiel wenn ein Server hängt.
@@ -501,7 +534,7 @@ Ursache und klicke **Erneut versuchen**. Die Logs des Spiels findest du mit
 **Die Spieleranzeige bleibt bei „Der Server antwortet noch nicht“**
 
 - Das Spiel startet noch. Warte ein paar Minuten.
-- Läuft die App in Docker, prüfe `QUERY_HOST` und `--add-host` (Abschnitt 11.4).
+- Läuft die App in Docker, prüfe `QUERY_HOST` und `--add-host` (Abschnitt 11.5).
 - Eine Firewall auf dem Rechner kann die Abfrage blockieren.
 
 **Nach dem Absenden eines Formulars erscheint „Cross-site POST form submissions are forbidden“**

@@ -1,0 +1,35 @@
+{
+	"version": 1,
+	"slug": "core-keeper",
+	"name": "Core Keeper",
+	"description": "Mining sandbox. Players join with the Game ID from the server log; no ports need to be opened.",
+	"image": "escaping/core-keeper-dedicated:latest",
+	"ports": [],
+	"env": [
+		{
+			"key": "WORLD_NAME",
+			"label": "World name",
+			"default": "Core Keeper Server"
+		},
+		{
+			"key": "MAX_PLAYERS",
+			"label": "Max players",
+			"default": "8"
+		},
+		{
+			"key": "GAME_ID",
+			"label": "Game ID (15-28 letters and digits, empty = generate)",
+			"secret": true
+		}
+	],
+	"volumes": [
+		{
+			"container": "/home/steam/core-keeper-data"
+		},
+		{
+			"container": "/home/steam/core-keeper-dedicated"
+		}
+	],
+	"memoryMb": 4096,
+	"docsUrl": "https://github.com/escapingnetwork/core-keeper-dedicated"
+}

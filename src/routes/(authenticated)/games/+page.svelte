@@ -1,12 +1,14 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { resolve } from '$app/paths';
-	import type { PageData } from './$types';
+	import type { ActionData, PageData } from './$types';
 	import Translate from '#lib/i18n/Translate.svelte';
-	import { locale, t } from '#lib/i18n/i18n.ts';
+	import { locale, msg, t } from '#lib/i18n/i18n.ts';
 	import { gameDescription } from '#lib/i18n/catalog.ts';
 
-	let { data }: { data: PageData } = $props();
+	let { data, form }: { data: PageData; form: ActionData } = $props();
+
+	let syncing = $state(false);
 
 	let search = $state('');
 	const templates = $derived(
@@ -53,6 +55,64 @@
 		{/if}
 	</div>
 </div>
+
+{#if data.catalog}
+	{@const result = data.catalog.lastResult}
+	<section class="card catalog">
+		<div class="catalog-text">
+			{#if !data.catalog.enabled}
+				<p><Translate key="games.catalog.off" /></p>
+			{:else if form?.message}
+				<p class="error-text" role="alert">{$msg(form.message)}</p>
+			{:else if !result}
+				<p><Translate key="games.catalog.never" /></p>
+			{:else if result.error}
+				<p class="error-text">{$msg(result.error)}</p>
+			{:else}
+				<p>
+					<Translate
+						key="games.catalog.result"
+						variables={{
+							time: new Date(result.at).toLocaleString($locale),
+							added: result.added?.length ?? 0,
+							updated: result.updated?.length ?? 0
+						}}
+					/>
+				</p>
+				{#if result.skipped?.length}
+					<p>
+						<Translate
+							key="games.catalog.skipped"
+							variables={{ slugs: result.skipped.join(', ') }}
+						/>
+					</p>
+				{/if}
+				{#if result.invalid?.length}
+					<p title={result.invalid.join('\n')}>
+						<Translate key="games.catalog.invalid" variables={{ count: result.invalid.length }} />
+					</p>
+				{/if}
+			{/if}
+		</div>
+		{#if data.catalog.enabled}
+			<form
+				method="POST"
+				action="?/syncCatalog"
+				use:enhance={() => {
+					syncing = true;
+					return async ({ update }) => {
+						await update();
+						syncing = false;
+					};
+				}}
+			>
+				<button class="btn-ghost btn-small" disabled={syncing}>
+					<Translate key={syncing ? 'games.catalog.updating' : 'games.catalog.update'} />
+				</button>
+			</form>
+		{/if}
+	</section>
+{/if}
 
 {#if limitReached}
 	<p class="alert info"><Translate key="games.limitReached" /></p>
@@ -126,6 +186,30 @@
 	.search {
 		width: 16rem;
 		max-width: 100%;
+	}
+
+	.catalog {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 0.75rem;
+		margin-bottom: 1rem;
+		padding-block: 0.75rem;
+		color: var(--text-muted);
+		font-size: 0.9rem;
+	}
+
+	.catalog-text {
+		flex: 1 1 20rem;
+	}
+
+	.catalog p {
+		margin: 0;
+	}
+
+	.error-text {
+		color: var(--danger);
 	}
 
 	.grid {

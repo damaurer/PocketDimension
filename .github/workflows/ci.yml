@@ -28,6 +28,7 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run check
+      - run: npm run catalog:check
       - run: npm run test:unit
 
       - name: Install Playwright browser

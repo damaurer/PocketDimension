@@ -9,6 +9,7 @@ export const load: PageServerLoad = async ({ locals, params }) => {
 
 	return {
 		id: template.id,
+		slug: template.slug,
 		builtin: template.builtin,
 		inUse: (await locals.repositories.games.countServersUsingTemplate(template.id)) > 0,
 		values: templateToForm(template)
@@ -39,7 +40,9 @@ export const actions: Actions = {
 		const template = await games.findTemplateBySlug(params.slug);
 		if (!template) error(404, 'Game not found.');
 		if (template.builtin) {
-			return fail(400, { message: 'Built-in games cannot be deleted; disable them instead.' });
+			return fail(400, {
+				message: 'Games from the catalog cannot be deleted; disable them instead.'
+			});
 		}
 		if ((await games.countServersUsingTemplate(template.id)) > 0) {
 			return fail(400, { message: 'Delete the servers of this game first.' });
