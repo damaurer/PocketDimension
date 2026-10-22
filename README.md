@@ -25,8 +25,9 @@ use, backups and everyday use: [`docs/handbuch.md`](docs/handbuch.md).
 
 ## Games
 
-The catalog ships with Minecraft (Java), Valheim, Terraria, Factorio, Counter-Strike 2, Palworld,
-Satisfactory, Rust, Core Keeper and Project Zomboid. Administrators can disable these and add any
+The catalog ships with Minecraft (Java and Bedrock), Valheim, Terraria, Factorio, Counter-Strike 2,
+Team Fortress 2, Palworld, Satisfactory, Rust, Core Keeper, Project Zomboid, 7 Days to Die,
+Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse and OpenTTD. Administrators can disable these and add any
 other game that runs in Docker under **Games → New game template** (image, ports, data directories
 and the variables players may set). Each server gets its own Docker volumes; a second server of the
 same game gets its ports shifted (e.g. 25575 instead of 25565).

@@ -363,9 +363,10 @@ Jeder Server ist eine Karte mit:
 Die Seite aktualisiert sich selbst, während ein Server eingerichtet wird alle paar Sekunden, sonst
 etwa alle 15 Sekunden.
 
-**Spieleranzeige:** Minecraft, Valheim, Counter-Strike 2, Rust, Project Zomboid und Satisfactory
-melden Spielerzahl, Karte und Version. Terraria, Factorio, Palworld und Core Keeper zeigen nur
-CPU, Arbeitsspeicher und den Zustand. Steht dort „Der Server antwortet noch nicht“, startet das
+**Spieleranzeige:** Minecraft (Java und Bedrock), Valheim, Counter-Strike 2, Team Fortress 2,
+Rust, Project Zomboid, Satisfactory, 7 Days to Die, Enshrouded, V Rising, ARK: Survival Evolved,
+Sons of the Forest und OpenTTD melden Spielerzahl, Karte und Version. Terraria, Factorio, Palworld,
+Core Keeper und Necesse zeigen nur CPU, Arbeitsspeicher und den Zustand. Steht dort „Der Server antwortet noch nicht“, startet das
 Spiel meist noch; große Spiele brauchen beim ersten Start einige Minuten.
 
 **Knöpfe:**
