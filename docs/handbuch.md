@@ -16,6 +16,7 @@ Dieses Handbuch hat zwei Teile:
   - [2. Installation](#2-installation)
   - [3. Nur im Heimnetz betreiben](#3-nur-im-heimnetz-betreiben)
   - [4. Im Internet betreiben](#4-im-internet-betreiben)
+    - [4.5 Was die App absichert und was nicht](#45-was-die-app-absichert-und-was-nicht)
   - [5. Alle Einstellungen](#5-alle-einstellungen)
   - [6. Update, Backup und Logs](#6-update-backup-und-logs)
 - [Teil B – Bedienung](#teil-b--bedienung)
@@ -249,6 +250,50 @@ services:
 Pocket Dimension sieht ohnehin nur Container, die es selbst erstellt hat oder die im Netzwerk
 `POCKET_DIMENSION_NETWORK` hängen. Alle anderen Container auf dem Rechner bleiben unsichtbar.
 
+> **Ehrlich gesagt:** Auch über den Socket-Proxy darf die App Container anlegen. Wer die App
+> vollständig übernimmt, kann damit weiterhin Container mit vollen Rechten starten. Der Proxy
+> verkleinert die Angriffsfläche (kein Zugriff auf Swarm, Secrets, Plugins, `exec` usw.), ersetzt
+> aber nicht ein starkes Admin-Passwort und aktuelle Updates. Hänge den Socket-Proxy nie in das
+> Netzwerk `POCKET_DIMENSION_NETWORK`, sonst könnten Gameserver ihn erreichen.
+
+### 4.5 Was die App absichert und was nicht
+
+Pocket Dimension ist für den Betrieb im Internet gehärtet:
+
+- **Anmeldung:** Passwörter werden mit bcrypt gespeichert. Nach 10 Fehlversuchen für dasselbe Konto
+  von derselben IP und nach 50 Fehlversuchen insgesamt von einer IP ist für 15 Minuten Schluss.
+  Hinter einem Reverse Proxy funktioniert das nur mit `ADDRESS_HEADER` (siehe 4.1), sonst sieht
+  die App alle Besucher unter der IP des Proxys.
+- **Browser-Schutz:** Content Security Policy, Schutz vor Einbettung in fremde Seiten und
+  Formular-Schutz gegen Cross-Site-Anfragen sind immer aktiv. Anmelde-Cookies sind `HttpOnly` und
+  über HTTPS `Secure`.
+- **App-Container:** Das Image startet die App als normaler Benutzer `node`, nicht als `root`. Beim
+  Start übernimmt es nur das Datenverzeichnis und tritt der Gruppe des Docker-Sockets bei, danach
+  werden alle Rechte abgegeben.
+- **Gameserver:** Jeder Server läuft in einem eigenen Container ohne Sonderrechte
+  (`no-new-privileges`, keine Raw-Sockets, Prozesslimit, Speicherlimit der Vorlage). Spielvorlagen
+  können weder `privileged` noch Ordner des Rechners noch den Docker-Socket einbinden, nur eigene
+  Docker-Volumes. Die Gameserver verschiedener Benutzer können sich im Netzwerk
+  `POCKET_DIMENSION_NETWORK` nicht gegenseitig erreichen, so bleiben etwa RCON-Ports privat.
+- **Downloads:** Spielekatalog und Vorschaubilder werden nur gelesen, haben eine Größengrenze, und
+  Vorschaubilder werden nie aus dem eigenen Netz geladen.
+
+Was du selbst im Blick behalten musst:
+
+- **Administratoren** können beliebige Docker-Images als Spiel eintragen. Ein Image läuft zwar
+  eingesperrt, kann aber alles tun, was ein Programm im Internet und in deinem Heimnetz tun kann.
+  Vergib Adminrechte nur an Personen, denen du den Rechner anvertrauen würdest.
+- **Gameserver erreichen dein Heimnetz.** Docker-Container können andere Geräte im lokalen Netz
+  ansprechen (Router, NAS). Wer das ausschließen will, betreibt Pocket Dimension auf einem eigenen
+  Rechner oder in einem eigenen Netzsegment (VLAN, Gastnetz).
+- **CPU:** Speicher ist pro Spiel begrenzt, Rechenzeit nicht. Ein hängender Server kann den Rechner
+  ausbremsen; **Stoppen** hilft.
+- **Gemeinsamer Katalog:** Spiele aus dem Katalog bekommen Updates automatisch, auch ein anderes
+  Image. Wer das nicht möchte, setzt `CATALOG_SYNC_HOURS=0` und aktualisiert per Knopf, oder
+  `CATALOG_URL=` (leer) für gar keine Katalog-Abfrage.
+- **Updates:** Spiele-Images ändern sich ständig. Ein Server holt beim Erstellen das neueste Image;
+  bestehende Server bleiben auf ihrem Stand, bis du sie löschst und neu anlegst.
+
 ## 5. Alle Einstellungen
 
 Alle Einstellungen sind Umgebungsvariablen. Eine Vorlage mit Kommentaren liegt in
@@ -286,6 +331,22 @@ docker compose up -d
 
 Laufende Gameserver werden dabei nicht angehalten. Nach manchen Updates müssen sich alle Benutzer
 neu anmelden.
+
+**Hinweis für Installationen vor Oktober 2026:** Seit dem Sicherheits-Update läuft die App im
+Container nicht mehr als `root`. Beim ersten Start übernimmt sie das Datenverzeichnis automatisch,
+du musst nichts tun. Außerdem trennt sie die Gameserver im Netzwerk voneinander. Bei bestehenden
+Installationen gilt das erst, wenn das Netzwerk neu angelegt wird; die App weist im Log darauf hin
+(„lets game servers reach each other“). So legst du es neu an, die Gameserver laufen dabei weiter:
+
+```bash
+docker compose stop pocketdimension
+servers=$(docker ps -aq --filter network=POCKET_DIMENSION_NETWORK)
+for c in $servers; do docker network disconnect POCKET_DIMENSION_NETWORK "$c"; done
+docker network rm POCKET_DIMENSION_NETWORK
+docker network create -o com.docker.network.bridge.enable_icc=false POCKET_DIMENSION_NETWORK
+for c in $servers; do docker network connect POCKET_DIMENSION_NETWORK "$c"; done
+docker compose up -d
+```
 
 ### Backup
 
@@ -525,6 +586,15 @@ Dort kannst du Container direkt starten, stoppen und neu starten, zum Beispiel w
 Die App kommt nicht an Docker. Prüfe, ob der Docker-Socket eingebunden ist
 (`-v /var/run/docker.sock:/var/run/docker.sock`) bzw. ob `DOCKER_HOST` stimmt und der Socket-Proxy
 läuft.
+
+**Im Log steht „the Docker socket … is not group-writable; the app keeps running as root“**
+Der eingebundene Docker-Socket erlaubt nur `root` den Zugriff, deshalb kann die App ihre Rechte
+nicht abgeben. Sie funktioniert trotzdem. Besser: einen Socket-Proxy verwenden (Abschnitt 4.4).
+
+**„Too many login attempts“ / „Zu viele Anmeldeversuche“, obwohl das Passwort stimmt**
+Nach zu vielen Fehlversuchen von einer IP sperrt die App diese für 15 Minuten. Trifft es alle
+Benutzer gleichzeitig, fehlt hinter dem Reverse Proxy `ADDRESS_HEADER` (Abschnitt 4.1). Ein
+Neustart der App hebt die Sperre sofort auf.
 
 **Ein Server bleibt bei „Wird heruntergeladen“**
 Große Images brauchen Zeit. Mit `docker pull <image>` auf dem Rechner siehst du den Fortschritt.

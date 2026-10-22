@@ -6,7 +6,7 @@ import {
 	setSessionCookie,
 	verifyPassword
 } from '#lib/server/security/authentication.ts';
-import { loginLimiter } from '#lib/server/security/rateLimit.ts';
+import { loginFailureLimiter, loginLimiter } from '#lib/server/security/rateLimit.ts';
 
 const LOGIN_FAILED = 'Email/name or password is not correct.';
 
@@ -28,8 +28,9 @@ export const actions: Actions = {
 			return fail(400, { message: 'Email/name and password are required.' });
 		}
 
-		const limiterKey = `${getClientAddress()}|${emailOrName.toLowerCase()}`;
-		const retryAfter = loginLimiter.hit(limiterKey);
+		const address = getClientAddress();
+		const limiterKey = `${address}|${emailOrName.toLowerCase()}`;
+		const retryAfter = loginFailureLimiter.retryAfter(address) || loginLimiter.hit(limiterKey);
 		if (retryAfter > 0) {
 			return fail(429, {
 				message: `Too many login attempts. Try again in ${Math.ceil(retryAfter / 60)} minutes.`
@@ -50,6 +51,7 @@ export const actions: Actions = {
 		}
 
 		if (!user) {
+			loginFailureLimiter.hit(address);
 			return fail(400, { message: LOGIN_FAILED });
 		}
 
