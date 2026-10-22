@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "factorio",
 	"name": "Factorio",
 	"description": "Factory building. Creates a new save on first start.",
@@ -23,5 +23,6 @@
 		}
 	],
 	"memoryMb": 2048,
-	"docsUrl": "https://github.com/factoriotools/factorio-docker"
+	"docsUrl": "https://github.com/factoriotools/factorio-docker",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/427520/header.jpg"
 }

@@ -18,7 +18,8 @@ const entry: CatalogEntry = {
 	volumes: [{ container: '/data' }],
 	memoryMb: 1024,
 	query: null,
-	docsUrl: 'https://example.com/'
+	docsUrl: 'https://example.com/',
+	thumbnailUrl: 'https://example.com/header.jpg'
 };
 
 async function repository() {

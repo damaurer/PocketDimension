@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "palworld",
 	"name": "Palworld",
 	"description": "Creature collecting survival game.",
@@ -51,5 +51,6 @@
 		}
 	],
 	"memoryMb": 16384,
-	"docsUrl": "https://palworld-server-docker.loef.dev/"
+	"docsUrl": "https://palworld-server-docker.loef.dev/",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1623730/header.jpg"
 }

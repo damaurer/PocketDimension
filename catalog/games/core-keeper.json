@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "core-keeper",
 	"name": "Core Keeper",
 	"description": "Mining sandbox. Players join with the Game ID from the server log; no ports need to be opened.",
@@ -31,5 +31,6 @@
 		}
 	],
 	"memoryMb": 4096,
-	"docsUrl": "https://github.com/escapingnetwork/core-keeper-dedicated"
+	"docsUrl": "https://github.com/escapingnetwork/core-keeper-dedicated",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1621690/header.jpg"
 }

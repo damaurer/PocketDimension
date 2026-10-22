@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import type { ActionData, PageData } from './$types';
 	import Translate from '#lib/i18n/Translate.svelte';
+	import GameThumbnail from '#lib/components/GameThumbnail.svelte';
 	import { locale, msg } from '#lib/i18n/i18n.ts';
 	import { gameDescription, settingLabel } from '#lib/i18n/catalog.ts';
 
@@ -26,6 +27,8 @@
 	<a class="back-link" href={resolve('/(authenticated)/games')}>
 		&larr; <Translate key="games.back" />
 	</a>
+
+	<GameThumbnail game={data.template} class="banner" />
 
 	<div class="page-header">
 		<div>
@@ -128,6 +131,11 @@
 </div>
 
 <style>
+	:global(.banner) {
+		margin-bottom: 1rem;
+		border-radius: var(--radius);
+	}
+
 	.facts {
 		margin: 0;
 		padding-left: 1.1rem;

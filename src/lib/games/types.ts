@@ -48,6 +48,8 @@ export interface GameTemplateInput {
 	memoryMb?: number | null;
 	query?: TemplateQuery | null;
 	docsUrl?: string | null;
+	/** Picture shown on the game's card; the app downloads it and serves it itself. */
+	thumbnailUrl?: string | null;
 }
 
 export interface GameTemplate extends GameTemplateInput {
@@ -66,7 +68,7 @@ export interface GameServerView {
 	name: string;
 	ownerId: number;
 	ownerName: string | null;
-	template: { id: number; slug: string; name: string };
+	template: { id: number; slug: string; name: string; thumbnailUrl: string | null };
 	status: ServerStatus;
 	statusMessage: string | null;
 	/** Docker state when the container exists: running, exited, ... */

@@ -417,17 +417,18 @@ anzupassen, lege lieber eine eigene Vorlage an.
 Docker-Image gibt, lässt sich hinzufügen. Die Angaben findest du meist in der Beschreibung des Images
 auf Docker Hub.
 
-| Feld                 | Beispiel                               | Bedeutung                                                                                              |
-| -------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Name des Spiels      | `Minecraft Bedrock`                    | Wird im Katalog angezeigt.                                                                             |
-| Kurzname             | `minecraft-bedrock`                    | Teil der Adresse; Kleinbuchstaben, Ziffern, Bindestriche.                                              |
-| Docker-Image         | `itzg/minecraft-bedrock-server:latest` | Image auf Docker Hub oder einer anderen Registry.                                                      |
-| Ports                | `19132/udp Game`                       | Ein Port pro Zeile: Port, Protokoll (`tcp` oder `udp`), optional eine Bezeichnung.                     |
-| Datenverzeichnisse   | `/data`                                | Pfade im Container, in denen das Spiel seine Daten speichert. Jeder Server bekommt ein eigenes Volume. |
-| Speicherlimit in MB  | `2048`                                 | Mehr Arbeitsspeicher darf der Server nicht nutzen.                                                     |
-| Einstellungen (JSON) | siehe unten                            | Was Spieler beim Erstellen einstellen dürfen.                                                          |
-| GameDig-Spiel-ID     | `mbe`                                  | Optional, für die Spieleranzeige.                                                                      |
-| Abfrage-Port         | `0`                                    | Position des Abfrage-Ports in der Portliste, gezählt ab 0.                                             |
+| Feld                 | Beispiel                                                          | Bedeutung                                                                                              |
+| -------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Name des Spiels      | `Minecraft Bedrock`                                               | Wird im Katalog angezeigt.                                                                             |
+| Kurzname             | `minecraft-bedrock`                                               | Teil der Adresse; Kleinbuchstaben, Ziffern, Bindestriche.                                              |
+| Docker-Image         | `itzg/minecraft-bedrock-server:latest`                            | Image auf Docker Hub oder einer anderen Registry.                                                      |
+| Ports                | `19132/udp Game`                                                  | Ein Port pro Zeile: Port, Protokoll (`tcp` oder `udp`), optional eine Bezeichnung.                     |
+| Datenverzeichnisse   | `/data`                                                           | Pfade im Container, in denen das Spiel seine Daten speichert. Jeder Server bekommt ein eigenes Volume. |
+| Speicherlimit in MB  | `2048`                                                            | Mehr Arbeitsspeicher darf der Server nicht nutzen.                                                     |
+| Einstellungen (JSON) | siehe unten                                                       | Was Spieler beim Erstellen einstellen dürfen.                                                          |
+| GameDig-Spiel-ID     | `mbe`                                                             | Optional, für die Spieleranzeige.                                                                      |
+| Abfrage-Port         | `0`                                                               | Position des Abfrage-Ports in der Portliste, gezählt ab 0.                                             |
+| Vorschaubild         | `https://cdn.akamai.steamstatic.com/steam/apps/892970/header.jpg` | Optional. Bild auf der Spielkarte, siehe unten.                                                        |
 
 Die **Einstellungen** sind eine Liste von Umgebungsvariablen des Images:
 
@@ -452,6 +453,15 @@ Die **Einstellungen** sind eine Liste von Umgebungsvariablen des Images:
 - `secret`: Eingabe als Passwortfeld.
 - `options`: Auswahlliste statt freiem Text.
 - `help`: Hinweis unter dem Feld.
+
+**Vorschaubilder:** Die App lädt das Bild einmal selbst herunter, speichert es in ihrer Datenbank
+und liefert es danach selbst aus. Die Browser der Spieler fragen also nie bei fremden Servern an,
+und die Content-Security-Policy bleibt streng. Erlaubt sind nur https-Adressen und Bilder im Format
+PNG, JPEG, WebP, GIF oder AVIF bis 1 MB; Adressen im lokalen Netz lädt die App nicht. Ohne Bild oder
+wenn es sich nicht laden lässt, zeigt die Karte ein farbiges Bild mit den Anfangsbuchstaben; ein
+fehlgeschlagener Download wird nach einer Stunde erneut versucht. Für Spiele auf Steam passt das
+Kopfbild der Shop-Seite: `https://cdn.akamai.steamstatic.com/steam/apps/<App-ID>/header.jpg`.
+Achte auf die Rechte am Bild.
 
 Spieler können nur die hier aufgeführten Variablen setzen. Ports, Image und Datenverzeichnisse legt
 allein der Administrator fest.

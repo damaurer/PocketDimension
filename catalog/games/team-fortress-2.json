@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "team-fortress-2",
 	"name": "Team Fortress 2",
 	"description": "Class-based team shooter. Needs a Game Server Login Token (app ID 440) from steamcommunity.com/dev/managegameservers. Downloads the server on first start.",
@@ -66,5 +66,6 @@
 		"type": "teamfortress2",
 		"port": 1
 	},
-	"docsUrl": "https://github.com/CM2Walki/TF2"
+	"docsUrl": "https://github.com/CM2Walki/TF2",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/440/header.jpg"
 }

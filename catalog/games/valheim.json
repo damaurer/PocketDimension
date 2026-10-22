@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "valheim",
 	"name": "Valheim",
 	"description": "Viking survival. The server password needs at least 5 characters.",
@@ -55,5 +55,6 @@
 		"type": "valheim",
 		"port": 1
 	},
-	"docsUrl": "https://github.com/lloesche/valheim-server-docker"
+	"docsUrl": "https://github.com/lloesche/valheim-server-docker",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/892970/header.jpg"
 }

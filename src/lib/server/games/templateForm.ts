@@ -13,7 +13,8 @@ const FIELDS = [
 	'memoryMb',
 	'queryType',
 	'queryPort',
-	'docsUrl'
+	'docsUrl',
+	'thumbnailUrl'
 ] as const;
 
 export type TemplateFormValues = Record<(typeof FIELDS)[number], string>;
@@ -45,7 +46,8 @@ export function templateToForm(template: GameTemplate): TemplateFormValues {
 		memoryMb: template.memoryMb ? String(template.memoryMb) : '',
 		queryType: template.query?.type ?? '',
 		queryPort: template.query ? String(template.query.port) : '',
-		docsUrl: template.docsUrl ?? ''
+		docsUrl: template.docsUrl ?? '',
+		thumbnailUrl: template.thumbnailUrl ?? ''
 	};
 }
 
@@ -60,5 +62,6 @@ export const EMPTY_TEMPLATE_FORM: TemplateFormValues = {
 	memoryMb: '',
 	queryType: '',
 	queryPort: '',
-	docsUrl: ''
+	docsUrl: '',
+	thumbnailUrl: ''
 };

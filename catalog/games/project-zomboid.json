@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "project-zomboid",
 	"name": "Project Zomboid",
 	"description": "Zombie survival.",
@@ -57,5 +57,6 @@
 		"type": "projectzomboid",
 		"port": 0
 	},
-	"docsUrl": "https://github.com/Renegade-Master/zomboid-dedicated-server"
+	"docsUrl": "https://github.com/Renegade-Master/zomboid-dedicated-server",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/108600/header.jpg"
 }

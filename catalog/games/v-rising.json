@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "v-rising",
 	"name": "V Rising",
 	"description": "Vampire survival. The first start can take up to 10 minutes. Password and other settings are in persistentdata/Settings/ServerHostSettings.json.",
@@ -47,5 +47,6 @@
 		"type": "vrising",
 		"port": 1
 	},
-	"docsUrl": "https://github.com/TrueOsiris/docker-vrising"
+	"docsUrl": "https://github.com/TrueOsiris/docker-vrising",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1604030/header.jpg"
 }

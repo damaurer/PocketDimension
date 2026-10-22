@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "rust",
 	"name": "Rust",
 	"description": "Survival game. Downloads the server on every start.",
@@ -54,5 +54,6 @@
 		"type": "rust",
 		"port": 0
 	},
-	"docsUrl": "https://github.com/Didstopia/rust-server"
+	"docsUrl": "https://github.com/Didstopia/rust-server",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/252490/header.jpg"
 }

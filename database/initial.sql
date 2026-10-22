@@ -43,6 +43,7 @@ CREATE TABLE IF NOT EXISTS "GameTemplate" (
     "memoryMb" INTEGER,
     "query" TEXT,
     "docsUrl" TEXT,
+    "thumbnailUrl" TEXT,
     "builtin" INTEGER NOT NULL DEFAULT 0,
     "catalogVersion" INTEGER,
     "enabled" INTEGER NOT NULL DEFAULT 1,
@@ -65,3 +66,11 @@ CREATE TABLE IF NOT EXISTS "GameServer" (
 );
 
 CREATE INDEX IF NOT EXISTS "GameServer_ownerId" ON "GameServer"("ownerId");
+
+-- Downloaded game thumbnails, so browsers never contact the image host.
+CREATE TABLE IF NOT EXISTS "GameThumbnail" (
+    "url" TEXT NOT NULL PRIMARY KEY,
+    "contentType" TEXT NOT NULL,
+    "data" BLOB NOT NULL,
+    "fetchedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

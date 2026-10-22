@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "sons-of-the-forest",
 	"name": "Sons of the Forest",
 	"description": "Co-op horror survival. Downloads the server on first start. Name, password and other settings are in userdata/dedicatedserver.cfg.",
@@ -45,5 +45,6 @@
 		"type": "sotf",
 		"port": 1
 	},
-	"docsUrl": "https://github.com/jammsen/docker-sons-of-the-forest-dedicated-server"
+	"docsUrl": "https://github.com/jammsen/docker-sons-of-the-forest-dedicated-server",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1326470/header.jpg"
 }
