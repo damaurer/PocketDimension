@@ -44,6 +44,7 @@ CREATE TABLE IF NOT EXISTS "GameTemplate" (
     "query" TEXT,
     "docsUrl" TEXT,
     "builtin" INTEGER NOT NULL DEFAULT 0,
+    "catalogVersion" INTEGER,
     "enabled" INTEGER NOT NULL DEFAULT 1,
     "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP

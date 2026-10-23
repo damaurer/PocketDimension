@@ -3,6 +3,7 @@
 
 import type { User } from '#lib/types.ts';
 import type { Repositories } from '#lib/server/services.ts';
+import type { Locale } from '#lib/i18n/i18n.ts';
 
 declare global {
 	namespace App {
@@ -10,6 +11,7 @@ declare global {
 		interface Locals {
 			user: User | undefined;
 			isAdmin: boolean;
+			locale: Locale;
 			repositories: Repositories;
 		}
 		// interface PageData {}

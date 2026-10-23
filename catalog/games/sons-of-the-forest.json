@@ -1,0 +1,49 @@
+{
+	"version": 1,
+	"slug": "sons-of-the-forest",
+	"name": "Sons of the Forest",
+	"description": "Co-op horror survival. Downloads the server on first start. Name, password and other settings are in userdata/dedicatedserver.cfg.",
+	"image": "jammsen/sons-of-the-forest-dedicated-server:latest",
+	"ports": [
+		{
+			"container": 8766,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 27016,
+			"protocol": "udp",
+			"label": "Query"
+		},
+		{
+			"container": 9700,
+			"protocol": "udp",
+			"label": "Blob sync"
+		}
+	],
+	"env": [
+		{
+			"key": "ALWAYS_UPDATE_ON_START",
+			"label": "Update on every start",
+			"options": ["true", "false"],
+			"default": "true"
+		},
+		{
+			"key": "SKIP_NETWORK_ACCESSIBILITY_TEST",
+			"label": "Skip network test",
+			"options": ["true", "false"],
+			"default": "true"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/sonsoftheforest"
+		}
+	],
+	"memoryMb": 8192,
+	"query": {
+		"type": "sotf",
+		"port": 1
+	},
+	"docsUrl": "https://github.com/jammsen/docker-sons-of-the-forest-dedicated-server"
+}

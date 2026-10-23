@@ -52,7 +52,10 @@ export interface GameTemplateInput {
 
 export interface GameTemplate extends GameTemplateInput {
 	id: number;
+	/** Comes from the shared game catalog and is updated from there. */
 	builtin: boolean;
+	/** Catalog version the template was last updated to; null for own templates. */
+	catalogVersion: number | null;
 	enabled: boolean;
 }
 

@@ -1,40 +1,70 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
+	import { resolve } from '$app/paths';
 	import type { ActionData, PageData } from './$types';
 	import Translate from '#lib/i18n/Translate.svelte';
+	import { t } from '#lib/i18n/i18n.ts';
 	import TemplateForm from '../../TemplateForm.svelte';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 </script>
 
 <svelte:head>
-	<title>{data.values.name}</title>
+	<title>{data.values.name} · Pocket Dimension</title>
 </svelte:head>
 
-<h1>{data.values.name}</h1>
+<div class="narrow wide">
+	<a class="back-link" href={resolve('/(authenticated)/games')}>
+		&larr; <Translate key="games.back" />
+	</a>
+	<div class="page-header">
+		<h1>{data.values.name}</h1>
+	</div>
 
-{#if data.builtin}
-	<p class="note"><Translate key="games.admin.builtin" /></p>
-{/if}
+	{#if data.builtin}
+		<p class="alert info"><Translate key="games.admin.builtin" /></p>
+	{/if}
 
-<TemplateForm
-	values={form && 'values' in form && form.values ? form.values : data.values}
-	message={form?.message}
-/>
+	<TemplateForm
+		values={form && 'values' in form && form.values ? form.values : data.values}
+		message={form?.message}
+	/>
 
-{#if !data.builtin && !data.inUse}
-	<form method="POST" action="?/delete" use:enhance class="delete">
-		<button><Translate key="games.admin.delete" /></button>
-	</form>
-{/if}
+	<section class="export">
+		<p class="muted"><Translate key="games.admin.exportHint" /></p>
+		<a
+			class="btn btn-ghost"
+			href={resolve('/(authenticated)/games/[slug]/export', { slug: data.slug })}
+			download="{data.slug}.json"
+			data-sveltekit-reload
+		>
+			<Translate key="games.admin.export" />
+		</a>
+	</section>
+
+	{#if !data.builtin && !data.inUse}
+		<form
+			method="POST"
+			action="?/delete"
+			class="delete"
+			use:enhance={({ cancel }) => {
+				if (!confirm($t('games.admin.deleteConfirm'))) cancel();
+			}}
+		>
+			<button class="btn-danger"><Translate key="games.admin.delete" /></button>
+		</form>
+	{/if}
+</div>
 
 <style>
-	.note {
-		text-align: center;
+	.wide {
+		max-width: 48rem;
 	}
 
+	.export,
 	.delete {
 		margin-top: 2rem;
-		text-align: center;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--border);
 	}
 </style>

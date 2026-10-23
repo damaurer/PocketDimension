@@ -9,3 +9,4 @@ yarn.lock
 /test-results
 /playwright-report
 /shared
+/catalog/catalog.json

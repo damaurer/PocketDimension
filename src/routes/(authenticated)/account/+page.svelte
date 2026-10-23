@@ -1,7 +1,8 @@
 <script lang="ts">
 	import type { ActionData, PageData } from './$types';
-	import type { User } from '#lib/types.ts';
+	import { Role, type User } from '#lib/types.ts';
 	import Translate from '#lib/i18n/Translate.svelte';
+	import { t } from '#lib/i18n/i18n.ts';
 	import Modal from '#lib/components/Modal.svelte';
 	import UserForm from './UserForm.svelte';
 
@@ -9,120 +10,141 @@
 
 	let showModal = $state(false);
 	let activeUser: User | undefined = $state();
+
+	function openUser(user?: User) {
+		activeUser = user;
+		showModal = true;
+	}
 </script>
 
 <svelte:head>
-	<title>Account</title>
+	<title>{$t('nav.account')} · Pocket Dimension</title>
 </svelte:head>
 
-<h1>Account</h1>
-
-<UserForm
-	action="?/updateAccount"
-	submitButtonText="label.update"
-	idPrefix="account"
-	user={data.user}
-	ownAccount
-	form={showModal ? undefined : form}
-/>
-
-<form action="/logout" method="POST" class="logout-form">
-	<button>
-		<Translate key="account.user.button.logout" />
-	</button>
-</form>
-
-{#if data.isAdmin}
-	<hr />
-
-	<div class="flex-row-space-between align-center">
-		<h3>
-			<Translate key="account.admin.headline" />
-		</h3>
-		<button
-			onclick={() => {
-				showModal = true;
-				activeUser = undefined;
-			}}
-		>
-			<Translate key="account.admin.user.add" />
-		</button>
+<div class="page-header">
+	<div>
+		<h1><Translate key="account.title" /></h1>
+		<p class="subtitle"><Translate key="account.intro" /></p>
 	</div>
-	<div class="flex-row-wrap">
-		{#each data.users as user (user.id)}
-			<div class="user-card">
-				<div class="user-data">
-					<span><Translate key="label.email" />: {user.email}</span>
-					<span><Translate key="label.name" />: {user.name}</span>
-				</div>
-				<div>
-					<button
-						onclick={() => {
-							showModal = true;
-							activeUser = user;
-						}}
-						aria-label="Open User Modal"
-					>
-						<Translate key="account.user.button.edit" />
-					</button>
-				</div>
+</div>
+
+<div class="layout">
+	<section class="card">
+		<h2><Translate key="account.profile" /></h2>
+		<UserForm
+			action="?/updateAccount"
+			submitButtonText="label.update"
+			idPrefix="account"
+			user={data.user}
+			ownAccount
+			form={showModal ? undefined : form}
+		/>
+	</section>
+
+	{#if data.isAdmin}
+		<section class="card">
+			<div class="section-header">
+				<h2><Translate key="account.admin.headline" /></h2>
+				<button class="btn-primary btn-small" onclick={() => openUser()}>
+					+ <Translate key="account.admin.user.add" />
+				</button>
 			</div>
-		{/each}
-	</div>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr>
+							<th><Translate key="label.name" /></th>
+							<th><Translate key="label.email" /></th>
+							<th><Translate key="account.role" /></th>
+							<th
+								><span class="visually-hidden"><Translate key="account.user.button.edit" /></span
+								></th
+							>
+						</tr>
+					</thead>
+					<tbody>
+						{#each data.users as user (user.id)}
+							<tr>
+								<td>{user.name ?? '–'}</td>
+								<td>{user.email}</td>
+								<td>
+									{#if user.roles.includes(Role.ADMINISTRATOR_ROLE)}
+										<span class="badge badge-plain"><Translate key="label.isAdmin" /></span>
+									{:else}
+										<span class="muted"><Translate key="account.role.user" /></span>
+									{/if}
+								</td>
+								<td class="edit">
+									<button class="btn-ghost btn-small" onclick={() => openUser(user)}>
+										<Translate key="account.user.button.edit" />
+									</button>
+								</td>
+							</tr>
+						{:else}
+							<tr>
+								<td colspan="4" class="muted"><Translate key="account.admin.noUsers" /></td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		</section>
 
-	<Modal bind:showModal showFooter={false}>
-		<h2 slot="header">
-			<Translate key="account.modal.header" />
-		</h2>
-		{#key activeUser}
-			{#if activeUser}
-				<UserForm
-					action="?/updateUser"
-					submitButtonText="label.update"
-					idPrefix="update"
-					user={activeUser}
-					manageRoles
-					{form}
-				/>
-			{:else}
-				<UserForm
-					action="?/registerUser"
-					submitButtonText="label.create"
-					idPrefix="create"
-					manageRoles
-					{form}
-				/>
-			{/if}
-		{/key}
-	</Modal>
-{/if}
+		<Modal bind:showModal>
+			{#snippet header()}
+				<h2>
+					<Translate key={activeUser ? 'account.modal.edit' : 'account.admin.user.add'} />
+				</h2>
+			{/snippet}
+			{#key activeUser}
+				{#if activeUser}
+					<UserForm
+						action="?/updateUser"
+						submitButtonText="label.update"
+						idPrefix="update"
+						user={activeUser}
+						manageRoles
+						{form}
+					/>
+				{:else}
+					<UserForm
+						action="?/registerUser"
+						submitButtonText="label.create"
+						idPrefix="create"
+						manageRoles
+						{form}
+					/>
+				{/if}
+			{/key}
+		</Modal>
+	{/if}
+</div>
 
 <style>
-	.user-card {
+	.layout {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr));
+		gap: 1rem;
+		align-items: start;
+	}
+
+	.section-header {
 		display: flex;
-		flex-direction: row;
 		justify-content: space-between;
-		align-items: flex-end;
-		border: 1px solid var(--color-theme-1);
-		width: 100%;
-		margin: 0.2rem;
-		padding: 0.2rem;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 0.75rem;
 	}
 
-	.user-data {
-		display: flex;
-		flex-direction: column;
+	.section-header h2 {
+		margin: 0;
 	}
 
-	h1 {
-		margin: 4px 0;
+	td {
+		overflow-wrap: anywhere;
 	}
 
-	.logout-form {
-		margin-top: 1.5rem;
-	}
-
-	hr {
-		width: 100%;
+	.edit {
+		text-align: right;
 	}
 </style>

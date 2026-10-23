@@ -80,7 +80,9 @@ describe('template parsing', () => {
 		expect(validateTemplate({ ...base, memoryMb: '10' }).error).toBeDefined();
 	});
 
-	it('ships built-in templates that pass validation', () => {
+	it('ships the catalog games and they pass validation', () => {
+		expect(BUILTIN_TEMPLATES.map((t) => t.slug)).toContain('minecraft-java');
+		expect(BUILTIN_TEMPLATES.length).toBeGreaterThanOrEqual(10);
 		for (const template of BUILTIN_TEMPLATES) {
 			expect(isValidImage(template.image), template.slug).toBe(true);
 			for (const volume of template.volumes) {

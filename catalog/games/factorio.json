@@ -1,0 +1,27 @@
+{
+	"version": 1,
+	"slug": "factorio",
+	"name": "Factorio",
+	"description": "Factory building. Creates a new save on first start.",
+	"image": "factoriotools/factorio:stable",
+	"ports": [
+		{
+			"container": 34197,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 27015,
+			"protocol": "tcp",
+			"label": "RCON"
+		}
+	],
+	"env": [],
+	"volumes": [
+		{
+			"container": "/factorio"
+		}
+	],
+	"memoryMb": 2048,
+	"docsUrl": "https://github.com/factoriotools/factorio-docker"
+}

@@ -6,9 +6,11 @@ import {
 	AUTH_COOKIE,
 	verifyToken
 } from '#lib/server/security/authentication.ts';
-import { getRepositories, getServerManager } from '#lib/server/services.ts';
+import { getCatalogSync, getRepositories, getServerManager } from '#lib/server/services.ts';
 import { toPublicUser } from '#lib/server/database/repository/user.repository.ts';
 import { isAdmin } from '#lib/utils.ts';
+import { pickLocale } from '#lib/i18n/i18n.ts';
+import { config } from '#lib/server/config.ts';
 
 const SECURITY_HEADERS: Record<string, string> = {
 	'X-Content-Type-Options': 'nosniff',
@@ -48,6 +50,9 @@ export const init: ServerInit = () => {
 	// Finish servers whose creation was interrupted by a restart. Docker may be
 	// unavailable at this point; the servers page retries on demand.
 	getServerManager().catch((e) => console.error('Docker:', e));
+	getCatalogSync()
+		.then((sync) => sync.start(config.catalog.syncHours))
+		.catch((e) => console.error('Game catalog:', e));
 };
 
 export const handle: Handle = async ({ event, resolve }) => {
@@ -55,6 +60,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return resolve(event);
 	}
 
+	event.locals.locale = pickLocale(
+		event.cookies.get('locale'),
+		event.request.headers.get('accept-language')
+	);
 	event.locals.repositories = await getRepositories();
 	await loadCurrentUser(event);
 
@@ -65,7 +74,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 		redirect(303, '/');
 	}
 
-	const response = await resolve(event);
+	const response = await resolve(event, {
+		transformPageChunk: ({ html }) =>
+			html.replace('<html lang="en">', `<html lang="${event.locals.locale}">`)
+	});
 
 	for (const [header, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(header, value);

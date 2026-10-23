@@ -1,82 +1,79 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import Translate from '#lib/i18n/Translate.svelte';
 
-	export let showModal: boolean;
-	export let showFooter = true;
+	let {
+		showModal = $bindable(),
+		header,
+		children
+	}: { showModal: boolean; header: Snippet; children: Snippet } = $props();
 
-	let dialog: HTMLDialogElement;
+	let dialog: HTMLDialogElement | undefined = $state();
 
-	$: if (dialog && showModal) dialog.showModal();
-	else if (dialog && !showModal) dialog.close();
+	$effect(() => {
+		if (!dialog) return;
+		if (showModal && !dialog.open) dialog.showModal();
+		if (!showModal && dialog.open) dialog.close();
+	});
 </script>
 
-<!-- svelte-ignore a11y_click_events_have_key_events -->
 <dialog
 	bind:this={dialog}
-	on:close={() => (showModal = false)}
-	on:click|self={() => dialog.close()}
+	onclose={() => (showModal = false)}
+	onclick={(e) => {
+		if (e.target === dialog) dialog?.close();
+	}}
 >
-	<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
-	<div on:click|stopPropagation>
-		<slot name="header" />
-		<hr />
-		<slot />
-		{#if showFooter}
-			<hr />
-			<div class="dialog-footer">
-				<!-- svelte-ignore a11y_autofocus -->
-				<button autofocus on:click={() => dialog.close()}>
-					<Translate key="modal.close" />
-				</button>
-			</div>
-		{/if}
+	<div class="content">
+		<div class="header">
+			{@render header()}
+			<button type="button" class="btn-ghost btn-small" onclick={() => dialog?.close()}>
+				<Translate key="modal.close" />
+			</button>
+		</div>
+		{@render children()}
 	</div>
 </dialog>
 
 <style>
 	dialog {
-		max-width: 32em;
-		border-radius: 0.2em;
-		border: none;
+		width: min(32rem, calc(100vw - 2rem));
 		padding: 0;
+		border: 1px solid var(--border);
+		border-radius: var(--radius);
+		background: var(--surface);
+		color: var(--text);
+		box-shadow: var(--shadow);
 	}
 
 	dialog::backdrop {
-		background: rgba(0, 0, 0, 0.3);
+		background: rgb(0 0 0 / 40%);
 	}
 
-	dialog > div {
-		padding: 1em;
+	.content {
+		padding: 1.25rem;
+	}
+
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	dialog[open] {
-		animation: zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+		animation: zoom 0.2s ease-out;
 	}
 
 	@keyframes zoom {
 		from {
-			transform: scale(0.95);
-		}
-		to {
-			transform: scale(1);
-		}
-	}
-
-	dialog[open]::backdrop {
-		animation: fade 0.2s ease-out;
-	}
-
-	@keyframes fade {
-		from {
+			transform: scale(0.97);
 			opacity: 0;
 		}
 		to {
+			transform: scale(1);
 			opacity: 1;
 		}
-	}
-
-	.dialog-footer {
-		display: flex;
-		justify-content: center;
 	}
 </style>

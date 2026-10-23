@@ -20,13 +20,27 @@ docker run -d --name pocketdimension \
 Then open http://localhost:3000 and log in with the admin email (or the name `admin`) and password.
 All settings are listed in [`.env.example`](.env.example).
 
+The full manual (in German) covers installation, running behind a reverse proxy with HTTPS, local
+use, backups and everyday use: [`docs/handbuch.md`](docs/handbuch.md).
+
 ## Games
 
-The catalog ships with Minecraft (Java), Valheim, Terraria, Factorio, Counter-Strike 2, Palworld,
-Satisfactory, Rust, Core Keeper and Project Zomboid. Administrators can disable these and add any
+The catalog ships with Minecraft (Java and Bedrock), Valheim, Terraria, Factorio, Counter-Strike 2,
+Team Fortress 2, Palworld, Satisfactory, Rust, Core Keeper, Project Zomboid, 7 Days to Die,
+Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse and OpenTTD. Administrators can disable these and add any
 other game that runs in Docker under **Games → New game template** (image, ports, data directories
 and the variables players may set). Each server gets its own Docker volumes; a second server of the
 same game gets its ports shifted (e.g. 25575 instead of 25565).
+
+### Shared game catalog
+
+The games come from [`catalog/`](catalog/), a catalog shared by every PocketDimension installation.
+Each instance ships with the catalog as it was at build time and fetches
+`catalog/catalog.json` from this repository once a day, read-only and without any account or key.
+New games arrive disabled until an administrator enables them; own templates are never touched.
+Set `CATALOG_URL` to point at a fork, or to an empty value to stay offline. To add a game for
+everyone, export it from its edit page and open a pull request, see
+[`catalog/README.md`](catalog/README.md).
 
 ### Live status
 
@@ -60,3 +74,5 @@ npm run dev
 | `npm run test:unit`        | Unit tests (Vitest)                           |
 | `npm run test:integration` | Browser tests against a build (Playwright)    |
 | `npm run build`            | Production build, start with `node server.js` |
+| `npm run catalog:check`    | Validate the shared game catalog              |
+| `npm run catalog:build`    | Rebuild `catalog/catalog.json` from the games |

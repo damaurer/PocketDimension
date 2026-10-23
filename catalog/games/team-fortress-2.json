@@ -1,0 +1,70 @@
+{
+	"version": 1,
+	"slug": "team-fortress-2",
+	"name": "Team Fortress 2",
+	"description": "Class-based team shooter. Needs a Game Server Login Token (app ID 440) from steamcommunity.com/dev/managegameservers. Downloads the server on first start.",
+	"image": "cm2network/tf2:latest",
+	"ports": [
+		{
+			"container": 27015,
+			"protocol": "tcp",
+			"label": "Game (TCP)"
+		},
+		{
+			"container": 27015,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 27020,
+			"protocol": "udp",
+			"label": "SourceTV"
+		}
+	],
+	"env": [
+		{
+			"key": "SRCDS_TOKEN",
+			"label": "Game Server Login Token",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "SRCDS_HOSTNAME",
+			"label": "Server name",
+			"default": "PocketDimension TF2"
+		},
+		{
+			"key": "SRCDS_PW",
+			"label": "Server password",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "SRCDS_RCONPW",
+			"label": "RCON password",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "SRCDS_STARTMAP",
+			"label": "Start map",
+			"default": "ctf_2fort"
+		},
+		{
+			"key": "SRCDS_MAXPLAYERS",
+			"label": "Max players",
+			"default": "24"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/home/steam/tf-dedicated"
+		}
+	],
+	"memoryMb": 2048,
+	"query": {
+		"type": "teamfortress2",
+		"port": 1
+	},
+	"docsUrl": "https://github.com/CM2Walki/TF2"
+}

@@ -1,0 +1,58 @@
+{
+	"version": 1,
+	"slug": "rust",
+	"name": "Rust",
+	"description": "Survival game. Downloads the server on every start.",
+	"image": "didstopia/rust-server:latest",
+	"ports": [
+		{
+			"container": 28015,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 28016,
+			"protocol": "tcp",
+			"label": "RCON"
+		}
+	],
+	"env": [
+		{
+			"key": "RUST_SERVER_NAME",
+			"label": "Server name",
+			"default": "PocketDimension Rust"
+		},
+		{
+			"key": "RUST_SERVER_MAXPLAYERS",
+			"label": "Max players",
+			"default": "50"
+		},
+		{
+			"key": "RUST_SERVER_WORLDSIZE",
+			"label": "World size",
+			"default": "3500"
+		},
+		{
+			"key": "RUST_SERVER_SEED",
+			"label": "Map seed",
+			"default": "12345"
+		},
+		{
+			"key": "RUST_RCON_PASSWORD",
+			"label": "RCON password",
+			"required": true,
+			"secret": true
+		}
+	],
+	"volumes": [
+		{
+			"container": "/steamcmd/rust"
+		}
+	],
+	"memoryMb": 12288,
+	"query": {
+		"type": "rust",
+		"port": 0
+	},
+	"docsUrl": "https://github.com/Didstopia/rust-server"
+}
