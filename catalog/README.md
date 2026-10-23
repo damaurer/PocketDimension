@@ -21,7 +21,7 @@ games and fixes reach everyone without an app update. No account, key or server 
 
 ## Entry format
 
-The fields are those of the template editor (see the Bedienerhandbuch, section 11.3):
+The fields are those of the template editor (see the Benutzerhandbuch, section 12):
 
 | Field          | Required | Meaning                                                                                                                                                                                  |
 | -------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

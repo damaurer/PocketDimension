@@ -6,7 +6,7 @@
 
 <footer>
 	<a
-		href={`${repository}/blob/main/docs/handbuch.md`}
+		href={`${repository}/blob/main/docs/benutzerhandbuch.md`}
 		target="_blank"
 		rel="noopener noreferrer external"
 	>
