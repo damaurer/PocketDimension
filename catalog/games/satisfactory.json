@@ -1,0 +1,42 @@
+{
+	"version": 1,
+	"slug": "satisfactory",
+	"name": "Satisfactory",
+	"description": "Factory building in 3D. The server is claimed in-game by the first player.",
+	"image": "wolveix/satisfactory-server:latest",
+	"ports": [
+		{
+			"container": 7777,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 7777,
+			"protocol": "tcp",
+			"label": "API"
+		},
+		{
+			"container": 8888,
+			"protocol": "tcp",
+			"label": "Reliable messaging"
+		}
+	],
+	"env": [
+		{
+			"key": "MAXPLAYERS",
+			"label": "Max players",
+			"default": "4"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/config"
+		}
+	],
+	"memoryMb": 8192,
+	"query": {
+		"type": "satisfactory",
+		"port": 0
+	},
+	"docsUrl": "https://github.com/wolveix/satisfactory-server"
+}

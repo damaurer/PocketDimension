@@ -65,6 +65,11 @@ async function migrate(database: Database) {
 			'ALTER TABLE "User" ADD COLUMN "sessionVersion" INTEGER NOT NULL DEFAULT 0'
 		);
 	}
+
+	const templateColumns = await database.all<{ name: string }>('PRAGMA table_info("GameTemplate")');
+	if (!templateColumns.some((c) => c.name === 'catalogVersion')) {
+		await database.exec('ALTER TABLE "GameTemplate" ADD COLUMN "catalogVersion" INTEGER');
+	}
 }
 
 let connection: Promise<Database> | undefined;

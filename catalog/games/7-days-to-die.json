@@ -1,0 +1,71 @@
+{
+	"version": 1,
+	"slug": "7-days-to-die",
+	"name": "7 Days to Die",
+	"description": "Zombie survival with base building. Downloads about 15 GB on first start. Server name and password are set in serverfiles/sdtdserver.xml.",
+	"image": "vinanrra/7dtd-server:latest",
+	"ports": [
+		{
+			"container": 26900,
+			"protocol": "tcp",
+			"label": "Game (TCP)"
+		},
+		{
+			"container": 26900,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 26901,
+			"protocol": "udp",
+			"label": "Query"
+		},
+		{
+			"container": 26902,
+			"protocol": "udp",
+			"label": "Game 2"
+		}
+	],
+	"env": [
+		{
+			"key": "START_MODE",
+			"label": "Start mode (1 start, 3 update and start)",
+			"options": ["1", "3"],
+			"default": "3",
+			"required": true
+		},
+		{
+			"key": "VERSION",
+			"label": "Game branch",
+			"default": "stable"
+		},
+		{
+			"key": "TimeZone",
+			"label": "Time zone",
+			"default": "Europe/Berlin"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/home/sdtdserver/serverfiles"
+		},
+		{
+			"container": "/home/sdtdserver/.local/share/7DaysToDie"
+		},
+		{
+			"container": "/home/sdtdserver/lgsm/config-lgsm/sdtdserver"
+		},
+		{
+			"container": "/home/sdtdserver/log"
+		},
+		{
+			"container": "/home/sdtdserver/lgsm/backup"
+		}
+	],
+	"memoryMb": 8192,
+	"query": {
+		"type": "sdtd",
+		"port": 2
+	},
+	"docsUrl": "https://github.com/vinanrra/Docker-7DaysToDie"
+}

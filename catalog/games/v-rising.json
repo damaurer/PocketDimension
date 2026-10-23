@@ -1,0 +1,51 @@
+{
+	"version": 1,
+	"slug": "v-rising",
+	"name": "V Rising",
+	"description": "Vampire survival. The first start can take up to 10 minutes. Password and other settings are in persistentdata/Settings/ServerHostSettings.json.",
+	"image": "trueosiris/vrising:latest",
+	"ports": [
+		{
+			"container": 9876,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 9877,
+			"protocol": "udp",
+			"label": "Query"
+		}
+	],
+	"env": [
+		{
+			"key": "SERVERNAME",
+			"label": "Server name",
+			"default": "PocketDimension",
+			"required": true
+		},
+		{
+			"key": "WORLDNAME",
+			"label": "World name",
+			"default": "world1"
+		},
+		{
+			"key": "TZ",
+			"label": "Time zone",
+			"default": "Europe/Berlin"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/mnt/vrising/server"
+		},
+		{
+			"container": "/mnt/vrising/persistentdata"
+		}
+	],
+	"memoryMb": 8192,
+	"query": {
+		"type": "vrising",
+		"port": 1
+	},
+	"docsUrl": "https://github.com/TrueOsiris/docker-vrising"
+}

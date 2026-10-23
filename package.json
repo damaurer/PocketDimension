@@ -13,7 +13,9 @@
 		"format": "prettier --write .",
 		"test:integration": "playwright test",
 		"test:unit": "vitest run",
-		"test:unit:watch": "vitest"
+		"test:unit:watch": "vitest",
+		"catalog:check": "node scripts/catalog.ts check",
+		"catalog:build": "node scripts/catalog.ts build"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

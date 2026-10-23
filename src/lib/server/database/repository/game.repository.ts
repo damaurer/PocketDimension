@@ -1,4 +1,5 @@
 import type { Database } from '#lib/server/database/client.ts';
+import type { CatalogEntry } from '#lib/server/games/catalogEntry.ts';
 import type {
 	GameTemplate,
 	GameTemplateInput,
@@ -19,6 +20,7 @@ interface TemplateRow {
 	query: string | null;
 	docsUrl: string | null;
 	builtin: number;
+	catalogVersion: number | null;
 	enabled: number;
 }
 
@@ -54,6 +56,7 @@ function toTemplate(row: TemplateRow): GameTemplate {
 		query: row.query ? (JSON.parse(row.query) as TemplateQuery) : null,
 		docsUrl: row.docsUrl,
 		builtin: row.builtin === 1,
+		catalogVersion: row.catalogVersion,
 		enabled: row.enabled === 1
 	};
 }
@@ -74,6 +77,13 @@ function templateParams(t: GameTemplateInput) {
 		t.query ? JSON.stringify(t.query) : null,
 		t.docsUrl ?? null
 	];
+}
+
+export interface CatalogSyncCounts {
+	added: string[];
+	updated: string[];
+	/** Slugs used by an own template of this instance. */
+	skipped: string[];
 }
 
 const SELECT_SERVER = `
@@ -128,16 +138,38 @@ export class GameRepository {
 		await this.db.run('DELETE FROM GameTemplate WHERE id = ? AND builtin = 0', [id]);
 	}
 
-	/** Inserts new built-in templates and refreshes existing ones; keeps the enabled flag. */
-	async syncBuiltinTemplates(templates: GameTemplateInput[]): Promise<void> {
-		for (const template of templates) {
+	/**
+	 * Inserts new catalog games and updates the ones that came from the catalog
+	 * when the entry is at least as new; keeps the enabled flag. Own templates
+	 * with the same slug are left alone and reported as skipped.
+	 */
+	async syncCatalog(
+		entries: CatalogEntry[],
+		options: { enableNew: boolean }
+	): Promise<CatalogSyncCounts> {
+		const counts: CatalogSyncCounts = { added: [], updated: [], skipped: [] };
+		for (const { version, ...template } of entries) {
 			const existing = await this.findTemplateBySlug(template.slug);
 			if (!existing) {
-				await this.createTemplate(template, true);
-			} else if (existing.builtin) {
+				const id = await this.createTemplate(template, true);
+				await this.db.run('UPDATE GameTemplate SET catalogVersion = ?, enabled = ? WHERE id = ?', [
+					version,
+					options.enableNew ? 1 : 0,
+					id
+				]);
+				counts.added.push(template.slug);
+			} else if (!existing.builtin) {
+				counts.skipped.push(template.slug);
+			} else if (version >= (existing.catalogVersion ?? 0)) {
 				await this.updateTemplate(existing.id, template);
+				await this.db.run('UPDATE GameTemplate SET catalogVersion = ? WHERE id = ?', [
+					version,
+					existing.id
+				]);
+				if (version > (existing.catalogVersion ?? 0)) counts.updated.push(template.slug);
 			}
 		}
+		return counts;
 	}
 
 	async countServersUsingTemplate(templateId: number): Promise<number> {

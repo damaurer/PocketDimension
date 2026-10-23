@@ -1,0 +1,55 @@
+{
+	"version": 1,
+	"slug": "palworld",
+	"name": "Palworld",
+	"description": "Creature collecting survival game.",
+	"image": "thijsvanloef/palworld-server-docker:latest",
+	"ports": [
+		{
+			"container": 8211,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 27015,
+			"protocol": "udp",
+			"label": "Query"
+		}
+	],
+	"env": [
+		{
+			"key": "SERVER_NAME",
+			"label": "Server name",
+			"default": "PocketDimension Palworld"
+		},
+		{
+			"key": "PLAYERS",
+			"label": "Max players",
+			"default": "16"
+		},
+		{
+			"key": "SERVER_PASSWORD",
+			"label": "Server password",
+			"secret": true
+		},
+		{
+			"key": "ADMIN_PASSWORD",
+			"label": "Admin password",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "COMMUNITY",
+			"label": "List in community servers",
+			"options": ["false", "true"],
+			"default": "false"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/palworld"
+		}
+	],
+	"memoryMb": 16384,
+	"docsUrl": "https://palworld-server-docker.loef.dev/"
+}

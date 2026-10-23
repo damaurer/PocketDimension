@@ -30,6 +30,18 @@
 		message={form?.message}
 	/>
 
+	<section class="export">
+		<p class="muted"><Translate key="games.admin.exportHint" /></p>
+		<a
+			class="btn btn-ghost"
+			href={resolve('/(authenticated)/games/[slug]/export', { slug: data.slug })}
+			download="{data.slug}.json"
+			data-sveltekit-reload
+		>
+			<Translate key="games.admin.export" />
+		</a>
+	</section>
+
 	{#if !data.builtin && !data.inUse}
 		<form
 			method="POST"
@@ -49,6 +61,7 @@
 		max-width: 48rem;
 	}
 
+	.export,
 	.delete {
 		margin-top: 2rem;
 		padding-top: 1.5rem;

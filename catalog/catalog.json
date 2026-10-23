@@ -1,0 +1,1182 @@
+{
+	"schemaVersion": 1,
+	"games": [
+		{
+			"version": 1,
+			"slug": "7-days-to-die",
+			"name": "7 Days to Die",
+			"description": "Zombie survival with base building. Downloads about 15 GB on first start. Server name and password are set in serverfiles/sdtdserver.xml.",
+			"image": "vinanrra/7dtd-server:latest",
+			"ports": [
+				{
+					"container": 26900,
+					"protocol": "tcp",
+					"label": "Game (TCP)"
+				},
+				{
+					"container": 26900,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 26901,
+					"protocol": "udp",
+					"label": "Query"
+				},
+				{
+					"container": 26902,
+					"protocol": "udp",
+					"label": "Game 2"
+				}
+			],
+			"env": [
+				{
+					"key": "START_MODE",
+					"label": "Start mode (1 start, 3 update and start)",
+					"default": "3",
+					"required": true,
+					"options": [
+						"1",
+						"3"
+					]
+				},
+				{
+					"key": "VERSION",
+					"label": "Game branch",
+					"default": "stable"
+				},
+				{
+					"key": "TimeZone",
+					"label": "Time zone",
+					"default": "Europe/Berlin"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/home/sdtdserver/serverfiles"
+				},
+				{
+					"container": "/home/sdtdserver/.local/share/7DaysToDie"
+				},
+				{
+					"container": "/home/sdtdserver/lgsm/config-lgsm/sdtdserver"
+				},
+				{
+					"container": "/home/sdtdserver/log"
+				},
+				{
+					"container": "/home/sdtdserver/lgsm/backup"
+				}
+			],
+			"memoryMb": 8192,
+			"query": {
+				"type": "sdtd",
+				"port": 2
+			},
+			"docsUrl": "https://github.com/vinanrra/Docker-7DaysToDie"
+		},
+		{
+			"version": 1,
+			"slug": "ark-survival-evolved",
+			"name": "ARK: Survival Evolved",
+			"description": "Dinosaur survival. Downloads about 20 GB on first start, which takes a while. Not ARK: Survival Ascended.",
+			"image": "hermsi/ark-server:latest",
+			"ports": [
+				{
+					"container": 7777,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 7778,
+					"protocol": "udp",
+					"label": "Game 2"
+				},
+				{
+					"container": 27015,
+					"protocol": "udp",
+					"label": "Query"
+				}
+			],
+			"env": [
+				{
+					"key": "SESSION_NAME",
+					"label": "Server name",
+					"default": "PocketDimension",
+					"required": true
+				},
+				{
+					"key": "SERVER_MAP",
+					"label": "Map",
+					"default": "TheIsland",
+					"options": [
+						"TheIsland",
+						"TheCenter",
+						"ScorchedEarth_P",
+						"Ragnarok",
+						"Aberration_P",
+						"Extinction",
+						"Valguero_P",
+						"Genesis",
+						"CrystalIsles",
+						"Gen2",
+						"LostIsland",
+						"Fjordur"
+					]
+				},
+				{
+					"key": "SERVER_PASSWORD",
+					"label": "Server password",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "ADMIN_PASSWORD",
+					"label": "Admin password",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "MAX_PLAYERS",
+					"label": "Max players",
+					"default": "20"
+				},
+				{
+					"key": "UPDATE_ON_START",
+					"label": "Update on every start",
+					"default": "true",
+					"options": [
+						"false",
+						"true"
+					]
+				}
+			],
+			"volumes": [
+				{
+					"container": "/app"
+				}
+			],
+			"memoryMb": 8192,
+			"query": {
+				"type": "ase",
+				"port": 2
+			},
+			"docsUrl": "https://github.com/Hermsi1337/docker-ark-server"
+		},
+		{
+			"version": 1,
+			"slug": "core-keeper",
+			"name": "Core Keeper",
+			"description": "Mining sandbox. Players join with the Game ID from the server log; no ports need to be opened.",
+			"image": "escaping/core-keeper-dedicated:latest",
+			"ports": [],
+			"env": [
+				{
+					"key": "WORLD_NAME",
+					"label": "World name",
+					"default": "Core Keeper Server"
+				},
+				{
+					"key": "MAX_PLAYERS",
+					"label": "Max players",
+					"default": "8"
+				},
+				{
+					"key": "GAME_ID",
+					"label": "Game ID (15-28 letters and digits, empty = generate)",
+					"secret": true
+				}
+			],
+			"volumes": [
+				{
+					"container": "/home/steam/core-keeper-data"
+				},
+				{
+					"container": "/home/steam/core-keeper-dedicated"
+				}
+			],
+			"memoryMb": 4096,
+			"query": null,
+			"docsUrl": "https://github.com/escapingnetwork/core-keeper-dedicated"
+		},
+		{
+			"version": 1,
+			"slug": "counter-strike-2",
+			"name": "Counter-Strike 2",
+			"description": "Needs a Game Server Login Token from steamcommunity.com/dev/managegameservers. Downloads about 60 GB on first start.",
+			"image": "joedwards32/cs2:latest",
+			"ports": [
+				{
+					"container": 27015,
+					"protocol": "tcp",
+					"label": "Game (TCP)"
+				},
+				{
+					"container": 27015,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 27020,
+					"protocol": "udp",
+					"label": "SourceTV"
+				}
+			],
+			"env": [
+				{
+					"key": "SRCDS_TOKEN",
+					"label": "Game Server Login Token",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "CS2_SERVERNAME",
+					"label": "Server name",
+					"default": "PocketDimension CS2"
+				},
+				{
+					"key": "CS2_PW",
+					"label": "Server password",
+					"secret": true
+				},
+				{
+					"key": "CS2_RCONPW",
+					"label": "RCON password",
+					"secret": true
+				},
+				{
+					"key": "CS2_MAXPLAYERS",
+					"label": "Max players",
+					"default": "10"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/home/steam/cs2-dedicated"
+				}
+			],
+			"memoryMb": 4096,
+			"query": {
+				"type": "counterstrike2",
+				"port": 1
+			},
+			"docsUrl": "https://github.com/joedwards32/CS2"
+		},
+		{
+			"version": 1,
+			"slug": "enshrouded",
+			"name": "Enshrouded",
+			"description": "Survival and crafting in a fog-covered world. Players join with the role password. Downloads the server on first start; needs a lot of memory.",
+			"image": "mornedhels/enshrouded-server:latest",
+			"ports": [
+				{
+					"container": 15637,
+					"protocol": "udp",
+					"label": "Game"
+				}
+			],
+			"env": [
+				{
+					"key": "SERVER_NAME",
+					"label": "Server name",
+					"default": "PocketDimension",
+					"required": true
+				},
+				{
+					"key": "SERVER_SLOT_COUNT",
+					"label": "Max players (1-16)",
+					"default": "16"
+				},
+				{
+					"key": "SERVER_ROLE_0_NAME",
+					"label": "Player role name",
+					"default": "Friends",
+					"required": true
+				},
+				{
+					"key": "SERVER_ROLE_0_PASSWORD",
+					"label": "Server password",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "SERVER_ROLE_0_CAN_EDIT_BASE",
+					"label": "Players may build in bases",
+					"default": "true",
+					"options": [
+						"true",
+						"false"
+					]
+				},
+				{
+					"key": "SERVER_ROLE_0_CAN_EXTEND_BASE",
+					"label": "Players may extend bases",
+					"default": "true",
+					"options": [
+						"true",
+						"false"
+					]
+				},
+				{
+					"key": "SERVER_ROLE_0_CAN_ACCESS_INVENTORIES",
+					"label": "Players may open chests",
+					"default": "true",
+					"options": [
+						"true",
+						"false"
+					]
+				},
+				{
+					"key": "UPDATE_CRON",
+					"label": "Update check (cron, empty = only on start)",
+					"default": "*/30 * * * *"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/opt/enshrouded"
+				}
+			],
+			"memoryMb": 16384,
+			"query": {
+				"type": "enshrouded",
+				"port": 0
+			},
+			"docsUrl": "https://github.com/mornedhels/enshrouded-server"
+		},
+		{
+			"version": 1,
+			"slug": "factorio",
+			"name": "Factorio",
+			"description": "Factory building. Creates a new save on first start.",
+			"image": "factoriotools/factorio:stable",
+			"ports": [
+				{
+					"container": 34197,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 27015,
+					"protocol": "tcp",
+					"label": "RCON"
+				}
+			],
+			"env": [],
+			"volumes": [
+				{
+					"container": "/factorio"
+				}
+			],
+			"memoryMb": 2048,
+			"query": null,
+			"docsUrl": "https://github.com/factoriotools/factorio-docker"
+		},
+		{
+			"version": 1,
+			"slug": "minecraft-bedrock",
+			"name": "Minecraft: Bedrock Edition",
+			"description": "For players on consoles, phones, tablets and Windows. Downloads the server on first start. By creating the server you accept the Minecraft EULA.",
+			"image": "itzg/minecraft-bedrock-server:latest",
+			"ports": [
+				{
+					"container": 19132,
+					"protocol": "udp",
+					"label": "Game"
+				}
+			],
+			"env": [
+				{
+					"key": "EULA",
+					"label": "Accept the Minecraft EULA",
+					"default": "TRUE",
+					"required": true,
+					"options": [
+						"TRUE"
+					]
+				},
+				{
+					"key": "VERSION",
+					"label": "Minecraft version",
+					"default": "LATEST"
+				},
+				{
+					"key": "SERVER_NAME",
+					"label": "Server name",
+					"default": "PocketDimension"
+				},
+				{
+					"key": "GAMEMODE",
+					"label": "Game mode",
+					"default": "survival",
+					"options": [
+						"survival",
+						"creative",
+						"adventure"
+					]
+				},
+				{
+					"key": "DIFFICULTY",
+					"label": "Difficulty",
+					"default": "normal",
+					"options": [
+						"peaceful",
+						"easy",
+						"normal",
+						"hard"
+					]
+				},
+				{
+					"key": "MAX_PLAYERS",
+					"label": "Max players",
+					"default": "10"
+				},
+				{
+					"key": "ONLINE_MODE",
+					"label": "Check Xbox Live accounts",
+					"default": "true",
+					"options": [
+						"true",
+						"false"
+					]
+				},
+				{
+					"key": "LEVEL_SEED",
+					"label": "Map seed"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/data"
+				}
+			],
+			"memoryMb": 2048,
+			"query": {
+				"type": "mbe",
+				"port": 0
+			},
+			"docsUrl": "https://github.com/itzg/docker-minecraft-bedrock-server"
+		},
+		{
+			"version": 1,
+			"slug": "minecraft-java",
+			"name": "Minecraft: Java Edition",
+			"description": "Vanilla, Paper, Fabric, Forge and more. Downloads the server on first start. By creating the server you accept the Minecraft EULA.",
+			"image": "itzg/minecraft-server:latest",
+			"ports": [
+				{
+					"container": 25565,
+					"protocol": "tcp",
+					"label": "Game"
+				}
+			],
+			"env": [
+				{
+					"key": "EULA",
+					"label": "Accept the Minecraft EULA",
+					"default": "TRUE",
+					"required": true,
+					"options": [
+						"TRUE"
+					]
+				},
+				{
+					"key": "TYPE",
+					"label": "Server type",
+					"default": "VANILLA",
+					"options": [
+						"VANILLA",
+						"PAPER",
+						"FABRIC",
+						"FORGE",
+						"NEOFORGE",
+						"PURPUR"
+					]
+				},
+				{
+					"key": "VERSION",
+					"label": "Minecraft version",
+					"default": "LATEST"
+				},
+				{
+					"key": "MEMORY",
+					"label": "Java memory",
+					"default": "2G"
+				},
+				{
+					"key": "MOTD",
+					"label": "Message of the day",
+					"default": "A PocketDimension server"
+				},
+				{
+					"key": "DIFFICULTY",
+					"label": "Difficulty",
+					"default": "normal",
+					"options": [
+						"peaceful",
+						"easy",
+						"normal",
+						"hard"
+					]
+				},
+				{
+					"key": "MAX_PLAYERS",
+					"label": "Max players",
+					"default": "10"
+				},
+				{
+					"key": "ONLINE_MODE",
+					"label": "Check accounts with Mojang",
+					"default": "TRUE",
+					"options": [
+						"TRUE",
+						"FALSE"
+					]
+				}
+			],
+			"volumes": [
+				{
+					"container": "/data"
+				}
+			],
+			"memoryMb": 3072,
+			"query": {
+				"type": "minecraft",
+				"port": 0
+			},
+			"docsUrl": "https://docker-minecraft-server.readthedocs.io/"
+		},
+		{
+			"version": 1,
+			"slug": "necesse",
+			"name": "Necesse",
+			"description": "Top-down sandbox adventure with settlements. A new world is created on first start.",
+			"image": "brammys/necesse-server:latest",
+			"ports": [
+				{
+					"container": 14159,
+					"protocol": "udp",
+					"label": "Game"
+				}
+			],
+			"env": [
+				{
+					"key": "WORLD",
+					"label": "World name",
+					"default": "world",
+					"required": true
+				},
+				{
+					"key": "PASSWORD",
+					"label": "Server password",
+					"secret": true
+				},
+				{
+					"key": "SLOTS",
+					"label": "Max players",
+					"default": "10"
+				},
+				{
+					"key": "OWNER",
+					"label": "Owner (player name)"
+				},
+				{
+					"key": "MOTD",
+					"label": "Message of the day",
+					"default": "A PocketDimension server"
+				},
+				{
+					"key": "PAUSE",
+					"label": "Pause when nobody is online (0 no, 1 yes)",
+					"default": "1",
+					"options": [
+						"0",
+						"1"
+					]
+				}
+			],
+			"volumes": [
+				{
+					"container": "/necesse/saves"
+				},
+				{
+					"container": "/necesse/cfg"
+				},
+				{
+					"container": "/necesse/logs"
+				}
+			],
+			"memoryMb": 2048,
+			"query": null,
+			"docsUrl": "https://github.com/BrammyS/necesse-docker-server"
+		},
+		{
+			"version": 1,
+			"slug": "openttd",
+			"name": "OpenTTD",
+			"description": "Open-source transport tycoon. Starts a new game, or continues the last autosave.",
+			"image": "bateau/openttd:latest",
+			"ports": [
+				{
+					"container": 3979,
+					"protocol": "tcp",
+					"label": "Game"
+				},
+				{
+					"container": 3979,
+					"protocol": "udp",
+					"label": "Game (UDP)"
+				}
+			],
+			"env": [
+				{
+					"key": "loadgame",
+					"label": "Start with (false new game, last-autosave continue)",
+					"default": "last-autosave",
+					"options": [
+						"last-autosave",
+						"false"
+					]
+				}
+			],
+			"volumes": [
+				{
+					"container": "/home/openttd/.local/share/openttd"
+				},
+				{
+					"container": "/home/openttd/.config/openttd"
+				}
+			],
+			"memoryMb": 1024,
+			"query": {
+				"type": "openttd",
+				"port": 0
+			},
+			"docsUrl": "https://github.com/bateau84/openttd"
+		},
+		{
+			"version": 1,
+			"slug": "palworld",
+			"name": "Palworld",
+			"description": "Creature collecting survival game.",
+			"image": "thijsvanloef/palworld-server-docker:latest",
+			"ports": [
+				{
+					"container": 8211,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 27015,
+					"protocol": "udp",
+					"label": "Query"
+				}
+			],
+			"env": [
+				{
+					"key": "SERVER_NAME",
+					"label": "Server name",
+					"default": "PocketDimension Palworld"
+				},
+				{
+					"key": "PLAYERS",
+					"label": "Max players",
+					"default": "16"
+				},
+				{
+					"key": "SERVER_PASSWORD",
+					"label": "Server password",
+					"secret": true
+				},
+				{
+					"key": "ADMIN_PASSWORD",
+					"label": "Admin password",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "COMMUNITY",
+					"label": "List in community servers",
+					"default": "false",
+					"options": [
+						"false",
+						"true"
+					]
+				}
+			],
+			"volumes": [
+				{
+					"container": "/palworld"
+				}
+			],
+			"memoryMb": 16384,
+			"query": null,
+			"docsUrl": "https://palworld-server-docker.loef.dev/"
+		},
+		{
+			"version": 1,
+			"slug": "project-zomboid",
+			"name": "Project Zomboid",
+			"description": "Zombie survival.",
+			"image": "renegademaster/zomboid-dedicated-server:latest",
+			"ports": [
+				{
+					"container": 16261,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 16262,
+					"protocol": "udp",
+					"label": "Direct"
+				}
+			],
+			"env": [
+				{
+					"key": "SERVER_NAME",
+					"label": "Server name",
+					"default": "PocketDimension"
+				},
+				{
+					"key": "ADMIN_PASSWORD",
+					"label": "Admin password (letters and digits)",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "SERVER_PASSWORD",
+					"label": "Server password",
+					"secret": true
+				},
+				{
+					"key": "MAX_PLAYERS",
+					"label": "Max players",
+					"default": "16"
+				},
+				{
+					"key": "MAX_RAM",
+					"label": "Java memory",
+					"default": "4096m"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/home/steam/Zomboid"
+				},
+				{
+					"container": "/home/steam/ZomboidDedicatedServer"
+				}
+			],
+			"memoryMb": 6144,
+			"query": {
+				"type": "projectzomboid",
+				"port": 0
+			},
+			"docsUrl": "https://github.com/Renegade-Master/zomboid-dedicated-server"
+		},
+		{
+			"version": 1,
+			"slug": "rust",
+			"name": "Rust",
+			"description": "Survival game. Downloads the server on every start.",
+			"image": "didstopia/rust-server:latest",
+			"ports": [
+				{
+					"container": 28015,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 28016,
+					"protocol": "tcp",
+					"label": "RCON"
+				}
+			],
+			"env": [
+				{
+					"key": "RUST_SERVER_NAME",
+					"label": "Server name",
+					"default": "PocketDimension Rust"
+				},
+				{
+					"key": "RUST_SERVER_MAXPLAYERS",
+					"label": "Max players",
+					"default": "50"
+				},
+				{
+					"key": "RUST_SERVER_WORLDSIZE",
+					"label": "World size",
+					"default": "3500"
+				},
+				{
+					"key": "RUST_SERVER_SEED",
+					"label": "Map seed",
+					"default": "12345"
+				},
+				{
+					"key": "RUST_RCON_PASSWORD",
+					"label": "RCON password",
+					"required": true,
+					"secret": true
+				}
+			],
+			"volumes": [
+				{
+					"container": "/steamcmd/rust"
+				}
+			],
+			"memoryMb": 12288,
+			"query": {
+				"type": "rust",
+				"port": 0
+			},
+			"docsUrl": "https://github.com/Didstopia/rust-server"
+		},
+		{
+			"version": 1,
+			"slug": "satisfactory",
+			"name": "Satisfactory",
+			"description": "Factory building in 3D. The server is claimed in-game by the first player.",
+			"image": "wolveix/satisfactory-server:latest",
+			"ports": [
+				{
+					"container": 7777,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 7777,
+					"protocol": "tcp",
+					"label": "API"
+				},
+				{
+					"container": 8888,
+					"protocol": "tcp",
+					"label": "Reliable messaging"
+				}
+			],
+			"env": [
+				{
+					"key": "MAXPLAYERS",
+					"label": "Max players",
+					"default": "4"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/config"
+				}
+			],
+			"memoryMb": 8192,
+			"query": {
+				"type": "satisfactory",
+				"port": 0
+			},
+			"docsUrl": "https://github.com/wolveix/satisfactory-server"
+		},
+		{
+			"version": 1,
+			"slug": "sons-of-the-forest",
+			"name": "Sons of the Forest",
+			"description": "Co-op horror survival. Downloads the server on first start. Name, password and other settings are in userdata/dedicatedserver.cfg.",
+			"image": "jammsen/sons-of-the-forest-dedicated-server:latest",
+			"ports": [
+				{
+					"container": 8766,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 27016,
+					"protocol": "udp",
+					"label": "Query"
+				},
+				{
+					"container": 9700,
+					"protocol": "udp",
+					"label": "Blob sync"
+				}
+			],
+			"env": [
+				{
+					"key": "ALWAYS_UPDATE_ON_START",
+					"label": "Update on every start",
+					"default": "true",
+					"options": [
+						"true",
+						"false"
+					]
+				},
+				{
+					"key": "SKIP_NETWORK_ACCESSIBILITY_TEST",
+					"label": "Skip network test",
+					"default": "true",
+					"options": [
+						"true",
+						"false"
+					]
+				}
+			],
+			"volumes": [
+				{
+					"container": "/sonsoftheforest"
+				}
+			],
+			"memoryMb": 8192,
+			"query": {
+				"type": "sotf",
+				"port": 1
+			},
+			"docsUrl": "https://github.com/jammsen/docker-sons-of-the-forest-dedicated-server"
+		},
+		{
+			"version": 1,
+			"slug": "team-fortress-2",
+			"name": "Team Fortress 2",
+			"description": "Class-based team shooter. Needs a Game Server Login Token (app ID 440) from steamcommunity.com/dev/managegameservers. Downloads the server on first start.",
+			"image": "cm2network/tf2:latest",
+			"ports": [
+				{
+					"container": 27015,
+					"protocol": "tcp",
+					"label": "Game (TCP)"
+				},
+				{
+					"container": 27015,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 27020,
+					"protocol": "udp",
+					"label": "SourceTV"
+				}
+			],
+			"env": [
+				{
+					"key": "SRCDS_TOKEN",
+					"label": "Game Server Login Token",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "SRCDS_HOSTNAME",
+					"label": "Server name",
+					"default": "PocketDimension TF2"
+				},
+				{
+					"key": "SRCDS_PW",
+					"label": "Server password",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "SRCDS_RCONPW",
+					"label": "RCON password",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "SRCDS_STARTMAP",
+					"label": "Start map",
+					"default": "ctf_2fort"
+				},
+				{
+					"key": "SRCDS_MAXPLAYERS",
+					"label": "Max players",
+					"default": "24"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/home/steam/tf-dedicated"
+				}
+			],
+			"memoryMb": 2048,
+			"query": {
+				"type": "teamfortress2",
+				"port": 1
+			},
+			"docsUrl": "https://github.com/CM2Walki/TF2"
+		},
+		{
+			"version": 1,
+			"slug": "terraria",
+			"name": "Terraria",
+			"description": "Vanilla Terraria server. A new world is created on first start.",
+			"image": "passivelemon/terraria-docker:terraria-latest",
+			"ports": [
+				{
+					"container": 7777,
+					"protocol": "tcp",
+					"label": "Game"
+				}
+			],
+			"env": [
+				{
+					"key": "WORLDNAME",
+					"label": "World name",
+					"default": "World",
+					"required": true
+				},
+				{
+					"key": "AUTOCREATE",
+					"label": "World size (1 small, 2 medium, 3 large)",
+					"default": "2",
+					"required": true,
+					"options": [
+						"1",
+						"2",
+						"3"
+					]
+				},
+				{
+					"key": "DIFFICULTY",
+					"label": "Difficulty (0 normal, 1 expert, 2 master, 3 journey)",
+					"default": "0",
+					"options": [
+						"0",
+						"1",
+						"2",
+						"3"
+					]
+				},
+				{
+					"key": "MAXPLAYERS",
+					"label": "Max players",
+					"default": "8"
+				},
+				{
+					"key": "PASSWORD",
+					"label": "Server password",
+					"secret": true
+				},
+				{
+					"key": "MOTD",
+					"label": "Message of the day"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/opt/terraria/config"
+				}
+			],
+			"memoryMb": 2048,
+			"query": null,
+			"docsUrl": "https://github.com/PassiveLemon/terraria-docker"
+		},
+		{
+			"version": 1,
+			"slug": "v-rising",
+			"name": "V Rising",
+			"description": "Vampire survival. The first start can take up to 10 minutes. Password and other settings are in persistentdata/Settings/ServerHostSettings.json.",
+			"image": "trueosiris/vrising:latest",
+			"ports": [
+				{
+					"container": 9876,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 9877,
+					"protocol": "udp",
+					"label": "Query"
+				}
+			],
+			"env": [
+				{
+					"key": "SERVERNAME",
+					"label": "Server name",
+					"default": "PocketDimension",
+					"required": true
+				},
+				{
+					"key": "WORLDNAME",
+					"label": "World name",
+					"default": "world1"
+				},
+				{
+					"key": "TZ",
+					"label": "Time zone",
+					"default": "Europe/Berlin"
+				}
+			],
+			"volumes": [
+				{
+					"container": "/mnt/vrising/server"
+				},
+				{
+					"container": "/mnt/vrising/persistentdata"
+				}
+			],
+			"memoryMb": 8192,
+			"query": {
+				"type": "vrising",
+				"port": 1
+			},
+			"docsUrl": "https://github.com/TrueOsiris/docker-vrising"
+		},
+		{
+			"version": 1,
+			"slug": "valheim",
+			"name": "Valheim",
+			"description": "Viking survival. The server password needs at least 5 characters.",
+			"image": "lloesche/valheim-server:latest",
+			"ports": [
+				{
+					"container": 2456,
+					"protocol": "udp",
+					"label": "Game"
+				},
+				{
+					"container": 2457,
+					"protocol": "udp",
+					"label": "Query"
+				}
+			],
+			"env": [
+				{
+					"key": "SERVER_NAME",
+					"label": "Server name",
+					"default": "PocketDimension",
+					"required": true
+				},
+				{
+					"key": "WORLD_NAME",
+					"label": "World name",
+					"default": "Dedicated",
+					"required": true
+				},
+				{
+					"key": "SERVER_PASS",
+					"label": "Server password (min. 5 characters)",
+					"required": true,
+					"secret": true
+				},
+				{
+					"key": "SERVER_PUBLIC",
+					"label": "List in server browser",
+					"default": "false",
+					"options": [
+						"false",
+						"true"
+					]
+				}
+			],
+			"volumes": [
+				{
+					"container": "/config"
+				},
+				{
+					"container": "/opt/valheim"
+				}
+			],
+			"memoryMb": 4096,
+			"query": {
+				"type": "valheim",
+				"port": 1
+			},
+			"docsUrl": "https://github.com/lloesche/valheim-server-docker"
+		}
+	]
+}

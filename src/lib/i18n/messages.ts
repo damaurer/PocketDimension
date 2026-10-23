@@ -69,8 +69,8 @@ const GERMAN: [RegExp, string | ((match: string, ...groups: string[]) => string)
 	[/^Template not found\.$/, 'Vorlage nicht gefunden.'],
 	[/^A game with this slug already exists\.$/, 'Es gibt bereits ein Spiel mit diesem Kurznamen.'],
 	[
-		/^Built-in games cannot be deleted; disable them instead\.$/,
-		'Mitgelieferte Spiele können nicht gelöscht werden; deaktiviere sie stattdessen.'
+		/^Games from the catalog cannot be deleted; disable them instead\.$/,
+		'Spiele aus dem Katalog können nicht gelöscht werden; deaktiviere sie stattdessen.'
 	],
 	[/^Delete the servers of this game first\.$/, 'Lösche zuerst die Server dieses Spiels.'],
 	[/^The slug "(.+)" is reserved\.$/, 'Der Kurzname „$1“ ist reserviert.'],
@@ -111,6 +111,25 @@ const GERMAN: [RegExp, string | ((match: string, ...groups: string[]) => string)
 	[
 		/^Documentation link must be an http\(s\) URL\.$/,
 		'Der Link zur Dokumentation muss eine http(s)-Adresse sein.'
+	],
+	// Game catalog
+	[
+		/^Could not update the game catalog: (.+)$/,
+		(_, reason) =>
+			`Der Spielekatalog konnte nicht aktualisiert werden: ${localizeServerMessage('de', reason)}`
+	],
+	[
+		/^No catalog address is set \(CATALOG_URL\)\.$/,
+		'Es ist keine Katalogadresse gesetzt (CATALOG_URL).'
+	],
+	[/^The catalog answered with HTTP (\d+)\.$/, 'Der Katalog antwortete mit HTTP $1.'],
+	[/^The catalog did not answer in time\.$/, 'Der Katalog hat nicht rechtzeitig geantwortet.'],
+	[/^The catalog is too large\.$/, 'Der Katalog ist zu groß.'],
+	[/^The catalog is not valid JSON\.$/, 'Der Katalog ist kein gültiges JSON.'],
+	[/^The catalog has no "games" list\.$/, 'Dem Katalog fehlt die Liste „games“.'],
+	[
+		/^The catalog uses format (.+); this version of PocketDimension reads format (\d+)\. Update PocketDimension\.$/,
+		'Der Katalog nutzt Format $1, diese PocketDimension-Version liest Format $2. Bitte PocketDimension aktualisieren.'
 	]
 ];
 

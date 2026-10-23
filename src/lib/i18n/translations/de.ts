@@ -111,7 +111,19 @@ export default {
 	'games.admin.delete': 'Vorlage löschen',
 	'games.admin.deleteConfirm': 'Diese Spielvorlage löschen?',
 	'games.admin.builtin':
-		'Mitgelieferte Vorlagen werden mit der App aktualisiert. Änderungen hier werden beim nächsten Start überschrieben.',
+		'Spiele aus dem gemeinsamen Katalog werden von dort aktualisiert. Änderungen hier werden überschrieben, sobald eine neuere Version des Spiels kommt.',
+	'games.admin.export': 'Für den Katalog exportieren',
+	'games.admin.exportHint':
+		'Lädt dieses Spiel als Katalogeintrag herunter. Um es mit allen zu teilen, die PocketDimension betreiben, schlage es per Pull Request in catalog/games im PocketDimension-Repository vor.',
+	'games.catalog.update': 'Katalog aktualisieren',
+	'games.catalog.updating': 'Wird aktualisiert…',
+	'games.catalog.never': 'Der gemeinsame Spielekatalog wurde noch nicht abgefragt.',
+	'games.catalog.result':
+		'Katalog geprüft {{time}}: {{added}} neu, {{updated}} aktualisiert. Neue Spiele bleiben deaktiviert, bis du sie aktivierst.',
+	'games.catalog.skipped':
+		'Nicht übernommen, weil ein eigenes Spiel den Kurznamen nutzt: {{slugs}}.',
+	'games.catalog.invalid': 'Ungültige Einträge ausgelassen: {{count}}.',
+	'games.catalog.off': 'Der gemeinsame Spielekatalog ist ausgeschaltet (CATALOG_URL ist leer).',
 
 	'template.intro': 'Hier kannst du jedes Spiel hinzufügen, das als Docker-Container läuft.',
 	'template.section.general': 'Allgemein',

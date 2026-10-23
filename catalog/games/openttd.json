@@ -1,0 +1,41 @@
+{
+	"version": 1,
+	"slug": "openttd",
+	"name": "OpenTTD",
+	"description": "Open-source transport tycoon. Starts a new game, or continues the last autosave.",
+	"image": "bateau/openttd:latest",
+	"ports": [
+		{
+			"container": 3979,
+			"protocol": "tcp",
+			"label": "Game"
+		},
+		{
+			"container": 3979,
+			"protocol": "udp",
+			"label": "Game (UDP)"
+		}
+	],
+	"env": [
+		{
+			"key": "loadgame",
+			"label": "Start with (false new game, last-autosave continue)",
+			"options": ["last-autosave", "false"],
+			"default": "last-autosave"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/home/openttd/.local/share/openttd"
+		},
+		{
+			"container": "/home/openttd/.config/openttd"
+		}
+	],
+	"memoryMb": 1024,
+	"query": {
+		"type": "openttd",
+		"port": 0
+	},
+	"docsUrl": "https://github.com/bateau84/openttd"
+}

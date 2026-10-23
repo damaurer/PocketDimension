@@ -1,0 +1,56 @@
+{
+	"version": 1,
+	"slug": "terraria",
+	"name": "Terraria",
+	"description": "Vanilla Terraria server. A new world is created on first start.",
+	"image": "passivelemon/terraria-docker:terraria-latest",
+	"ports": [
+		{
+			"container": 7777,
+			"protocol": "tcp",
+			"label": "Game"
+		}
+	],
+	"env": [
+		{
+			"key": "WORLDNAME",
+			"label": "World name",
+			"default": "World",
+			"required": true
+		},
+		{
+			"key": "AUTOCREATE",
+			"label": "World size (1 small, 2 medium, 3 large)",
+			"options": ["1", "2", "3"],
+			"default": "2",
+			"required": true
+		},
+		{
+			"key": "DIFFICULTY",
+			"label": "Difficulty (0 normal, 1 expert, 2 master, 3 journey)",
+			"options": ["0", "1", "2", "3"],
+			"default": "0"
+		},
+		{
+			"key": "MAXPLAYERS",
+			"label": "Max players",
+			"default": "8"
+		},
+		{
+			"key": "PASSWORD",
+			"label": "Server password",
+			"secret": true
+		},
+		{
+			"key": "MOTD",
+			"label": "Message of the day"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/opt/terraria/config"
+		}
+	],
+	"memoryMb": 2048,
+	"docsUrl": "https://github.com/PassiveLemon/terraria-docker"
+}

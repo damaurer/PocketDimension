@@ -1,0 +1,59 @@
+{
+	"version": 1,
+	"slug": "valheim",
+	"name": "Valheim",
+	"description": "Viking survival. The server password needs at least 5 characters.",
+	"image": "lloesche/valheim-server:latest",
+	"ports": [
+		{
+			"container": 2456,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 2457,
+			"protocol": "udp",
+			"label": "Query"
+		}
+	],
+	"env": [
+		{
+			"key": "SERVER_NAME",
+			"label": "Server name",
+			"default": "PocketDimension",
+			"required": true
+		},
+		{
+			"key": "WORLD_NAME",
+			"label": "World name",
+			"default": "Dedicated",
+			"required": true
+		},
+		{
+			"key": "SERVER_PASS",
+			"label": "Server password (min. 5 characters)",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "SERVER_PUBLIC",
+			"label": "List in server browser",
+			"options": ["false", "true"],
+			"default": "false"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/config"
+		},
+		{
+			"container": "/opt/valheim"
+		}
+	],
+	"memoryMb": 4096,
+	"query": {
+		"type": "valheim",
+		"port": 1
+	},
+	"docsUrl": "https://github.com/lloesche/valheim-server-docker"
+}
