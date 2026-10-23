@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "ark-survival-evolved",
 	"name": "ARK: Survival Evolved",
 	"description": "Dinosaur survival. Downloads about 20 GB on first start, which takes a while. Not ARK: Survival Ascended.",
@@ -81,5 +81,6 @@
 		"type": "ase",
 		"port": 2
 	},
-	"docsUrl": "https://github.com/Hermsi1337/docker-ark-server"
+	"docsUrl": "https://github.com/Hermsi1337/docker-ark-server",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/346110/header.jpg"
 }

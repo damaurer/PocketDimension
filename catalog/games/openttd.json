@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "openttd",
 	"name": "OpenTTD",
 	"description": "Open-source transport tycoon. Starts a new game, or continues the last autosave.",
@@ -37,5 +37,6 @@
 		"type": "openttd",
 		"port": 0
 	},
-	"docsUrl": "https://github.com/bateau84/openttd"
+	"docsUrl": "https://github.com/bateau84/openttd",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1536610/header.jpg"
 }

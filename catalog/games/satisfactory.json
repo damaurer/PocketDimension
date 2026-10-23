@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "satisfactory",
 	"name": "Satisfactory",
 	"description": "Factory building in 3D. The server is claimed in-game by the first player.",
@@ -38,5 +38,6 @@
 		"type": "satisfactory",
 		"port": 0
 	},
-	"docsUrl": "https://github.com/wolveix/satisfactory-server"
+	"docsUrl": "https://github.com/wolveix/satisfactory-server",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/526870/header.jpg"
 }

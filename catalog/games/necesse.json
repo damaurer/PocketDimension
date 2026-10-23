@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "necesse",
 	"name": "Necesse",
 	"description": "Top-down sandbox adventure with settlements. A new world is created on first start.",
@@ -56,5 +56,6 @@
 		}
 	],
 	"memoryMb": 2048,
-	"docsUrl": "https://github.com/BrammyS/necesse-docker-server"
+	"docsUrl": "https://github.com/BrammyS/necesse-docker-server",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1169040/header.jpg"
 }

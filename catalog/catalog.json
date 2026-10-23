@@ -2,7 +2,7 @@
 	"schemaVersion": 1,
 	"games": [
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "7-days-to-die",
 			"name": "7 Days to Die",
 			"description": "Zombie survival with base building. Downloads about 15 GB on first start. Server name and password are set in serverfiles/sdtdserver.xml.",
@@ -73,10 +73,11 @@
 				"type": "sdtd",
 				"port": 2
 			},
-			"docsUrl": "https://github.com/vinanrra/Docker-7DaysToDie"
+			"docsUrl": "https://github.com/vinanrra/Docker-7DaysToDie",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/251570/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "ark-survival-evolved",
 			"name": "ARK: Survival Evolved",
 			"description": "Dinosaur survival. Downloads about 20 GB on first start, which takes a while. Not ARK: Survival Ascended.",
@@ -161,10 +162,11 @@
 				"type": "ase",
 				"port": 2
 			},
-			"docsUrl": "https://github.com/Hermsi1337/docker-ark-server"
+			"docsUrl": "https://github.com/Hermsi1337/docker-ark-server",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/346110/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "core-keeper",
 			"name": "Core Keeper",
 			"description": "Mining sandbox. Players join with the Game ID from the server log; no ports need to be opened.",
@@ -197,10 +199,11 @@
 			],
 			"memoryMb": 4096,
 			"query": null,
-			"docsUrl": "https://github.com/escapingnetwork/core-keeper-dedicated"
+			"docsUrl": "https://github.com/escapingnetwork/core-keeper-dedicated",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1621690/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "counter-strike-2",
 			"name": "Counter-Strike 2",
 			"description": "Needs a Game Server Login Token from steamcommunity.com/dev/managegameservers. Downloads about 60 GB on first start.",
@@ -260,10 +263,11 @@
 				"type": "counterstrike2",
 				"port": 1
 			},
-			"docsUrl": "https://github.com/joedwards32/CS2"
+			"docsUrl": "https://github.com/joedwards32/CS2",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/730/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "enshrouded",
 			"name": "Enshrouded",
 			"description": "Survival and crafting in a fog-covered world. Players join with the role password. Downloads the server on first start; needs a lot of memory.",
@@ -342,10 +346,11 @@
 				"type": "enshrouded",
 				"port": 0
 			},
-			"docsUrl": "https://github.com/mornedhels/enshrouded-server"
+			"docsUrl": "https://github.com/mornedhels/enshrouded-server",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1203220/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "factorio",
 			"name": "Factorio",
 			"description": "Factory building. Creates a new save on first start.",
@@ -370,7 +375,8 @@
 			],
 			"memoryMb": 2048,
 			"query": null,
-			"docsUrl": "https://github.com/factoriotools/factorio-docker"
+			"docsUrl": "https://github.com/factoriotools/factorio-docker",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/427520/header.jpg"
 		},
 		{
 			"version": 1,
@@ -455,7 +461,8 @@
 				"type": "mbe",
 				"port": 0
 			},
-			"docsUrl": "https://github.com/itzg/docker-minecraft-bedrock-server"
+			"docsUrl": "https://github.com/itzg/docker-minecraft-bedrock-server",
+			"thumbnailUrl": null
 		},
 		{
 			"version": 1,
@@ -544,10 +551,11 @@
 				"type": "minecraft",
 				"port": 0
 			},
-			"docsUrl": "https://docker-minecraft-server.readthedocs.io/"
+			"docsUrl": "https://docker-minecraft-server.readthedocs.io/",
+			"thumbnailUrl": null
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "necesse",
 			"name": "Necesse",
 			"description": "Top-down sandbox adventure with settlements. A new world is created on first start.",
@@ -608,10 +616,11 @@
 			],
 			"memoryMb": 2048,
 			"query": null,
-			"docsUrl": "https://github.com/BrammyS/necesse-docker-server"
+			"docsUrl": "https://github.com/BrammyS/necesse-docker-server",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1169040/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "openttd",
 			"name": "OpenTTD",
 			"description": "Open-source transport tycoon. Starts a new game, or continues the last autosave.",
@@ -652,10 +661,11 @@
 				"type": "openttd",
 				"port": 0
 			},
-			"docsUrl": "https://github.com/bateau84/openttd"
+			"docsUrl": "https://github.com/bateau84/openttd",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1536610/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "palworld",
 			"name": "Palworld",
 			"description": "Creature collecting survival game.",
@@ -711,10 +721,11 @@
 			],
 			"memoryMb": 16384,
 			"query": null,
-			"docsUrl": "https://palworld-server-docker.loef.dev/"
+			"docsUrl": "https://palworld-server-docker.loef.dev/",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1623730/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "project-zomboid",
 			"name": "Project Zomboid",
 			"description": "Zombie survival.",
@@ -772,10 +783,11 @@
 				"type": "projectzomboid",
 				"port": 0
 			},
-			"docsUrl": "https://github.com/Renegade-Master/zomboid-dedicated-server"
+			"docsUrl": "https://github.com/Renegade-Master/zomboid-dedicated-server",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/108600/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "rust",
 			"name": "Rust",
 			"description": "Survival game. Downloads the server on every start.",
@@ -830,10 +842,11 @@
 				"type": "rust",
 				"port": 0
 			},
-			"docsUrl": "https://github.com/Didstopia/rust-server"
+			"docsUrl": "https://github.com/Didstopia/rust-server",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/252490/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "satisfactory",
 			"name": "Satisfactory",
 			"description": "Factory building in 3D. The server is claimed in-game by the first player.",
@@ -872,10 +885,11 @@
 				"type": "satisfactory",
 				"port": 0
 			},
-			"docsUrl": "https://github.com/wolveix/satisfactory-server"
+			"docsUrl": "https://github.com/wolveix/satisfactory-server",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/526870/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "sons-of-the-forest",
 			"name": "Sons of the Forest",
 			"description": "Co-op horror survival. Downloads the server on first start. Name, password and other settings are in userdata/dedicatedserver.cfg.",
@@ -927,10 +941,11 @@
 				"type": "sotf",
 				"port": 1
 			},
-			"docsUrl": "https://github.com/jammsen/docker-sons-of-the-forest-dedicated-server"
+			"docsUrl": "https://github.com/jammsen/docker-sons-of-the-forest-dedicated-server",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1326470/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "team-fortress-2",
 			"name": "Team Fortress 2",
 			"description": "Class-based team shooter. Needs a Game Server Login Token (app ID 440) from steamcommunity.com/dev/managegameservers. Downloads the server on first start.",
@@ -997,10 +1012,11 @@
 				"type": "teamfortress2",
 				"port": 1
 			},
-			"docsUrl": "https://github.com/CM2Walki/TF2"
+			"docsUrl": "https://github.com/CM2Walki/TF2",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/440/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "terraria",
 			"name": "Terraria",
 			"description": "Vanilla Terraria server. A new world is created on first start.",
@@ -1063,10 +1079,11 @@
 			],
 			"memoryMb": 2048,
 			"query": null,
-			"docsUrl": "https://github.com/PassiveLemon/terraria-docker"
+			"docsUrl": "https://github.com/PassiveLemon/terraria-docker",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/105600/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "v-rising",
 			"name": "V Rising",
 			"description": "Vampire survival. The first start can take up to 10 minutes. Password and other settings are in persistentdata/Settings/ServerHostSettings.json.",
@@ -1114,10 +1131,11 @@
 				"type": "vrising",
 				"port": 1
 			},
-			"docsUrl": "https://github.com/TrueOsiris/docker-vrising"
+			"docsUrl": "https://github.com/TrueOsiris/docker-vrising",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1604030/header.jpg"
 		},
 		{
-			"version": 1,
+			"version": 2,
 			"slug": "valheim",
 			"name": "Valheim",
 			"description": "Viking survival. The server password needs at least 5 characters.",
@@ -1176,7 +1194,8 @@
 				"type": "valheim",
 				"port": 1
 			},
-			"docsUrl": "https://github.com/lloesche/valheim-server-docker"
+			"docsUrl": "https://github.com/lloesche/valheim-server-docker",
+			"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/892970/header.jpg"
 		}
 	]
 }

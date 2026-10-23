@@ -19,6 +19,7 @@ interface TemplateRow {
 	memoryMb: number | null;
 	query: string | null;
 	docsUrl: string | null;
+	thumbnailUrl: string | null;
 	builtin: number;
 	catalogVersion: number | null;
 	enabled: number;
@@ -55,6 +56,7 @@ function toTemplate(row: TemplateRow): GameTemplate {
 		memoryMb: row.memoryMb,
 		query: row.query ? (JSON.parse(row.query) as TemplateQuery) : null,
 		docsUrl: row.docsUrl,
+		thumbnailUrl: row.thumbnailUrl,
 		builtin: row.builtin === 1,
 		catalogVersion: row.catalogVersion,
 		enabled: row.enabled === 1
@@ -75,8 +77,14 @@ function templateParams(t: GameTemplateInput) {
 		JSON.stringify(t.volumes),
 		t.memoryMb ?? null,
 		t.query ? JSON.stringify(t.query) : null,
-		t.docsUrl ?? null
+		t.docsUrl ?? null,
+		t.thumbnailUrl ?? null
 	];
+}
+
+export interface Thumbnail {
+	contentType: string;
+	data: Buffer;
 }
 
 export interface CatalogSyncCounts {
@@ -113,8 +121,8 @@ export class GameRepository {
 
 	async createTemplate(template: GameTemplateInput, builtin = false): Promise<number> {
 		const { lastID } = await this.db.run(
-			`INSERT INTO GameTemplate (name, description, image, ports, env, volumes, memoryMb, query, docsUrl, slug, builtin)
-			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			`INSERT INTO GameTemplate (name, description, image, ports, env, volumes, memoryMb, query, docsUrl, thumbnailUrl, slug, builtin)
+			 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 			[...templateParams(template), template.slug, builtin ? 1 : 0]
 		);
 		return lastID;
@@ -124,7 +132,7 @@ export class GameRepository {
 		await this.db.run(
 			`UPDATE GameTemplate
 			 SET name = ?, description = ?, image = ?, ports = ?, env = ?, volumes = ?, memoryMb = ?,
-			     query = ?, docsUrl = ?, slug = ?, updatedAt = CURRENT_TIMESTAMP
+			     query = ?, docsUrl = ?, thumbnailUrl = ?, slug = ?, updatedAt = CURRENT_TIMESTAMP
 			 WHERE id = ?`,
 			[...templateParams(template), template.slug, id]
 		);
@@ -170,6 +178,24 @@ export class GameRepository {
 			}
 		}
 		return counts;
+	}
+
+	async findThumbnail(url: string): Promise<Thumbnail | undefined> {
+		return this.db.get<Thumbnail>('SELECT contentType, data FROM GameThumbnail WHERE url = ?', [
+			url
+		]);
+	}
+
+	/** Stores a downloaded thumbnail and drops the ones no game uses anymore. */
+	async saveThumbnail(url: string, thumbnail: Thumbnail): Promise<void> {
+		await this.db.run(
+			'INSERT OR REPLACE INTO GameThumbnail (url, contentType, data) VALUES (?, ?, ?)',
+			[url, thumbnail.contentType, thumbnail.data]
+		);
+		await this.db.run(
+			`DELETE FROM GameThumbnail
+			 WHERE url NOT IN (SELECT thumbnailUrl FROM GameTemplate WHERE thumbnailUrl IS NOT NULL)`
+		);
 	}
 
 	async countServersUsingTemplate(templateId: number): Promise<number> {

@@ -292,7 +292,8 @@ export class ServerManager {
 				template: {
 					id: server.templateId,
 					slug: template?.slug ?? '',
-					name: template?.name ?? '?'
+					name: template?.name ?? '?',
+					thumbnailUrl: template?.thumbnailUrl ?? null
 				},
 				status:
 					server.containerId && !container && server.status === 'ready' ? 'error' : server.status,

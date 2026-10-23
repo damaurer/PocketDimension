@@ -130,6 +130,9 @@ export default {
 	'template.slugHint': 'Used in addresses. Lowercase letters, digits and dashes.',
 	'template.description': 'Description',
 	'template.docsUrl': 'Documentation link',
+	'template.thumbnailUrl': 'Thumbnail (address)',
+	'template.thumbnailHint':
+		'https address of a PNG, JPEG, WebP, GIF or AVIF image up to 1 MB, ideally 460 × 215. The app downloads it once and serves it itself. Empty = picture with the initials.',
 	'template.image': 'Docker image',
 	'template.ports': 'Ports',
 	'template.portsHint': 'One per line: port/protocol and an optional label, e.g. "25565/tcp Game".',

@@ -112,6 +112,8 @@ const GERMAN: [RegExp, string | ((match: string, ...groups: string[]) => string)
 		/^Documentation link must be an http\(s\) URL\.$/,
 		'Der Link zur Dokumentation muss eine http(s)-Adresse sein.'
 	],
+	[/^Thumbnail must be an https URL\.$/, 'Das Vorschaubild muss eine https-Adresse sein.'],
+	[/^Thumbnail URL is too long\.$/, 'Die Adresse des Vorschaubilds ist zu lang.'],
 	// Game catalog
 	[
 		/^Could not update the game catalog: (.+)$/,

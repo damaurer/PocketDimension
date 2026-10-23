@@ -3,7 +3,8 @@ import { mkdirSync, readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { config } from '#lib/server/config.ts';
 
-type Params = Record<string, string | number | null> | (string | number | null)[];
+type Value = string | number | null | Buffer;
+type Params = Record<string, Value> | Value[];
 
 /**
  * Small promise wrapper around sqlite3. All queries go through bound
@@ -69,6 +70,9 @@ async function migrate(database: Database) {
 	const templateColumns = await database.all<{ name: string }>('PRAGMA table_info("GameTemplate")');
 	if (!templateColumns.some((c) => c.name === 'catalogVersion')) {
 		await database.exec('ALTER TABLE "GameTemplate" ADD COLUMN "catalogVersion" INTEGER');
+	}
+	if (!templateColumns.some((c) => c.name === 'thumbnailUrl')) {
+		await database.exec('ALTER TABLE "GameTemplate" ADD COLUMN "thumbnailUrl" TEXT');
 	}
 }
 

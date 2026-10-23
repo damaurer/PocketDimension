@@ -121,6 +121,7 @@ export function validateTemplate(input: {
 	queryType: string;
 	queryPort: string;
 	docsUrl: string;
+	thumbnailUrl: string;
 }): Result<GameTemplateInput> {
 	if (!SLUG.test(input.slug) || input.slug.length > 40) {
 		return { error: 'Slug may only contain lowercase letters, digits and dashes.' };
@@ -171,6 +172,18 @@ export function validateTemplate(input: {
 		}
 	}
 
+	let thumbnailUrl: string | null = null;
+	if (input.thumbnailUrl) {
+		try {
+			const url = new URL(input.thumbnailUrl);
+			if (url.protocol !== 'https:' || url.username || url.password) throw new Error();
+			thumbnailUrl = url.toString();
+		} catch {
+			return { error: 'Thumbnail must be an https URL.' };
+		}
+		if (thumbnailUrl.length > 500) return { error: 'Thumbnail URL is too long.' };
+	}
+
 	return {
 		value: {
 			slug: input.slug,
@@ -182,7 +195,8 @@ export function validateTemplate(input: {
 			volumes: volumes.value,
 			memoryMb,
 			query,
-			docsUrl
+			docsUrl,
+			thumbnailUrl
 		}
 	};
 }

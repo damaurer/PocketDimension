@@ -13,6 +13,7 @@ import { ServerManager } from '#lib/server/games/servers.ts';
 import { StatusMonitor } from '#lib/server/games/status.ts';
 import { BUILTIN_TEMPLATES } from '#lib/server/games/catalog.ts';
 import { CatalogSync } from '#lib/server/games/catalogSync.ts';
+import { ThumbnailStore } from '#lib/server/games/thumbnails.ts';
 import { hashPassword } from '#lib/server/security/authentication.ts';
 import { config } from '#lib/server/config.ts';
 
@@ -75,4 +76,15 @@ export function getCatalogSync(): Promise<CatalogSync> {
 	})();
 	catalogSync.catch(() => (catalogSync = undefined));
 	return catalogSync;
+}
+
+let thumbnailStore: Promise<ThumbnailStore> | undefined;
+
+export function getThumbnailStore(): Promise<ThumbnailStore> {
+	thumbnailStore ??= (async () => {
+		const { games } = await getRepositories();
+		return new ThumbnailStore(games);
+	})();
+	thumbnailStore.catch(() => (thumbnailStore = undefined));
+	return thumbnailStore;
 }
