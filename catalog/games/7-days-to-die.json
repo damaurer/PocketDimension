@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "7-days-to-die",
 	"name": "7 Days to Die",
 	"description": "Zombie survival with base building. Downloads about 15 GB on first start. Server name and password are set in serverfiles/sdtdserver.xml.",
@@ -67,5 +67,6 @@
 		"type": "sdtd",
 		"port": 2
 	},
-	"docsUrl": "https://github.com/vinanrra/Docker-7DaysToDie"
+	"docsUrl": "https://github.com/vinanrra/Docker-7DaysToDie",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/251570/header.jpg"
 }

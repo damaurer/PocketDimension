@@ -22,4 +22,13 @@ describe('RateLimiter', () => {
 		limiter.reset('a');
 		expect(limiter.hit('a')).toBe(0);
 	});
+
+	it('retryAfter reports a block without counting an attempt', () => {
+		const limiter = new RateLimiter(1, 60_000, () => 0);
+		expect(limiter.retryAfter('a')).toBe(0);
+		limiter.hit('a');
+		expect(limiter.retryAfter('a')).toBe(0);
+		limiter.hit('a');
+		expect(limiter.retryAfter('a')).toBe(60);
+	});
 });

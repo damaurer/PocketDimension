@@ -41,7 +41,8 @@ export function parseCatalogEntry(data: unknown): Result<CatalogEntry> {
 		typeof data.image !== 'string' ||
 		!optional(data.description, 'string') ||
 		!optional(data.memoryMb, 'number') ||
-		!optional(data.docsUrl, 'string')
+		!optional(data.docsUrl, 'string') ||
+		!optional(data.thumbnailUrl, 'string')
 	) {
 		return fail('"slug", "name" and "image" must be strings.');
 	}
@@ -81,7 +82,8 @@ export function parseCatalogEntry(data: unknown): Result<CatalogEntry> {
 		memoryMb: data.memoryMb ? String(data.memoryMb) : '',
 		queryType: isRecord(query) ? (query.type as string) : '',
 		queryPort: isRecord(query) ? String(query.port) : '',
-		docsUrl: (data.docsUrl as string | undefined) ?? ''
+		docsUrl: (data.docsUrl as string | undefined) ?? '',
+		thumbnailUrl: (data.thumbnailUrl as string | undefined) ?? ''
 	});
 	if (result.error !== undefined) return fail(result.error);
 	return { value: { version: data.version as number, ...result.value } };
@@ -128,6 +130,7 @@ export function toCatalogEntry(template: GameTemplateInput, version: number): Ca
 		volumes: template.volumes,
 		memoryMb: template.memoryMb ?? null,
 		query: template.query ?? null,
-		docsUrl: template.docsUrl ?? null
+		docsUrl: template.docsUrl ?? null,
+		thumbnailUrl: template.thumbnailUrl ?? null
 	};
 }

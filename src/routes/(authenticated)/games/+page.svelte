@@ -3,6 +3,7 @@
 	import { resolve } from '$app/paths';
 	import type { ActionData, PageData } from './$types';
 	import Translate from '#lib/i18n/Translate.svelte';
+	import GameThumbnail from '#lib/components/GameThumbnail.svelte';
 	import { locale, msg, t } from '#lib/i18n/i18n.ts';
 	import { gameDescription } from '#lib/i18n/catalog.ts';
 
@@ -121,6 +122,7 @@
 <div class="grid">
 	{#each templates as template (template.id)}
 		<article class="card game" class:disabled={!template.enabled}>
+			<GameThumbnail game={template} class="cover" />
 			<header>
 				<h2>{template.name}</h2>
 				{#if !template.enabled}
@@ -226,6 +228,14 @@
 
 	.game.disabled {
 		opacity: 0.65;
+	}
+
+	/* The picture fills the top of the card up to its border. */
+	.game :global(.cover) {
+		width: calc(100% + 2.5rem);
+		max-width: none;
+		margin: -1.25rem -1.25rem 0;
+		border-radius: var(--radius) var(--radius) 0 0;
 	}
 
 	header {

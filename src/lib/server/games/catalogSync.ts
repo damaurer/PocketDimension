@@ -2,6 +2,7 @@ import type {
 	CatalogSyncCounts,
 	GameRepository
 } from '#lib/server/database/repository/game.repository.ts';
+import { readLimited } from '#lib/server/http.ts';
 import { parseCatalog } from './catalogEntry.ts';
 
 const TIMEOUT_MS = 15_000;
@@ -23,8 +24,9 @@ export async function fetchCatalog(url: string, fetcher: typeof fetch = fetch) {
 		redirect: 'follow'
 	});
 	if (!response.ok) throw new Error(`The catalog answered with HTTP ${response.status}.`);
-	const text = await response.text();
-	if (text.length > MAX_BYTES) throw new Error('The catalog is too large.');
+	const text = (await readLimited(response, MAX_BYTES, 'The catalog is too large.')).toString(
+		'utf8'
+	);
 
 	let data: unknown;
 	try {

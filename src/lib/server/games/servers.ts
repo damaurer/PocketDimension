@@ -223,6 +223,8 @@ export class ServerManager {
 					? { Memory: template.memoryMb * 1024 * 1024 }
 					: {}),
 				SecurityOpt: ['no-new-privileges:true'],
+				// Raw sockets would allow spoofing other hosts in the network; no game needs them.
+				CapDrop: ['NET_RAW', 'MKNOD', 'AUDIT_WRITE'],
 				PidsLimit: 2048,
 				LogConfig: { Type: 'json-file', Config: { 'max-size': '10m', 'max-file': '3' } }
 			}
@@ -292,7 +294,8 @@ export class ServerManager {
 				template: {
 					id: server.templateId,
 					slug: template?.slug ?? '',
-					name: template?.name ?? '?'
+					name: template?.name ?? '?',
+					thumbnailUrl: template?.thumbnailUrl ?? null
 				},
 				status:
 					server.containerId && !container && server.status === 'ready' ? 'error' : server.status,

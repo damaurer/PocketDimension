@@ -59,6 +59,11 @@ containers attached to the `POCKET_DIMENSION_NETWORK` network. Access to the Doc
 equivalent to root on the host: for internet-facing installs, run it behind an HTTPS reverse proxy
 and consider a [docker-socket-proxy](https://github.com/Tecnativa/docker-socket-proxy) via `DOCKER_HOST`.
 
+The image runs the app as the unprivileged `node` user; it starts as root only to take over the
+data volume and join the group of the mounted Docker socket. Game containers get no extra
+privileges (`no-new-privileges`, no raw sockets, no host paths) and cannot reach each other in
+`POCKET_DIMENSION_NETWORK`. See section 4.5 of the manual for what is and is not covered.
+
 ## Development
 
 ```bash

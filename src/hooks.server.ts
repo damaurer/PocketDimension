@@ -17,7 +17,8 @@ const SECURITY_HEADERS: Record<string, string> = {
 	'X-Frame-Options': 'DENY',
 	'Referrer-Policy': 'same-origin',
 	'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-	'Cross-Origin-Opener-Policy': 'same-origin'
+	'Cross-Origin-Opener-Policy': 'same-origin',
+	'Cross-Origin-Resource-Policy': 'same-origin'
 };
 
 async function loadCurrentUser(event: RequestEvent) {
@@ -85,7 +86,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	if (event.url.protocol === 'https:') {
 		response.headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
 	}
-	if (event.locals.user) {
+	// Responses that set their own caching (game thumbnails) keep it.
+	if (event.locals.user && !response.headers.has('Cache-Control')) {
 		response.headers.set('Cache-Control', 'private, no-store');
 	}
 

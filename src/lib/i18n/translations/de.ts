@@ -133,6 +133,9 @@ export default {
 	'template.slugHint': 'Wird in Adressen verwendet. Kleinbuchstaben, Ziffern und Bindestriche.',
 	'template.description': 'Beschreibung',
 	'template.docsUrl': 'Link zur Dokumentation',
+	'template.thumbnailUrl': 'Vorschaubild (Adresse)',
+	'template.thumbnailHint':
+		'https-Adresse eines PNG-, JPEG-, WebP-, GIF- oder AVIF-Bilds bis 1 MB, am besten im Format 460 × 215. Die App lädt es einmal herunter und liefert es selbst aus. Leer = Bild mit den Anfangsbuchstaben.',
 	'template.image': 'Docker-Image',
 	'template.ports': 'Ports',
 	'template.portsHint':

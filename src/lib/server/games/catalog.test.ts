@@ -18,7 +18,8 @@ const entry: CatalogEntry = {
 	volumes: [{ container: '/data' }],
 	memoryMb: 1024,
 	query: null,
-	docsUrl: 'https://example.com/'
+	docsUrl: 'https://example.com/',
+	thumbnailUrl: 'https://example.com/header.jpg'
 };
 
 async function repository() {
@@ -75,6 +76,19 @@ describe('fetchCatalog', () => {
 	it('reports HTTP errors and broken JSON', async () => {
 		await expect(fetchCatalog('https://x', respond('', 404))).rejects.toThrow(/HTTP 404/);
 		await expect(fetchCatalog('https://x', respond('{'))).rejects.toThrow(/not valid JSON/);
+	});
+
+	it('stops downloading a catalog that is too large', async () => {
+		let sent = 0;
+		const endless = new ReadableStream<Uint8Array>({
+			pull(controller) {
+				sent++;
+				controller.enqueue(new Uint8Array(64 * 1024));
+			}
+		});
+		const fetcher = (async () => new Response(endless)) as typeof fetch;
+		await expect(fetchCatalog('https://x', fetcher)).rejects.toThrow(/too large/);
+		expect(sent).toBeLessThan(40);
 	});
 });
 

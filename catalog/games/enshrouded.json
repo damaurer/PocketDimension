@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "enshrouded",
 	"name": "Enshrouded",
 	"description": "Survival and crafting in a fog-covered world. Players join with the role password. Downloads the server on first start; needs a lot of memory.",
@@ -69,5 +69,6 @@
 		"type": "enshrouded",
 		"port": 0
 	},
-	"docsUrl": "https://github.com/mornedhels/enshrouded-server"
+	"docsUrl": "https://github.com/mornedhels/enshrouded-server",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/1203220/header.jpg"
 }

@@ -63,7 +63,8 @@ describe('template parsing', () => {
 			memoryMb: '',
 			queryType: '',
 			queryPort: '',
-			docsUrl: ''
+			docsUrl: '',
+			thumbnailUrl: ''
 		};
 		expect(validateTemplate(base).value?.ports).toHaveLength(1);
 		expect(validateTemplate({ ...base, slug: 'My Game' }).error).toBeDefined();
@@ -78,6 +79,15 @@ describe('template parsing', () => {
 		).toBeDefined();
 		expect(validateTemplate({ ...base, docsUrl: 'javascript:alert(1)' }).error).toBeDefined();
 		expect(validateTemplate({ ...base, memoryMb: '10' }).error).toBeDefined();
+		expect(
+			validateTemplate({ ...base, thumbnailUrl: 'https://example.com/a.jpg' }).value?.thumbnailUrl
+		).toBe('https://example.com/a.jpg');
+		expect(validateTemplate({ ...base, thumbnailUrl: 'http://example.com/a.jpg' }).error).toBe(
+			'Thumbnail must be an https URL.'
+		);
+		expect(
+			validateTemplate({ ...base, thumbnailUrl: 'https://u:p@example.com/' }).error
+		).toBeDefined();
 	});
 
 	it('ships the catalog games and they pass validation', () => {

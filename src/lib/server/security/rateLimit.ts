@@ -34,6 +34,14 @@ export class RateLimiter {
 		return 0;
 	}
 
+	/** Like `hit`, but does not count an attempt. */
+	retryAfter(key: string): number {
+		const bucket = this.buckets.get(key);
+		const now = this.now();
+		if (!bucket || bucket.resetAt <= now || bucket.count <= this.limit) return 0;
+		return Math.ceil((bucket.resetAt - now) / 1000);
+	}
+
 	reset(key: string) {
 		this.buckets.delete(key);
 	}
@@ -48,3 +56,9 @@ export class RateLimiter {
 
 /** 10 failed logins per IP and account within 15 minutes. */
 export const loginLimiter = new RateLimiter(10, 15 * 60 * 1000);
+
+/**
+ * 50 failed logins per IP within 15 minutes, whatever account they name, so one
+ * address cannot try a password against many accounts.
+ */
+export const loginFailureLimiter = new RateLimiter(50, 15 * 60 * 1000);

@@ -5,6 +5,7 @@
 	import type { ActionData, PageData } from './$types';
 	import Translate from '#lib/i18n/Translate.svelte';
 	import CopyText from '#lib/components/CopyText.svelte';
+	import GameThumbnail from '#lib/components/GameThumbnail.svelte';
 	import { msg, t } from '#lib/i18n/i18n.ts';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
@@ -97,7 +98,10 @@
 		{@const live = isRunning(server) ? data.live[server.id] : undefined}
 		<article class="card server">
 			<header>
-				<div>
+				{#if server.template.slug}
+					<GameThumbnail game={server.template} class="server-thumbnail" />
+				{/if}
+				<div class="title">
 					<h2>{server.name}</h2>
 					<p class="muted meta">
 						{server.template.name}
@@ -263,6 +267,16 @@
 		justify-content: space-between;
 		align-items: flex-start;
 		gap: 1rem;
+	}
+
+	header :global(.server-thumbnail) {
+		flex: none;
+		width: 6.5rem;
+	}
+
+	.title {
+		flex: 1;
+		min-width: 0;
 	}
 
 	h2 {

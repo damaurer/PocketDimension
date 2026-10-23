@@ -1,5 +1,5 @@
 {
-	"version": 1,
+	"version": 2,
 	"slug": "terraria",
 	"name": "Terraria",
 	"description": "Vanilla Terraria server. A new world is created on first start.",
@@ -52,5 +52,6 @@
 		}
 	],
 	"memoryMb": 2048,
-	"docsUrl": "https://github.com/PassiveLemon/terraria-docker"
+	"docsUrl": "https://github.com/PassiveLemon/terraria-docker",
+	"thumbnailUrl": "https://cdn.akamai.steamstatic.com/steam/apps/105600/header.jpg"
 }

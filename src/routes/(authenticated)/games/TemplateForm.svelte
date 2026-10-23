@@ -14,7 +14,8 @@
 		| 'memoryMb'
 		| 'queryType'
 		| 'queryPort'
-		| 'docsUrl',
+		| 'docsUrl'
+		| 'thumbnailUrl',
 		string
 	>;
 
@@ -56,6 +57,18 @@
 		<div class="field">
 			<label for="t_docs"><Translate key="template.docsUrl" /></label>
 			<input id="t_docs" name="docsUrl" type="url" value={values.docsUrl} />
+		</div>
+		<div class="field">
+			<label for="t_thumbnail"><Translate key="template.thumbnailUrl" /></label>
+			<input
+				id="t_thumbnail"
+				name="thumbnailUrl"
+				type="url"
+				value={values.thumbnailUrl}
+				maxlength="500"
+				placeholder="https://"
+			/>
+			<span class="hint"><Translate key="template.thumbnailHint" /></span>
 		</div>
 	</fieldset>
 

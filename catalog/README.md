@@ -23,19 +23,20 @@ games and fixes reach everyone without an app update. No account, key or server 
 
 The fields are those of the template editor (see the Bedienerhandbuch, section 11.3):
 
-| Field         | Required | Meaning                                                                     |
-| ------------- | -------- | --------------------------------------------------------------------------- |
-| `version`     | yes      | Whole number, raised on every change.                                       |
-| `slug`        | yes      | Short name, lowercase letters, digits and dashes. Must match the file name. |
-| `name`        | yes      | Game name.                                                                  |
-| `description` | no       | Short text for players, in English.                                         |
-| `image`       | yes      | Docker image, ideally from the game's well-known community image.           |
-| `ports`       | no       | `{ "container": 25565, "protocol": "tcp", "label": "Game" }` per port.      |
-| `env`         | no       | Settings players may choose, see the manual.                                |
-| `volumes`     | no       | `{ "container": "/data" }` per data directory.                              |
-| `memoryMb`    | no       | Memory limit in MB.                                                         |
-| `query`       | no       | `{ "type": "<GameDig id>", "port": <index into ports> }` for live status.   |
-| `docsUrl`     | no       | Link to the image documentation.                                            |
+| Field          | Required | Meaning                                                                                                                                                                                  |
+| -------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `version`      | yes      | Whole number, raised on every change.                                                                                                                                                    |
+| `slug`         | yes      | Short name, lowercase letters, digits and dashes. Must match the file name.                                                                                                              |
+| `name`         | yes      | Game name.                                                                                                                                                                               |
+| `description`  | no       | Short text for players, in English.                                                                                                                                                      |
+| `image`        | yes      | Docker image, ideally from the game's well-known community image.                                                                                                                        |
+| `ports`        | no       | `{ "container": 25565, "protocol": "tcp", "label": "Game" }` per port.                                                                                                                   |
+| `env`          | no       | Settings players may choose, see the manual.                                                                                                                                             |
+| `volumes`      | no       | `{ "container": "/data" }` per data directory.                                                                                                                                           |
+| `memoryMb`     | no       | Memory limit in MB.                                                                                                                                                                      |
+| `query`        | no       | `{ "type": "<GameDig id>", "port": <index into ports> }` for live status.                                                                                                                |
+| `docsUrl`      | no       | Link to the image documentation.                                                                                                                                                         |
+| `thumbnailUrl` | no       | https address of the card picture (PNG, JPEG, WebP, GIF or AVIF, max. 1 MB, ideally 460 × 215). For Steam games use `https://cdn.akamai.steamstatic.com/steam/apps/<app id>/header.jpg`. |
 
 ## Review rules
 
