@@ -1,0 +1,85 @@
+{
+	"version": 1,
+	"slug": "ark-survival-evolved",
+	"name": "ARK: Survival Evolved",
+	"description": "Dinosaur survival. Downloads about 20 GB on first start, which takes a while. Not ARK: Survival Ascended.",
+	"image": "hermsi/ark-server:latest",
+	"ports": [
+		{
+			"container": 7777,
+			"protocol": "udp",
+			"label": "Game"
+		},
+		{
+			"container": 7778,
+			"protocol": "udp",
+			"label": "Game 2"
+		},
+		{
+			"container": 27015,
+			"protocol": "udp",
+			"label": "Query"
+		}
+	],
+	"env": [
+		{
+			"key": "SESSION_NAME",
+			"label": "Server name",
+			"default": "PocketDimension",
+			"required": true
+		},
+		{
+			"key": "SERVER_MAP",
+			"label": "Map",
+			"options": [
+				"TheIsland",
+				"TheCenter",
+				"ScorchedEarth_P",
+				"Ragnarok",
+				"Aberration_P",
+				"Extinction",
+				"Valguero_P",
+				"Genesis",
+				"CrystalIsles",
+				"Gen2",
+				"LostIsland",
+				"Fjordur"
+			],
+			"default": "TheIsland"
+		},
+		{
+			"key": "SERVER_PASSWORD",
+			"label": "Server password",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "ADMIN_PASSWORD",
+			"label": "Admin password",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "MAX_PLAYERS",
+			"label": "Max players",
+			"default": "20"
+		},
+		{
+			"key": "UPDATE_ON_START",
+			"label": "Update on every start",
+			"options": ["false", "true"],
+			"default": "true"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/app"
+		}
+	],
+	"memoryMb": 8192,
+	"query": {
+		"type": "ase",
+		"port": 2
+	},
+	"docsUrl": "https://github.com/Hermsi1337/docker-ark-server"
+}

@@ -1,0 +1,71 @@
+{
+	"version": 1,
+	"slug": "minecraft-bedrock",
+	"name": "Minecraft: Bedrock Edition",
+	"description": "For players on consoles, phones, tablets and Windows. Downloads the server on first start. By creating the server you accept the Minecraft EULA.",
+	"image": "itzg/minecraft-bedrock-server:latest",
+	"ports": [
+		{
+			"container": 19132,
+			"protocol": "udp",
+			"label": "Game"
+		}
+	],
+	"env": [
+		{
+			"key": "EULA",
+			"label": "Accept the Minecraft EULA",
+			"options": ["TRUE"],
+			"default": "TRUE",
+			"required": true
+		},
+		{
+			"key": "VERSION",
+			"label": "Minecraft version",
+			"default": "LATEST"
+		},
+		{
+			"key": "SERVER_NAME",
+			"label": "Server name",
+			"default": "PocketDimension"
+		},
+		{
+			"key": "GAMEMODE",
+			"label": "Game mode",
+			"options": ["survival", "creative", "adventure"],
+			"default": "survival"
+		},
+		{
+			"key": "DIFFICULTY",
+			"label": "Difficulty",
+			"options": ["peaceful", "easy", "normal", "hard"],
+			"default": "normal"
+		},
+		{
+			"key": "MAX_PLAYERS",
+			"label": "Max players",
+			"default": "10"
+		},
+		{
+			"key": "ONLINE_MODE",
+			"label": "Check Xbox Live accounts",
+			"options": ["true", "false"],
+			"default": "true"
+		},
+		{
+			"key": "LEVEL_SEED",
+			"label": "Map seed"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/data"
+		}
+	],
+	"memoryMb": 2048,
+	"query": {
+		"type": "mbe",
+		"port": 0
+	},
+	"docsUrl": "https://github.com/itzg/docker-minecraft-bedrock-server"
+}

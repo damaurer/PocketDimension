@@ -1,0 +1,73 @@
+{
+	"version": 1,
+	"slug": "enshrouded",
+	"name": "Enshrouded",
+	"description": "Survival and crafting in a fog-covered world. Players join with the role password. Downloads the server on first start; needs a lot of memory.",
+	"image": "mornedhels/enshrouded-server:latest",
+	"ports": [
+		{
+			"container": 15637,
+			"protocol": "udp",
+			"label": "Game"
+		}
+	],
+	"env": [
+		{
+			"key": "SERVER_NAME",
+			"label": "Server name",
+			"default": "PocketDimension",
+			"required": true
+		},
+		{
+			"key": "SERVER_SLOT_COUNT",
+			"label": "Max players (1-16)",
+			"default": "16"
+		},
+		{
+			"key": "SERVER_ROLE_0_NAME",
+			"label": "Player role name",
+			"default": "Friends",
+			"required": true
+		},
+		{
+			"key": "SERVER_ROLE_0_PASSWORD",
+			"label": "Server password",
+			"required": true,
+			"secret": true
+		},
+		{
+			"key": "SERVER_ROLE_0_CAN_EDIT_BASE",
+			"label": "Players may build in bases",
+			"options": ["true", "false"],
+			"default": "true"
+		},
+		{
+			"key": "SERVER_ROLE_0_CAN_EXTEND_BASE",
+			"label": "Players may extend bases",
+			"options": ["true", "false"],
+			"default": "true"
+		},
+		{
+			"key": "SERVER_ROLE_0_CAN_ACCESS_INVENTORIES",
+			"label": "Players may open chests",
+			"options": ["true", "false"],
+			"default": "true"
+		},
+		{
+			"key": "UPDATE_CRON",
+			"label": "Update check (cron, empty = only on start)",
+			"default": "*/30 * * * *"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/opt/enshrouded"
+		}
+	],
+	"memoryMb": 16384,
+	"query": {
+		"type": "enshrouded",
+		"port": 0
+	},
+	"docsUrl": "https://github.com/mornedhels/enshrouded-server"
+}

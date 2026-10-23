@@ -1,0 +1,60 @@
+{
+	"version": 1,
+	"slug": "necesse",
+	"name": "Necesse",
+	"description": "Top-down sandbox adventure with settlements. A new world is created on first start.",
+	"image": "brammys/necesse-server:latest",
+	"ports": [
+		{
+			"container": 14159,
+			"protocol": "udp",
+			"label": "Game"
+		}
+	],
+	"env": [
+		{
+			"key": "WORLD",
+			"label": "World name",
+			"default": "world",
+			"required": true
+		},
+		{
+			"key": "PASSWORD",
+			"label": "Server password",
+			"secret": true
+		},
+		{
+			"key": "SLOTS",
+			"label": "Max players",
+			"default": "10"
+		},
+		{
+			"key": "OWNER",
+			"label": "Owner (player name)"
+		},
+		{
+			"key": "MOTD",
+			"label": "Message of the day",
+			"default": "A PocketDimension server"
+		},
+		{
+			"key": "PAUSE",
+			"label": "Pause when nobody is online (0 no, 1 yes)",
+			"options": ["0", "1"],
+			"default": "1"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/necesse/saves"
+		},
+		{
+			"container": "/necesse/cfg"
+		},
+		{
+			"container": "/necesse/logs"
+		}
+	],
+	"memoryMb": 2048,
+	"docsUrl": "https://github.com/BrammyS/necesse-docker-server"
+}
