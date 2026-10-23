@@ -17,7 +17,8 @@ const SECURITY_HEADERS: Record<string, string> = {
 	'X-Frame-Options': 'DENY',
 	'Referrer-Policy': 'same-origin',
 	'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=()',
-	'Cross-Origin-Opener-Policy': 'same-origin'
+	'Cross-Origin-Opener-Policy': 'same-origin',
+	'Cross-Origin-Resource-Policy': 'same-origin'
 };
 
 async function loadCurrentUser(event: RequestEvent) {

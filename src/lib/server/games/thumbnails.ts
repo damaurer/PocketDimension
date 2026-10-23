@@ -1,41 +1,13 @@
 import { lookup } from 'node:dns/promises';
-import { BlockList, isIP } from 'node:net';
+import { isIP } from 'node:net';
 import type { GameRepository, Thumbnail } from '#lib/server/database/repository/game.repository.ts';
+import { isPrivateAddress, publicFetch, readLimited } from '#lib/server/http.ts';
 
 const TIMEOUT_MS = 10_000;
 const MAX_BYTES = 1024 * 1024;
 const MAX_REDIRECTS = 3;
 /** A failed download is tried again after this time. */
 const RETRY_MS = 60 * 60 * 1000;
-
-// Thumbnails are fetched by the server, so they must not reach into the local network.
-const PRIVATE = new BlockList();
-for (const [network, prefix] of [
-	['0.0.0.0', 8],
-	['10.0.0.0', 8],
-	['100.64.0.0', 10],
-	['127.0.0.0', 8],
-	['169.254.0.0', 16],
-	['172.16.0.0', 12],
-	['192.168.0.0', 16],
-	['224.0.0.0', 3]
-] as const) {
-	PRIVATE.addSubnet(network, prefix, 'ipv4');
-}
-for (const [network, prefix] of [
-	['::', 127],
-	['fc00::', 7],
-	['fe80::', 10],
-	['ff00::', 8]
-] as const) {
-	PRIVATE.addSubnet(network, prefix, 'ipv6');
-}
-
-function isPrivate(address: string) {
-	const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/i.exec(address);
-	if (mapped) return PRIVATE.check(mapped[1], 'ipv4');
-	return PRIVATE.check(address, isIP(address) === 6 ? 'ipv6' : 'ipv4');
-}
 
 export type Resolver = (host: string) => Promise<string[]>;
 
@@ -53,24 +25,13 @@ export function sniffImageType(data: Uint8Array): string | undefined {
 	return undefined;
 }
 
-async function readLimited(response: Response): Promise<Uint8Array> {
-	if (Number(response.headers.get('content-length')) > MAX_BYTES) {
-		throw new Error('The thumbnail is larger than 1 MB.');
-	}
-	const chunks: Uint8Array[] = [];
-	let size = 0;
-	for await (const chunk of response.body ?? []) {
-		size += chunk.length;
-		if (size > MAX_BYTES) throw new Error('The thumbnail is larger than 1 MB.');
-		chunks.push(chunk);
-	}
-	return Buffer.concat(chunks);
-}
-
-/** Downloads a thumbnail over https. Redirects are followed and checked like the first address. */
+/**
+ * Downloads a thumbnail over https. Redirects are followed and checked like the
+ * first address; `publicFetch` checks the address again when it connects.
+ */
 export async function downloadThumbnail(
 	address: string,
-	fetcher: typeof fetch = fetch,
+	fetcher: typeof fetch = publicFetch,
 	resolver: Resolver = resolveHost
 ): Promise<Thumbnail> {
 	let url = new URL(address);
@@ -78,7 +39,7 @@ export async function downloadThumbnail(
 		if (url.protocol !== 'https:') throw new Error('Thumbnails are only loaded over https.');
 		const host = url.hostname.replace(/^\[|\]$/g, '');
 		const addresses = isIP(host) ? [host] : await resolver(host);
-		if (addresses.length === 0 || addresses.some(isPrivate)) {
+		if (addresses.length === 0 || addresses.some(isPrivateAddress)) {
 			throw new Error('Thumbnails are not loaded from the local network.');
 		}
 
@@ -97,7 +58,7 @@ export async function downloadThumbnail(
 		}
 		if (!response.ok) throw new Error(`The thumbnail answered with HTTP ${response.status}.`);
 
-		const data = await readLimited(response);
+		const data = await readLimited(response, MAX_BYTES, 'The thumbnail is larger than 1 MB.');
 		const contentType = sniffImageType(data);
 		if (!contentType) throw new Error('The thumbnail is not a PNG, JPEG, WebP, GIF or AVIF image.');
 		return { contentType, data: Buffer.from(data) };
@@ -114,7 +75,7 @@ export class ThumbnailStore {
 
 	constructor(
 		private games: GameRepository,
-		private fetcher: typeof fetch = fetch,
+		private fetcher: typeof fetch = publicFetch,
 		private resolver: Resolver = resolveHost
 	) {}
 
