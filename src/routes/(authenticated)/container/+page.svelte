@@ -24,6 +24,10 @@
 		await invalidateAll();
 	}
 
+	const KNOWN_STATES = ['running', 'exited', 'created', 'restarting', 'paused', 'dead', 'removing'];
+	const stateLabel = (state: string) =>
+		KNOWN_STATES.includes(state) ? $t(`servers.state.${state}`) : state;
+
 	const tone = (state: string) =>
 		state === 'running' ? 'badge-success' : state === 'dead' ? 'badge-danger' : '';
 </script>
@@ -65,7 +69,7 @@
 								<div class="muted small mono">{container.Id.slice(0, 12)}</div>
 							</td>
 							<td>
-								<span class="badge {tone(container.State)}">{container.State}</span>
+								<span class="badge {tone(container.State)}">{stateLabel(container.State)}</span>
 								<div class="muted small">{container.Status}</div>
 							</td>
 							<td class="mono small">

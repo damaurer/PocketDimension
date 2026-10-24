@@ -1,16 +1,22 @@
 <script lang="ts">
-	import { locale, locales, saveLocale } from '#lib/i18n/i18n.ts';
+	import { locale, locales, saveLocale, t } from '#lib/i18n/i18n.ts';
 
-	const names: Record<string, string> = { en: 'English', de: 'Deutsch' };
+	const names: Record<string, string> = {
+		en: 'English',
+		de: 'Deutsch',
+		es: 'Español',
+		tl: 'Tagalog'
+	};
 </script>
 
-<div class="switch" role="group" aria-label="Language / Sprache">
+<div class="switch" role="group" aria-label={$t('language')}>
 	{#each locales as l (l)}
 		<button
 			type="button"
 			class:active={$locale === l}
 			aria-pressed={$locale === l}
 			title={names[l]}
+			lang={l}
 			onclick={() => saveLocale(l)}
 		>
 			{l.toUpperCase()}
