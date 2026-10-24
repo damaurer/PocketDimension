@@ -111,6 +111,19 @@ export const DESCRIPTIONS: Record<Language, Record<string, string>> = {
 
 export const LABELS: Record<Language, Record<string, string>> = {
 	de: {
+		// ports
+		Game: 'Spiel',
+		'Game (TCP)': 'Spiel (TCP)',
+		'Game (UDP)': 'Spiel (UDP)',
+		'Game 2': 'Spiel 2',
+		Query: 'Abfrage',
+		RCON: 'RCON',
+		SourceTV: 'SourceTV',
+		API: 'API',
+		'Blob sync': 'Blob-Sync',
+		Direct: 'Direkt',
+		'Reliable messaging': 'Zuverlässige Nachrichten',
+		// settings
 		'Accept the Minecraft EULA': 'Minecraft-EULA akzeptieren',
 		'Server type': 'Servertyp',
 		'Minecraft version': 'Minecraft-Version',
@@ -159,6 +172,19 @@ export const LABELS: Record<Language, Record<string, string>> = {
 			'Starten mit (false neues Spiel, last-autosave fortsetzen)'
 	},
 	es: {
+		// ports
+		Game: 'Juego',
+		'Game (TCP)': 'Juego (TCP)',
+		'Game (UDP)': 'Juego (UDP)',
+		'Game 2': 'Juego 2',
+		Query: 'Consulta',
+		RCON: 'RCON',
+		SourceTV: 'SourceTV',
+		API: 'API',
+		'Blob sync': 'Sincronización de blobs',
+		Direct: 'Directo',
+		'Reliable messaging': 'Mensajería fiable',
+		// settings
 		'Accept the Minecraft EULA': 'Aceptar el EULA de Minecraft',
 		'Server type': 'Tipo de servidor',
 		'Minecraft version': 'Versión de Minecraft',
@@ -208,6 +234,19 @@ export const LABELS: Record<Language, Record<string, string>> = {
 			'Empezar con (false partida nueva, last-autosave continuar)'
 	},
 	tl: {
+		// ports
+		Game: 'Laro',
+		'Game (TCP)': 'Laro (TCP)',
+		'Game (UDP)': 'Laro (UDP)',
+		'Game 2': 'Laro 2',
+		Query: 'Query',
+		RCON: 'RCON',
+		SourceTV: 'SourceTV',
+		API: 'API',
+		'Blob sync': 'Blob sync',
+		Direct: 'Direkta',
+		'Reliable messaging': 'Maaasahang messaging',
+		// settings
 		'Accept the Minecraft EULA': 'Tanggapin ang Minecraft EULA',
 		'Server type': 'Uri ng server',
 		'Minecraft version': 'Bersyon ng Minecraft',

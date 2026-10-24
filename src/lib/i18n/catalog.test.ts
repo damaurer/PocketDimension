@@ -14,6 +14,9 @@ describe('game texts', () => {
 				for (const variable of game.env) {
 					expect(LABELS[language][variable.label], variable.label).toBeTruthy();
 				}
+				for (const port of game.ports) {
+					if (port.label) expect(LABELS[language][port.label], port.label).toBeTruthy();
+				}
 			}
 		});
 	}

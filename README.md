@@ -1,5 +1,7 @@
 # PocketDimension
 
+**English** · [Deutsch](README.de.md) · [Español](README.es.md) · [Tagalog](README.tl.md)
+
 Self-hosted web app to start and manage game servers as Docker containers.
 
 Pick a game from the catalog, give the server a name, and PocketDimension pulls the image, starts
@@ -7,10 +9,12 @@ the server in its own container and shows who is playing, plus CPU and memory us
 a group of friends: an administrator creates the accounts, every player may run a limited number of
 servers, and the app is hardened for the public internet but runs just as well in a home network.
 
-| Manual (German)                              | For                                                                  |
-| -------------------------------------------- | -------------------------------------------------------------------- |
-| [Benutzerhandbuch](docs/benutzerhandbuch.md) | Players and administrators using the web interface                   |
-| [Bedienerhandbuch](docs/handbuch.md)         | Whoever installs and runs it: reverse proxy, HTTPS, backups, updates |
+The interface and the manuals are available in English, German, Spanish and Tagalog.
+
+| Manual                                                                                                                                                     | For                                                                  |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| User manual: [EN](docs/en/user-manual.md) · [DE](docs/de/user-manual.md) · [ES](docs/es/user-manual.md) · [TL](docs/tl/user-manual.md)                     | Players and administrators using the web interface                   |
+| Operator manual: [EN](docs/en/operator-manual.md) · [DE](docs/de/operator-manual.md) · [ES](docs/es/operator-manual.md) · [TL](docs/tl/operator-manual.md) | Whoever installs and runs it: reverse proxy, HTTPS, backups, updates |
 
 ## Requirements
 
@@ -63,13 +67,12 @@ docker run -d --name pocketdimension --restart unless-stopped \
 | `DB_ADMIN_EMAIL`, `DB_ADMIN_PASSWORD` | The first administrator, created on first start if the email does not exist yet.          |
 
 **4. Log in** at `http://<host>:3000` with the admin email (or the name `admin`) and the password.
-Change the password under **Konto / Account** and add your players there under **Benutzer
-hinzufügen / Add user**. The admin password from the environment is only used on the very first
-start; you can remove it afterwards.
+Change the password under **Account** and add your players there under **Add user**. The admin
+password from the environment is only used on the very first start; you can remove it afterwards.
 
 **5. Open the game ports.** Players connect straight to the game ports, not through the web app.
-Every server card shows its address and ports under **Adresse für Spieler / Address for players**;
-open those in your firewall and, for players outside your network, forward them in your router.
+Every server card shows its address and ports under **Address for players**; open those in your
+firewall and, for players outside your network, forward them in your router.
 Mind the protocol (`tcp` or `udp`). A second server of the same game uses ports shifted by 10
 (e.g. 25575 instead of 25565).
 
@@ -137,7 +140,7 @@ again with the same command and volume. Running game servers keep running during
   POST form submissions are forbidden". `ADDRESS_HEADER` lets the login rate limit see the real
   client address instead of the proxy's. Over HTTPS the app marks its cookies `Secure` and sends
   HSTS. Ready-to-use Caddy and nginx examples, a docker-socket-proxy setup and the list of risks
-  you still own are in the [Bedienerhandbuch, section 4](docs/handbuch.md#4-im-internet-betreiben).
+  you still own are in the [operator manual, section 4](docs/en/operator-manual.md#4-running-on-the-internet).
 
 ## Configuration
 
@@ -191,23 +194,23 @@ To keep it running, use a systemd service or a process manager of your choice.
 - Back up the volume `pocketdimension-data` and the game server volumes
   `pocketdimension-server-<id>-<index>` (worlds and saves); stop a server before backing it up.
 - `docker logs pocketdimension` shows the app log, `docker logs <container>` the log of a game
-  server. Administrators find container names under **Container** in the app.
+  server. Administrators find container names under **Containers** in the app.
 
-Details and commands: [Bedienerhandbuch, section 6](docs/handbuch.md#6-update-backup-und-logs).
+Details and commands: [operator manual, section 6](docs/en/operator-manual.md#6-updates-backups-and-logs).
 
 ## Troubleshooting
 
-| Symptom                                                   | Fix                                                                                                                                                            |
-| --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Login fails, log says "SECRET_JWT_KEY must be set"        | Set `SECRET_JWT_KEY` to at least 32 characters.                                                                                                                |
-| "Docker ist nicht erreichbar" / "Docker is not reachable" | Mount `/var/run/docker.sock` or fix `DOCKER_HOST`.                                                                                                             |
-| "Cross-site POST form submissions are forbidden"          | `ORIGIN` does not match the URL in the browser; fix it or leave it unset without a proxy.                                                                      |
-| Card keeps saying "The server is not answering yet"       | Wait for big games to finish starting; in Docker check `QUERY_HOST` and `--add-host`.                                                                          |
-| Friends cannot connect                                    | Open/forward the game ports with the right protocol; set `PUBLIC_HOST` if the address is wrong.                                                                |
-| Everybody locked out after failed logins behind a proxy   | Set `ADDRESS_HEADER` and `XFF_DEPTH`; restarting the app clears the lock.                                                                                      |
-| Forgot the admin password                                 | Another admin resets it under **Konto**; otherwise start once with a new `DB_ADMIN_EMAIL`, `DB_ADMIN_USER` and `DB_ADMIN_PASSWORD` to get an additional admin. |
+| Symptom                                                 | Fix                                                                                                                                                              |
+| ------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Login fails, log says "SECRET_JWT_KEY must be set"      | Set `SECRET_JWT_KEY` to at least 32 characters.                                                                                                                  |
+| "Docker is not reachable"                               | Mount `/var/run/docker.sock` or fix `DOCKER_HOST`.                                                                                                               |
+| "Cross-site POST form submissions are forbidden"        | `ORIGIN` does not match the URL in the browser; fix it or leave it unset without a proxy.                                                                        |
+| Card keeps saying "The server is not answering yet"     | Wait for big games to finish starting; in Docker check `QUERY_HOST` and `--add-host`.                                                                            |
+| Friends cannot connect                                  | Open/forward the game ports with the right protocol; set `PUBLIC_HOST` if the address is wrong.                                                                  |
+| Everybody locked out after failed logins behind a proxy | Set `ADDRESS_HEADER` and `XFF_DEPTH`; restarting the app clears the lock.                                                                                        |
+| Forgot the admin password                               | Another admin resets it under **Account**; otherwise start once with a new `DB_ADMIN_EMAIL`, `DB_ADMIN_USER` and `DB_ADMIN_PASSWORD` to get an additional admin. |
 
-More in the [Bedienerhandbuch, section 8](docs/handbuch.md#8-fehlerbehebung).
+More in the [operator manual, section 8](docs/en/operator-manual.md#8-troubleshooting).
 
 ## Games
 
@@ -248,7 +251,7 @@ and consider a [docker-socket-proxy](https://github.com/Tecnativa/docker-socket-
 The image runs the app as the unprivileged `node` user; it starts as root only to take over the
 data volume and join the group of the mounted Docker socket. Game containers get no extra
 privileges (`no-new-privileges`, no raw sockets, no host paths) and cannot reach each other in
-`POCKET_DIMENSION_NETWORK`. See [section 4.5 of the Bedienerhandbuch](docs/handbuch.md#45-was-die-app-absichert-und-was-nicht) for what is and is not covered.
+`POCKET_DIMENSION_NETWORK`. See [section 4.5 of the operator manual](docs/en/operator-manual.md#45-what-the-app-protects-and-what-it-does-not) for what is and is not covered.
 
 ## Development
 
@@ -267,3 +270,8 @@ npm run dev
 | `npm run build`            | Production build, start with `node server.js` |
 | `npm run catalog:check`    | Validate the shared game catalog              |
 | `npm run catalog:build`    | Rebuild `catalog/catalog.json` from the games |
+
+**Translations:** interface texts live in `src/lib/i18n/translations/` (`en`, `de`, `es`, `tl`),
+server messages in `src/lib/i18n/messages.ts` and game texts in `src/lib/i18n/catalog.ts`. The
+unit tests fail when a text is missing in one of the languages. The manuals live in
+`docs/<language>/`; English is the main version.

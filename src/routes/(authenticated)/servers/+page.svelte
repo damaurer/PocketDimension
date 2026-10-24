@@ -6,7 +6,8 @@
 	import Translate from '#lib/i18n/Translate.svelte';
 	import CopyText from '#lib/components/CopyText.svelte';
 	import GameThumbnail from '#lib/components/GameThumbnail.svelte';
-	import { msg, t } from '#lib/i18n/i18n.ts';
+	import { locale, msg, t } from '#lib/i18n/i18n.ts';
+	import { settingLabel } from '#lib/i18n/catalog.ts';
 
 	let { data, form }: { data: PageData; form: ActionData } = $props();
 
@@ -191,7 +192,9 @@
 							<li>
 								<CopyText text={`${data.host}:${port.host}`} />
 								<span class="muted small"
-									>{port.protocol}{port.label ? ` · ${port.label}` : ''}</span
+									>{port.protocol}{port.label
+										? ` · ${settingLabel($locale, port.label)}`
+										: ''}</span
 								>
 							</li>
 						{/each}
