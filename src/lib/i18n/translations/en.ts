@@ -1,4 +1,5 @@
 export default {
+	language: 'Language',
 	'nav.servers': 'Servers',
 	'nav.games': 'Games',
 	'nav.account': 'Account',

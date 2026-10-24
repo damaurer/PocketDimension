@@ -21,7 +21,7 @@ games and fixes reach everyone without an app update. No account, key or server 
 
 ## Entry format
 
-The fields are those of the template editor (see the Benutzerhandbuch, section 12):
+The fields are those of the template editor (see the [user manual, section 12](../docs/en/user-manual.md#12-adding-your-own-game)):
 
 | Field          | Required | Meaning                                                                                                                                                                                  |
 | -------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

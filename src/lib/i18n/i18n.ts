@@ -17,8 +17,10 @@ export function isLocale(value: unknown): value is Locale {
 export function pickLocale(saved: string | undefined, acceptLanguage: string | null): Locale {
 	if (isLocale(saved)) return saved;
 	for (const part of (acceptLanguage ?? '').split(',')) {
-		const language = part.split(';')[0].trim().slice(0, 2).toLowerCase();
-		if (isLocale(language)) return language;
+		const language = part.split(';')[0].trim().split('-')[0].toLowerCase();
+		// Browsers announce Tagalog as Filipino ("fil") as often as "tl".
+		const candidate = language === 'fil' ? 'tl' : language;
+		if (isLocale(candidate)) return candidate;
 	}
 	return 'en';
 }
