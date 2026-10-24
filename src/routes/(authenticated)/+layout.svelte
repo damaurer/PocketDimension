@@ -154,4 +154,11 @@
 			padding-top: 1.25rem;
 		}
 	}
+
+	/* Phones: the logo alone, so language switch and logout fit next to it. */
+	@media (max-width: 480px) {
+		.brand :global(.logo span) {
+			display: none;
+		}
+	}
 </style>

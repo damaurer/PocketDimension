@@ -274,6 +274,13 @@
 		width: 6.5rem;
 	}
 
+	/* Phones: a smaller thumbnail leaves the server name room to wrap at spaces. */
+	@media (max-width: 480px) {
+		header :global(.server-thumbnail) {
+			width: 3.5rem;
+		}
+	}
+
 	.title {
 		flex: 1;
 		min-width: 0;
