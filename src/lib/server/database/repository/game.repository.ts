@@ -148,7 +148,7 @@ export class GameRepository {
 
 	/**
 	 * Inserts new catalog games and updates the ones that came from the catalog
-	 * when the entry is at least as new; keeps the enabled flag. Own templates
+	 * when the entry is newer; keeps the enabled flag. Own templates
 	 * with the same slug are left alone and reported as skipped.
 	 */
 	async syncCatalog(
@@ -168,13 +168,14 @@ export class GameRepository {
 				counts.added.push(template.slug);
 			} else if (!existing.builtin) {
 				counts.skipped.push(template.slug);
-			} else if (version >= (existing.catalogVersion ?? 0)) {
+			} else if (version > (existing.catalogVersion ?? 0)) {
+				// Equal versions are skipped, so an administrator's changes survive restarts and syncs.
 				await this.updateTemplate(existing.id, template);
 				await this.db.run('UPDATE GameTemplate SET catalogVersion = ? WHERE id = ?', [
 					version,
 					existing.id
 				]);
-				if (version > (existing.catalogVersion ?? 0)) counts.updated.push(template.slug);
+				counts.updated.push(template.slug);
 			}
 		}
 		return counts;

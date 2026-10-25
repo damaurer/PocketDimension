@@ -4,7 +4,7 @@ import type {
 	GameRepository,
 	GameServerRecord
 } from '#lib/server/database/repository/game.repository.ts';
-import type { ContainerClient } from '#lib/server/docker/api/container.client.ts';
+import { isNotModified, type ContainerClient } from '#lib/server/docker/api/container.client.ts';
 import type { GameServerView, GameTemplate, Protocol } from '#lib/games/types.ts';
 import { allocatePortOffset, portKey } from '#lib/server/games/validation.ts';
 import { config } from '#lib/server/config.ts';
@@ -46,7 +46,11 @@ export class ServerManager {
 		private containers: ContainerClient
 	) {}
 
-	/** Host ports taken by any container on the host or reserved by a server still being created. */
+	/**
+	 * Host ports taken by any container on the host, running or not, and by every
+	 * server of this app, including servers still being created. Docker lists the
+	 * ports of running containers only, so stopped ones are inspected.
+	 */
 	private async usedHostPorts(): Promise<Set<string>> {
 		const used = new Set<string>();
 		const all = await this.docker.listContainers({ all: true });
@@ -54,9 +58,20 @@ export class ServerManager {
 			for (const port of container.Ports) {
 				if (port.PublicPort) used.add(portKey(port.PublicPort, port.Type as Protocol));
 			}
+			if (container.State === 'running') continue;
+			const info = await this.docker
+				.getContainer(container.Id)
+				.inspect()
+				.catch(() => undefined);
+			for (const [key, bindings] of Object.entries(info?.HostConfig?.PortBindings ?? {})) {
+				const protocol = (key.split('/')[1] ?? 'tcp') as Protocol;
+				for (const binding of (bindings as { HostPort?: string }[] | null) ?? []) {
+					const port = Number(binding.HostPort);
+					if (port > 0) used.add(portKey(port, protocol));
+				}
+			}
 		}
 		for (const server of await this.games.listServers()) {
-			if (server.containerId) continue;
 			const template = await this.games.findTemplateById(server.templateId);
 			for (const port of template?.ports ?? []) {
 				used.add(portKey(port.container + server.portOffset, port.protocol));
@@ -234,9 +249,14 @@ export class ServerManager {
 	async action(server: GameServerRecord, action: ServerAction): Promise<void> {
 		if (!server.containerId) throw new Error('The server is not ready yet.');
 		const container = this.docker.getContainer(server.containerId);
-		if (action === 'start') await container.start();
-		if (action === 'stop') await container.stop({ t: 30 });
-		if (action === 'restart') await container.restart({ t: 30 });
+		try {
+			if (action === 'start') await container.start();
+			if (action === 'stop') await container.stop({ t: 30 });
+			if (action === 'restart') await container.restart({ t: 30 });
+		} catch (e) {
+			// Already running or already stopped, e.g. after a double click or a stale page.
+			if (!isNotModified(e)) throw e;
+		}
 	}
 
 	/** Removes the container and the server's data volumes. */
@@ -265,9 +285,11 @@ export class ServerManager {
 	/** Combines database rows with live Docker state. */
 	async views(servers: GameServerRecord[]): Promise<GameServerView[]> {
 		const byServer = new Map<number, ContainerInfo>();
-		const containers = await this.docker
-			.listContainers({ all: true, filters: { label: [SERVER_LABEL] } })
-			.catch(() => [] as ContainerInfo[]);
+		// Fails when Docker is unreachable, instead of showing every container as gone.
+		const containers = await this.docker.listContainers({
+			all: true,
+			filters: { label: [SERVER_LABEL] }
+		});
 		for (const container of containers) {
 			byServer.set(Number(container.Labels[SERVER_LABEL]), container);
 		}

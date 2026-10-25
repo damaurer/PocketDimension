@@ -132,6 +132,20 @@ describe('syncCatalog', () => {
 		expect((await games.findTemplateBySlug('test-game'))?.name).toBe('New');
 	});
 
+	it("keeps an administrator's changes until a newer version arrives", async () => {
+		const games = await repository();
+		await games.syncCatalog([entry], { enableNew: true });
+		const template = (await games.findTemplateBySlug('test-game'))!;
+		await games.updateTemplate(template.id, { ...entry, image: 'local/test:dev' });
+
+		// Every app start and every sync brings the same version again.
+		await games.syncCatalog([entry], { enableNew: true });
+		expect((await games.findTemplateBySlug('test-game'))?.image).toBe('local/test:dev');
+
+		await games.syncCatalog([{ ...entry, version: 2 }], { enableNew: true });
+		expect((await games.findTemplateBySlug('test-game'))?.image).toBe('example/test:1.0');
+	});
+
 	it('keeps the games when the catalog cannot be reached', async () => {
 		const games = await repository();
 		await games.syncCatalog(BUILTIN_TEMPLATES, { enableNew: true });

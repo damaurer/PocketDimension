@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { resolve } from '$app/paths';
 	import Translate from '#lib/i18n/Translate.svelte';
+	import { msg } from '#lib/i18n/i18n.ts';
 </script>
 
 <svelte:head>
@@ -13,7 +14,7 @@
 		<p class="status">{page.status}</p>
 		<h1><Translate key={page.status === 404 ? 'error.notFound' : 'error.generic'} /></h1>
 		{#if page.error?.message && page.status !== 404}
-			<p class="muted">{page.error.message}</p>
+			<p class="muted">{$msg(page.error.message)}</p>
 		{/if}
 		<a class="btn btn-primary" href={resolve('/(public)')}><Translate key="error.home" /></a>
 	</div>

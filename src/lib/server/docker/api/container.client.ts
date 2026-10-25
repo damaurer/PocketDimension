@@ -9,6 +9,11 @@ export function isContainerId(id: unknown): id is string {
 	return typeof id === 'string' && CONTAINER_ID.test(id);
 }
 
+/** Docker answers 304 when a container already is in the requested state. */
+export function isNotModified(e: unknown): boolean {
+	return (e as { statusCode?: number })?.statusCode === 304;
+}
+
 export class ContainerNotFoundError extends Error {
 	constructor(id: string) {
 		super(`Container ${id} is not managed by PocketDimension.`);
@@ -51,16 +56,20 @@ export class ContainerClient {
 	async changeStatus(id: string, status: ContainerStatus): Promise<void> {
 		await this.assertManaged(id);
 		const container = this.client.getContainer(id);
-		switch (status) {
-			case ContainerStatus.START:
-				await container.start();
-				break;
-			case ContainerStatus.STOP:
-				await container.stop();
-				break;
-			case ContainerStatus.RESTART:
-				await container.restart();
-				break;
+		try {
+			switch (status) {
+				case ContainerStatus.START:
+					await container.start();
+					break;
+				case ContainerStatus.STOP:
+					await container.stop();
+					break;
+				case ContainerStatus.RESTART:
+					await container.restart();
+					break;
+			}
+		} catch (e) {
+			if (!isNotModified(e)) throw e;
 		}
 	}
 
