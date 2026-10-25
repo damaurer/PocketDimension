@@ -172,9 +172,36 @@ Kommentaren.
 | `ENFORCE_MEMORY_LIMITS`   | `true`                            | `false` startet Spiel-Container ohne ihr Speicherlimit.                                                |
 | `CATALOG_URL`             | `catalog/catalog.json` auf GitHub | Gemeinsamer Spielekatalog. Leer = nur die mitgelieferten Spiele, kein Netzwerkzugriff.                 |
 | `CATALOG_SYNC_HOURS`      | `24`                              | Stunden zwischen Katalog-Updates; `0` = nur über den Knopf.                                            |
+| `OIDC_ISSUER`             | –                                 | Single Sign-on: Issuer-Adresse des OpenID-Connect-Anbieters (siehe 9).                                 |
+| `OIDC_CLIENT_ID`          | –                                 | Beim Anbieter registrierte Client-ID.                                                                  |
+| `OIDC_CLIENT_SECRET`      | –                                 | Client Secret; leer bei einem öffentlichen Client.                                                     |
+| `OIDC_NAME`               | `SSO`                             | Name auf dem Anmeldeknopf („Mit … anmelden").                                                          |
+| `OIDC_SCOPES`             | `openid email profile`            | Beim Anbieter angefragte Scopes.                                                                       |
+| `OIDC_AUTO_CREATE`        | `true`                            | `false` = nur vorhandene Konten können sich anmelden.                                                  |
+| `OIDC_ROLES_CLAIM`        | `roles`                           | Claim mit Rollen oder Gruppen, z. B. `realm_access.roles`.                                             |
+| `OIDC_ADMIN_ROLE`         | –                                 | Rolle oder Gruppe, die zum Administrator macht. Leer = Rollen werden in der App verwaltet.             |
+| `LOCAL_LOGIN`             | `true`                            | `false` = nur Single Sign-on (wenn OIDC eingerichtet ist).                                             |
 
 Das Docker-Netzwerk `POCKET_DIMENSION_NETWORK` legt die App beim ersten Start selbst an; dafür
 gibt es nichts einzustellen.
+
+### Single Sign-on (OpenID Connect)
+
+Optionale Anmeldung über Keycloak oder einen anderen OpenID-Connect-Anbieter, zusätzlich zur
+normalen Anmeldung mit Passwort. Registriere einen Client mit der Redirect-URI
+`https://<deine-app>/auth/oidc/callback` und setze:
+
+```bash
+OIDC_ISSUER=https://sso.example.com/realms/games
+OIDC_CLIENT_ID=pocketdimension
+OIDC_CLIENT_SECRET=...
+OIDC_NAME=Keycloak
+```
+
+Neue Benutzer bekommen bei der ersten Anmeldung ein Konto; ein vorhandenes Konto wird verknüpft,
+wenn der Anbieter die E-Mail bestätigt hat. Mit `OIDC_ADMIN_ROLE` folgt die Administratorrolle dem
+Anbieter. Die Keycloak-Einrichtung Schritt für Schritt steht im
+[Bedienerhandbuch, Abschnitt 9](docs/de/operator-manual.md#9-single-sign-on).
 
 ## Ohne Docker
 

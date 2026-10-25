@@ -11,7 +11,8 @@
 		idPrefix,
 		form = undefined,
 		ownAccount = false,
-		manageRoles = false
+		manageRoles = false,
+		ssoName = undefined
 	}: {
 		user?: User;
 		action: string;
@@ -20,6 +21,8 @@
 		form?: { message?: string; success?: boolean } | null;
 		ownAccount?: boolean;
 		manageRoles?: boolean;
+		/** Set when the own account signs in through this provider and has no password. */
+		ssoName?: string;
 	} = $props();
 </script>
 
@@ -36,35 +39,45 @@
 	</div>
 	<div class="field">
 		<label for={`${idPrefix}_email_input`}><Translate key="label.email" /></label>
-		<input type="email" id={`${idPrefix}_email_input`} name="email" value={user?.email ?? ''} />
-	</div>
-	<div class="field">
-		<label for={`${idPrefix}_password_input`}>
-			<Translate key={user ? 'label.newPassword' : 'label.password'} />
-		</label>
 		<input
-			type="password"
-			id={`${idPrefix}_password_input`}
-			name="password"
-			autocomplete="new-password"
+			type="email"
+			id={`${idPrefix}_email_input`}
+			name="email"
+			value={user?.email ?? ''}
+			disabled={Boolean(ssoName)}
 		/>
-		{#if user}
-			<span class="hint"><Translate key="label.newPasswordHint" /></span>
-		{/if}
 	</div>
-	{#if ownAccount}
+	{#if ssoName}
+		<p class="hint"><Translate key="account.sso" variables={{ name: ssoName }} /></p>
+	{:else}
 		<div class="field">
-			<label for={`${idPrefix}_current_password_input`}>
-				<Translate key="label.currentPassword" />
+			<label for={`${idPrefix}_password_input`}>
+				<Translate key={user ? 'label.newPassword' : 'label.password'} />
 			</label>
 			<input
 				type="password"
-				id={`${idPrefix}_current_password_input`}
-				name="currentPassword"
-				autocomplete="current-password"
+				id={`${idPrefix}_password_input`}
+				name="password"
+				autocomplete="new-password"
 			/>
-			<span class="hint"><Translate key="label.currentPasswordHint" /></span>
+			{#if user}
+				<span class="hint"><Translate key="label.newPasswordHint" /></span>
+			{/if}
 		</div>
+		{#if ownAccount}
+			<div class="field">
+				<label for={`${idPrefix}_current_password_input`}>
+					<Translate key="label.currentPassword" />
+				</label>
+				<input
+					type="password"
+					id={`${idPrefix}_current_password_input`}
+					name="currentPassword"
+					autocomplete="current-password"
+				/>
+				<span class="hint"><Translate key="label.currentPasswordHint" /></span>
+			</div>
+		{/if}
 	{/if}
 	{#if manageRoles}
 		<label class="checkbox">

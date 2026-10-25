@@ -30,6 +30,10 @@ export default {
 	'login.welcome':
 		'Maligayang pagdating, <strong>{{name}}</strong>! Puwede mo nang gamitin ang app.',
 	'login.tagline': 'Sariling game server mo, isang click lang.',
+	'login.or': 'o',
+	'login.sso': 'Mag-login gamit ang {{name}}',
+	'account.sso':
+		'Nagla-login ka gamit ang {{name}}. Doon pinamamahalaan ang iyong email at password.',
 	'login.noAccount': 'Wala pang account? Magtanong sa iyong administrator.',
 
 	about: 'Tungkol sa Pocket Dimension',

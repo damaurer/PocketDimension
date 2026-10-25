@@ -34,6 +34,55 @@ const RULES: [RegExp, Record<Language, Replacement>][] = [
 			tl: 'Masyadong maraming pagsubok mag-login. Subukan ulit pagkalipas ng $1 minuto.'
 		}
 	],
+	[
+		/^Login with a password is turned off\.$/,
+		{
+			de: 'Die Anmeldung mit Passwort ist ausgeschaltet.',
+			es: 'El inicio de sesión con contraseña está desactivado.',
+			tl: 'Naka-off ang pag-login gamit ang password.'
+		}
+	],
+	// Single sign-on
+	[
+		/^Single sign-on failed\. Please try again\.$/,
+		{
+			de: 'Die Anmeldung über den Anmeldedienst ist fehlgeschlagen. Bitte versuche es erneut.',
+			es: 'El inicio de sesión único falló. Inténtalo de nuevo.',
+			tl: 'Pumalya ang single sign-on. Subukan ulit.'
+		}
+	],
+	[
+		/^Your single sign-on account has no email address\.$/,
+		{
+			de: 'Dein Konto beim Anmeldedienst hat keine E-Mail-Adresse.',
+			es: 'Tu cuenta de inicio de sesión único no tiene correo.',
+			tl: 'Walang email address ang iyong single sign-on account.'
+		}
+	],
+	[
+		/^An account with this email already exists\. Verify your email at the sign-on provider or ask your administrator\.$/,
+		{
+			de: 'Es gibt schon ein Konto mit dieser E-Mail. Bestätige deine E-Mail beim Anmeldedienst oder frag deinen Administrator.',
+			es: 'Ya existe una cuenta con este correo. Verifica tu correo en el proveedor de inicio de sesión o pregunta a tu administrador.',
+			tl: 'May account na gamit ang email na ito. I-verify ang iyong email sa sign-on provider o magtanong sa iyong administrator.'
+		}
+	],
+	[
+		/^There is no account for you here\. Ask your administrator\.$/,
+		{
+			de: 'Hier gibt es kein Konto für dich. Frag deinen Administrator.',
+			es: 'Aquí no hay una cuenta para ti. Pregunta a tu administrador.',
+			tl: 'Wala kang account dito. Magtanong sa iyong administrator.'
+		}
+	],
+	[
+		/^Too many login attempts\. Try again later\.$/,
+		{
+			de: 'Zu viele Anmeldeversuche. Versuche es später erneut.',
+			es: 'Demasiados intentos de inicio de sesión. Inténtalo más tarde.',
+			tl: 'Masyadong maraming pagsubok mag-login. Subukan ulit mamaya.'
+		}
+	],
 	// Accounts
 	[
 		/^Email is required\.$/,

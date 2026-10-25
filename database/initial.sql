@@ -25,6 +25,16 @@ CREATE TABLE IF NOT EXISTS  "Role" (
 -- CreateIndex
 CREATE UNIQUE INDEX IF NOT EXISTS "User_id_key" ON "User"("id");
 
+-- An account at an OpenID Connect provider that signs in as a user.
+CREATE TABLE IF NOT EXISTS "UserIdentity" (
+    "issuer" TEXT NOT NULL,
+    "subject" TEXT NOT NULL,
+    "userId" INTEGER NOT NULL REFERENCES "User" ("id") ON DELETE CASCADE,
+    "createdAt" TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY ("issuer", "subject")
+);
+
 
 -- InsertRole
 INSERT OR IGNORE INTO "Role" (name) values ('ADMINISTRATOR_ROLE');

@@ -52,6 +52,7 @@
 		"dockerode": "^5.0.1",
 		"gamedig": "^5.3.3",
 		"jsonwebtoken": "^9.0.3",
+		"openid-client": "^6.8.8",
 		"sqlite3": "^6.0.1"
 	},
 	"engines": {

@@ -27,6 +27,10 @@ function resolveJwtSecret(): string {
 
 let jwtSecret: string | undefined;
 
+const oidcIssuer = process.env.OIDC_ISSUER?.trim() || '';
+const oidcClientId = process.env.OIDC_CLIENT_ID?.trim() || '';
+const oidcEnabled = Boolean(oidcIssuer && oidcClientId);
+
 export const config = {
 	get jwtSecret(): string {
 		jwtSecret ??= resolveJwtSecret();
@@ -62,6 +66,25 @@ export const config = {
 		/** Hours between automatic catalog updates; 0 = only when an admin asks. */
 		syncHours: Number(process.env.CATALOG_SYNC_HOURS ?? 24)
 	},
+	/** Login through an OpenID Connect provider such as Keycloak; off unless issuer and client id are set. */
+	oidc: {
+		enabled: oidcEnabled,
+		issuer: oidcIssuer,
+		clientId: oidcClientId,
+		/** Empty for a public client, which then relies on PKCE alone. */
+		clientSecret: process.env.OIDC_CLIENT_SECRET || '',
+		/** Shown on the login button. */
+		name: process.env.OIDC_NAME?.trim() || 'SSO',
+		scopes: process.env.OIDC_SCOPES?.trim() || 'openid email profile',
+		/** Creates an account on the first login; otherwise only linked accounts may sign in. */
+		autoCreate: process.env.OIDC_AUTO_CREATE !== 'false',
+		/** Claim holding the user's roles or groups; dots walk into nested objects. */
+		rolesClaim: process.env.OIDC_ROLES_CLAIM?.trim() || 'roles',
+		/** Value in the roles claim that makes a user administrator; empty = roles are managed in the app. */
+		adminRole: process.env.OIDC_ADMIN_ROLE?.trim() || ''
+	},
+	/** Login with email/name and password. Can only be switched off when OIDC is configured. */
+	localLogin: !oidcEnabled || process.env.LOCAL_LOGIN !== 'false',
 	admin: {
 		name: process.env.DB_ADMIN_USER,
 		email: process.env.DB_ADMIN_EMAIL?.toLowerCase().trim(),

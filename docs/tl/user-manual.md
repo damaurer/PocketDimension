@@ -62,8 +62,12 @@ ng problema** ang GitHub issues ng proyekto.
 Buksan ang address na ibinigay ng administrator mo, halimbawa `https://games.example.com` o
 `http://192.168.0.10:3000`. Mag-login gamit ang **email o username** at ang **password** mo.
 
-- **Wala pang account?** Hindi ka puwedeng mag-sign up nang mag-isa. Magtanong sa administrator
-  ng installation.
+Kung gumagamit ng single sign-on ang installation mo, may button din sa pahina ng login gaya ng
+**Mag-login gamit ang Keycloak**. I-click ito, mag-login sa pahina ng login ng organisasyon mo, at
+babalik ka nang naka-login. May mga installation na ito lang na button ang ipinapakita.
+
+- **Wala pang account?** Hindi ka puwedeng mag-sign up nang mag-isa. Magtanong sa administrator ng
+  installation. Sa single sign-on, gagawin ang account mo sa una mong pag-login.
 - **Masyadong maraming maling subok:** pagkatapos ng 10 maling password para sa iisang account,
   hinaharangan ng app ang mga susunod na subok nang hanggang 15 minuto. Sinasabi ng mensahe kung
   gaano katagal maghihintay.
@@ -75,7 +79,8 @@ Buksan ang address na ibinigay ng administrator mo, halimbawa `https://games.exa
 - **Phone at dark mode:** umaangkop ang interface sa maliliit na screen at sumusunod sa light o
   dark mode ng device mo.
 
-Puwede kang mag-logout anumang oras gamit ang **Mag-logout** sa kanang itaas.
+Puwede kang mag-logout anumang oras gamit ang **Mag-logout** sa kanang itaas. Pagkatapos ng single
+sign-on, ila-logout ka rin nito sa sign-on service.
 
 ## 2. Pagpili ng laro
 
@@ -240,6 +245,9 @@ device. Mananatiling naka-login ang device kung saan mo ito pinalitan.
 **Nakalimutan ang password?** Walang "forgot password" sa email. Puwedeng magtakda ang
 administrator ng bagong password para sa iyo sa **Account → Mga user**.
 
+**Naka-login gamit ang single sign-on?** Kung ganoon, sa sign-on service pinamamahalaan ang
+email at password mo. Pangalan lang ang mababago mo sa profile mo.
+
 ## 8. Mga madalas itanong
 
 **Naiipit ang server ko sa "Nagda-download".**
@@ -303,6 +311,12 @@ account.
   hindi mo maaalis nang hindi sinasadya ang sarili mong admin rights.
 - Hindi nabubura ang mga account. Para pigilan ang isang tao, bigyan siya ng bagong password na
   hindi niya alam. Mananatili ang mga server niya hanggang burahin mo.
+
+**Single sign-on:** kung ginagamit ito ng installation, awtomatikong nagkakaroon ng player
+account ang mga tao sa una nilang pag-login. Puwedeng ang sign-on service ang magpasya kung
+administrator ang isang tao; sa ganoong kaso, ibinabalik sa susunod na pag-login ng tao ang mga
+pagbabago sa check na **Administrator** sa listahang ito. Magtanong sa nagpapatakbo ng installation
+(tingnan ang seksyon 9 ng manwal ng operator).
 
 ## 10. Lahat ng server
 

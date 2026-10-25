@@ -3,6 +3,7 @@ import { Role, type User } from '#lib/types.ts';
 
 /** Server-side user record, including the password hash. Never send this to the browser. */
 export interface UserRecord extends User {
+	/** Empty for accounts created through single sign-on, which cannot log in with a password. */
 	password: string;
 	sessionVersion: number;
 }
@@ -60,6 +61,27 @@ export class UserRepository {
 		return rows.map(toRecord);
 	}
 
+	async findByIdentity(issuer: string, subject: string): Promise<UserRecord | undefined> {
+		const row = await this.db.get<{ userId: number }>(
+			'SELECT userId FROM UserIdentity WHERE issuer = ? AND subject = ?',
+			[issuer, subject]
+		);
+		return row && this.findById(row.userId);
+	}
+
+	async hasIdentity(id: number): Promise<boolean> {
+		const row = await this.db.get('SELECT 1 FROM UserIdentity WHERE userId = ? LIMIT 1', [id]);
+		return row !== undefined;
+	}
+
+	async linkIdentity(id: number, issuer: string, subject: string): Promise<void> {
+		await this.db.run('INSERT INTO UserIdentity (issuer, subject, userId) VALUES (?, ?, ?)', [
+			issuer,
+			subject,
+			id
+		]);
+	}
+
 	async findAllExcept(id: number): Promise<UserRecord[]> {
 		const rows = await this.db.all<UserRow>(
 			`${SELECT_USER} WHERE User.id != ? GROUP BY User.id ORDER BY User.id`,
@@ -68,9 +90,11 @@ export class UserRepository {
 		return rows.map(toRecord);
 	}
 
+	/** Creates a user; with an identity it signs in through that provider and has no password. */
 	async create(
-		{ name, email, passwordHash }: Required<UserChanges>,
-		roles: Role[]
+		{ name, email, passwordHash }: { name: string | null; email: string; passwordHash: string },
+		roles: Role[],
+		identity?: { issuer: string; subject: string }
 	): Promise<UserRecord> {
 		const id = await this.db.transaction(async () => {
 			const { lastID } = await this.db.run(
@@ -78,6 +102,7 @@ export class UserRepository {
 				[name, email, passwordHash]
 			);
 			await this.replaceRoles(lastID, roles);
+			if (identity) await this.linkIdentity(lastID, identity.issuer, identity.subject);
 			return lastID;
 		});
 		return (await this.findById(id))!;
@@ -119,6 +144,10 @@ export class UserRepository {
 		});
 
 		return this.findById(id);
+	}
+
+	async setRoles(id: number, roles: Role[]): Promise<void> {
+		await this.db.transaction(() => this.replaceRoles(id, roles));
 	}
 
 	private async replaceRoles(id: number, roles: Role[]) {

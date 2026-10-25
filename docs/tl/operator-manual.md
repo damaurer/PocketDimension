@@ -23,6 +23,7 @@ Kung paano ginagamit ng mga player at administrator ang interface ay nasa
 - [6. Update, backup at log](#6-update-backup-at-log)
 - [7. Bilang ng player at catalog ng mga laro](#7-bilang-ng-player-at-catalog-ng-mga-laro)
 - [8. Pag-aayos ng problema](#8-pag-aayos-ng-problema)
+- [9. Single sign-on](#9-single-sign-on)
 
 ---
 
@@ -340,6 +341,15 @@ Mga environment variable ang lahat ng setting. May template na may mga komento s
 | `ENFORCE_MEMORY_LIMITS`   | `true`                           | Ang `false` ay nagsisimula ng mga laro nang walang memory limit ng template nila.                          |
 | `CATALOG_URL`             | catalog sa GitHub repository     | Address ng shared catalog ng mga laro (tingnan ang 7.2). Walang laman = mga larong kasama ng app lang.     |
 | `CATALOG_SYNC_HOURS`      | `24`                             | Mga oras sa pagitan ng awtomatikong pagtingin sa catalog. `0` = gamit ang button lang.                     |
+| `OIDC_ISSUER`             | –                                | Single sign-on: issuer address ng OpenID Connect provider (tingnan ang 9).                                 |
+| `OIDC_CLIENT_ID`          | –                                | Client ID na nakarehistro sa provider.                                                                     |
+| `OIDC_CLIENT_SECRET`      | –                                | Client secret; walang laman para sa public client.                                                         |
+| `OIDC_NAME`               | `SSO`                            | Pangalan sa login button ("Mag-login gamit ang …").                                                        |
+| `OIDC_SCOPES`             | `openid email profile`           | Mga scope na hinihingi sa provider.                                                                        |
+| `OIDC_AUTO_CREATE`        | `true`                           | `false` = mga dati nang account lang ang makakapag-login.                                                  |
+| `OIDC_ROLES_CLAIM`        | `roles`                          | Claim na may mga role o group, hal. `realm_access.roles`.                                                  |
+| `OIDC_ADMIN_ROLE`         | –                                | Role o group na gumagawang administrator sa isang tao. Walang laman = sa app pinamamahalaan ang mga role.  |
+| `LOCAL_LOGIN`             | `true`                           | `false` = single sign-on lang (kapag naka-set up ang OIDC).                                                |
 
 ## 6. Update, backup at log
 
@@ -496,3 +506,111 @@ gagawa ito ng karagdagang administrator account.
 I-ulat ito sa
 [github.com/damaurer/PocketDimension/issues](https://github.com/damaurer/PocketDimension/issues) o
 gamit ang **Mag-ulat ng problema** sa ibaba ng app.
+
+## 9. Single sign-on
+
+Bukod sa karaniwang login gamit ang pangalan at password, puwedeng payagan ng Pocket Dimension ang
+pag-login sa pamamagitan ng isang OpenID Connect provider, halimbawa Keycloak, Authentik, Authelia,
+Zitadel o Microsoft Entra ID. Naka-off ito hangga't hindi naka-set ang `OIDC_ISSUER` at
+`OIDC_CLIENT_ID`. Pagkatapos, may lalabas na button na **Mag-login gamit ang …** sa ilalim ng
+karaniwang form sa pahina ng login.
+
+### 9.1 Pag-set up ng Keycloak
+
+1. Sa realm mo, buksan ang **Clients → Create client**. Client type _OpenID Connect_, Client ID
+   halimbawa `pocketdimension`.
+2. I-on ang **Client authentication** at **Standard flow** lang ang iwanang naka-check.
+3. Sa **Login settings**, ilagay (gamit ang sarili mong address):
+   - **Valid redirect URIs:** `https://games.example.com/auth/oidc/callback`
+   - **Valid post logout redirect URIs:** `https://games.example.com/`
+   - **Web origins:** `https://games.example.com`
+4. Kopyahin ang **Client secret** mula sa tab na **Credentials**.
+5. Opsyonal, mga karapatan ng administrator mula sa Keycloak (tingnan ang 9.3): gumawa ng realm
+   role, halimbawa `pocketdimension-admin`, at ibigay ito sa mga dapat maging administrator. Bilang
+   default, inilalagay lang ng Keycloak ang mga realm role sa access token, kaya buksan ang **Client
+   scopes → roles → Mappers → realm roles** at i-on ang **Add to ID token** at **Add to userinfo**.
+
+Pagkatapos, simulan ang Pocket Dimension gamit ang mga dagdag na variable na ito:
+
+```bash
+OIDC_ISSUER=https://sso.example.com/realms/games
+OIDC_CLIENT_ID=pocketdimension
+OIDC_CLIENT_SECRET=<client secret>
+OIDC_NAME=Keycloak
+# opsyonal, tingnan ang 9.3
+OIDC_ROLES_CLAIM=realm_access.roles
+OIDC_ADMIN_ROLE=pocketdimension-admin
+```
+
+Ang `OIDC_ISSUER` ay ang address kung saan makikita ang `/.well-known/openid-configuration`; sa
+Keycloak ito ay `https://<keycloak>/realms/<realm>`. Dapat itong maabot ng app mismo (mula sa loob
+ng container nito). Ganito rin sa ibang provider: magrehistro ng web application na may redirect
+URI mula sa hakbang 3 at gamitin ang issuer, client ID at secret na ibibigay nila.
+
+Kapag nasa likod ng reverse proxy, i-set ang `ORIGIN` (seksyon 4), dahil dito binubuo ang redirect
+URI.
+
+### 9.2 Mga account
+
+- **Unang pag-login:** gagawa ang app ng account gamit ang email at username mula sa provider.
+  Wala itong password, at sa provider lang mababago ang email nito. Sa `OIDC_AUTO_CREATE=false`,
+  walang account na gagawin; ang may dati nang account lang ang makakapag-login.
+- **Mga dati nang account:** kapag may account na may parehong email, ili-link ito sa unang
+  pag-login, pero kung minarkahan lang ng provider na verified ang email (`email_verified`; sa
+  Keycloak, ang switch na **Email verified** sa user). Kung hindi, sasabihin ng pahina ng login na
+  ginagamit na ang email. Puwedeng gamitin ng naka-link na account ang dalawang paraan ng pag-login.
+- Nakakabit ang account sa user ID sa provider (`sub`), hindi sa email. Kapag nagbago ang email sa
+  provider sa ibang pagkakataon, walang pangalawang account na gagawin.
+- Puwedeng bigyan ng administrator ng password ang isang single sign-on account sa **Account →
+  Mga user**. Pagkatapos, puwede rin itong mag-login gamit ang karaniwang form.
+
+### 9.3 Role ng administrator mula sa provider
+
+Kapag walang `OIDC_ADMIN_ROLE`, sa app pa rin pinamamahalaan ang mga role tulad ng dati: player ang
+mga bagong account, at isang administrator ang nagpo-promote sa kanila.
+
+Kapag may `OIDC_ADMIN_ROLE`, ang provider ang nagpapasya. Sa bawat pag-login, binabasa ng app ang
+claim na nakasaad sa `OIDC_ROLES_CLAIM` mula sa ID token at userinfo. `roles` ang default; ang tuldok
+ay nagbabasa ng nested claim, gaya ng `realm_access.roles` ng Keycloak; para sa mga group, gamitin
+halimbawa ang `groups`. Kung nasa claim ang value ng `OIDC_ADMIN_ROLE`, magiging administrator ang
+account; kung wala, mawawala ang mga karapatan nito bilang administrator. Mapapalitan sa susunod na
+pag-login ang mga pagbabago sa role na ginawa sa app.
+
+> **Mag-ingat:** para rin ito sa mga naka-link na account, kasama ang unang administrator mula sa
+> `DB_ADMIN_EMAIL`. Ibigay muna sa sarili mo ang role sa provider bago ka mag-login gamit ang
+> account na iyon, kung hindi ay hindi na ito administrator pagkatapos.
+
+### 9.4 Single sign-on lang
+
+Itinatago ng `LOCAL_LOGIN=false` ang password form at tinatanggihan ang pag-login gamit ang
+password. Gumagana lang ito kapag naka-set up ang OIDC. Siguraduhin muna na kahit isang
+administrator ay makakapag-login sa pamamagitan ng provider. Kung down ang provider, i-restart ang
+app nang walang `LOCAL_LOGIN=false` para makapasok ulit.
+
+### 9.5 Seguridad
+
+- Ginagamit ng app ang authorization code flow na may PKCE (S256), `state` at `nonce`, at sinusuri
+  ang signature, issuer, audience at expiry ng ID token. Nakatago ang `state`, `nonce` at PKCE
+  verifier nang sampung minuto sa isang signed na HttpOnly cookie.
+- Ang `http://` na walang encryption para sa issuer ay para lang sa pagsubok nang lokal. Gumamit ng
+  HTTPS sa iba pang pagkakataon.
+- Tinatapos ng **Mag-logout** ang session sa app at, pagkatapos ng single sign-on, pati sa provider,
+  saka bumabalik sa pahina ng login.
+- Kapag na-lock ang isang tao sa provider, hindi na siya makakapag-login ulit. Pero valid pa rin ang
+  session na bukas na sa app hanggang mag-expire ito (`SESSION_MAX_AGE_SECONDS`, isang araw bilang
+  default). Para tapusin ito agad, magtakda ng bagong password para sa account sa **Account → Mga
+  user**; ila-logout nito ang account kahit saan.
+
+### 9.6 Pag-aayos ng problema
+
+**"Pumalya ang single sign-on"**
+Sinasabi ng log ng app (`docker logs pocketdimension`) ang dahilan. Karaniwan: maling `OIDC_ISSUER`,
+hindi maabot ang provider mula sa container, maling client secret.
+
+**Ipinapakita ng Keycloak ang "Invalid parameter: redirect_uri"**
+Hindi eksaktong tugma ang address sa **Valid redirect URIs**. Dapat ito ang address na ginagamit sa
+pagbukas ng app, dagdag ang `/auth/oidc/callback`. Kapag nasa likod ng proxy, tingnan ang `ORIGIN`.
+
+**Hindi nailalapat ang role ng administrator**
+Wala ang claim sa ID token at userinfo. Sa Keycloak, i-on ang **Add to ID token** sa mapper na
+"realm roles" (hakbang 5 sa 9.1) at tingnan ang `OIDC_ROLES_CLAIM`.
