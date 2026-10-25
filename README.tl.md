@@ -176,9 +176,36 @@ ang mga paliwanag.
 | `ENFORCE_MEMORY_LIMITS`   | `true`                           | Sa `false`, tumatakbo ang mga game container nang walang memory limit.                                            |
 | `CATALOG_URL`             | `catalog/catalog.json` sa GitHub | Shared na catalog ng mga laro. Walang laman = mga kasamang laro lang, walang network access.                      |
 | `CATALOG_SYNC_HOURS`      | `24`                             | Mga oras sa pagitan ng mga update ng catalog; `0` = sa button lang.                                               |
+| `OIDC_ISSUER`             | –                                | Single sign-on: issuer address ng OpenID Connect provider (tingnan ang 9).                                        |
+| `OIDC_CLIENT_ID`          | –                                | Client ID na nakarehistro sa provider.                                                                            |
+| `OIDC_CLIENT_SECRET`      | –                                | Client secret; walang laman para sa public client.                                                                |
+| `OIDC_NAME`               | `SSO`                            | Pangalan sa login button ("Mag-login gamit ang …").                                                               |
+| `OIDC_SCOPES`             | `openid email profile`           | Mga scope na hinihingi sa provider.                                                                               |
+| `OIDC_AUTO_CREATE`        | `true`                           | `false` = mga dati nang account lang ang makakapag-login.                                                         |
+| `OIDC_ROLES_CLAIM`        | `roles`                          | Claim na may mga role o group, hal. `realm_access.roles`.                                                         |
+| `OIDC_ADMIN_ROLE`         | –                                | Role o group na gumagawang administrator sa isang tao. Walang laman = sa app pinamamahalaan ang mga role.         |
+| `LOCAL_LOGIN`             | `true`                           | `false` = single sign-on lang (kapag naka-set up ang OIDC).                                                       |
 
 Ang app mismo ang gumagawa ng Docker network na `POCKET_DIMENSION_NETWORK` sa unang start; wala
 kang kailangang i-configure dito.
+
+### Single sign-on (OpenID Connect)
+
+Opsyonal na pag-login sa pamamagitan ng Keycloak o ibang OpenID Connect provider, bukod sa
+karaniwang login gamit ang password. Magrehistro ng client na may redirect URI na
+`https://<iyong-app>/auth/oidc/callback` at i-set ang:
+
+```bash
+OIDC_ISSUER=https://sso.example.com/realms/games
+OIDC_CLIENT_ID=pocketdimension
+OIDC_CLIENT_SECRET=...
+OIDC_NAME=Keycloak
+```
+
+Magkakaroon ng account ang mga bagong user sa una nilang pag-login; ili-link ang dati nang account
+kapag na-verify ng provider ang email nito. Sa `OIDC_ADMIN_ROLE`, sumusunod sa provider ang role ng
+administrator. Nasa [manwal ng operator, seksyon 9](docs/tl/operator-manual.md#9-single-sign-on) ang
+hakbang-hakbang na pag-set up ng Keycloak.
 
 ## Nang walang Docker
 

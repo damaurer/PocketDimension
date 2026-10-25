@@ -29,6 +29,9 @@ export default {
 	'label.create': 'Crear usuario',
 	'login.welcome': '¡Bienvenido, <strong>{{name}}</strong>! Ya puedes usar la aplicación.',
 	'login.tagline': 'Tus propios servidores de juegos, a un clic.',
+	'login.or': 'o',
+	'login.sso': 'Iniciar sesión con {{name}}',
+	'account.sso': 'Inicias sesión con {{name}}. Tu correo y tu contraseña se gestionan allí.',
 	'login.noAccount': '¿No tienes cuenta? Pídesela a tu administrador.',
 
 	about: 'Acerca de Pocket Dimension',

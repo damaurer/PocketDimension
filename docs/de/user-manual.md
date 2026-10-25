@@ -62,7 +62,12 @@ Projekts.
 `https://games.example.com` oder `http://192.168.0.10:3000`. Melde dich mit deiner **E-Mail oder
 deinem Benutzernamen** und deinem **Passwort** an.
 
+Nutzt deine Installation Single Sign-on, zeigt die Anmeldeseite zusätzlich einen Knopf wie **Mit
+Keycloak anmelden**. Klick darauf, melde dich auf der Anmeldeseite deiner Organisation an, und du
+kommst angemeldet zurück. Manche Installationen zeigen nur diesen Knopf.
+
 - **Kein Konto?** Selbst registrieren kann man sich nicht. Frag den Administrator der Installation.
+  Mit Single Sign-on wird dein Konto bei der ersten Anmeldung angelegt.
 - **Zu viele Fehlversuche:** Nach 10 falschen Passwörtern für dasselbe Konto sperrt die App weitere
   Versuche für bis zu 15 Minuten. Die Meldung nennt die Wartezeit.
 - **Wie lange bleibe ich angemeldet?** Standardmäßig einen Tag. Danach meldest du dich neu an.
@@ -73,7 +78,8 @@ deinem Benutzernamen** und deinem **Passwort** an.
 - **Handy und dunkler Modus:** Die Oberfläche passt sich an kleine Bildschirme an und folgt dem
   hellen oder dunklen Modus deines Geräts.
 
-Abmelden kannst du dich jederzeit oben rechts mit **Abmelden**.
+Abmelden kannst du dich jederzeit oben rechts mit **Abmelden**. Nach einem Single Sign-on meldet
+dich das auch beim Anmeldedienst ab.
 
 ## 2. Ein Spiel aussuchen
 
@@ -235,6 +241,9 @@ Das Gerät, an dem du das Passwort änderst, bleibt angemeldet.
 **Passwort vergessen?** Eine „Passwort vergessen“-Funktion per E-Mail gibt es nicht. Ein
 Administrator kann dir unter **Konto → Benutzer** ein neues Passwort setzen.
 
+**Mit Single Sign-on angemeldet?** Dann werden E-Mail und Passwort beim Anmeldedienst verwaltet.
+In deinem Profil kannst du nur den Namen ändern.
+
 ## 8. Häufige Fragen
 
 **Mein Server hängt bei „Wird heruntergeladen“.**
@@ -296,6 +305,12 @@ Unter **Konto** steht neben deinem Profil die Liste **Benutzer** mit allen ander
   versehentlich selbst die Adminrechte nehmen.
 - Konten lassen sich nicht löschen. Um jemanden auszusperren, setze ein neues, unbekanntes Passwort.
   Seine Server bleiben bestehen, bis du sie löschst.
+
+**Single Sign-on:** Nutzt die Installation es, bekommen Personen bei ihrer ersten Anmeldung
+automatisch ein Spielerkonto. Ob jemand Administrator ist, kann dann der Anmeldedienst entscheiden;
+in dem Fall wird ein geänderter Haken bei **Administrator** in dieser Liste bei der nächsten
+Anmeldung der Person zurückgesetzt. Frag die Person, die die Installation betreibt (siehe Abschnitt 9
+im Bedienerhandbuch).
 
 ## 10. Alle Server im Blick
 

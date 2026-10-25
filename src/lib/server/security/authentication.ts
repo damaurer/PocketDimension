@@ -72,6 +72,7 @@ export function hashPassword(password: string): Promise<string> {
 	return bcrypt.hash(password, BCRYPT_ROUNDS);
 }
 
+/** An empty hash belongs to a single sign-on account and never matches. */
 export function verifyPassword(password: string, hash: string | undefined): Promise<boolean> {
-	return bcrypt.compare(password, hash ?? DUMMY_HASH).then((ok) => ok && hash !== undefined);
+	return bcrypt.compare(password, hash || DUMMY_HASH).then((ok) => ok && Boolean(hash));
 }

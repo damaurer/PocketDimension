@@ -60,7 +60,12 @@ GitHub issues.
 Open the address your administrator gave you, for example `https://games.example.com` or
 `http://192.168.0.10:3000`. Log in with your **email or user name** and your **password**.
 
-- **No account?** You cannot sign up yourself. Ask the administrator of the installation.
+If your installation uses single sign-on, the login page also shows a button such as **Sign in
+with Keycloak**. Click it, log in on your organisation's login page, and you come back logged in.
+Some installations only show this button.
+
+- **No account?** You cannot sign up yourself. Ask the administrator of the installation. With
+  single sign-on, your account is created the first time you sign on.
 - **Too many failed attempts:** after 10 wrong passwords for the same account, the app blocks
   further attempts for up to 15 minutes. The message tells you how long to wait.
 - **How long do I stay logged in?** One day by default. After that you log in again. The
@@ -71,7 +76,8 @@ Open the address your administrator gave you, for example `https://games.example
 - **Phone and dark mode:** the interface adapts to small screens and follows your device's light
   or dark mode.
 
-You can log out at any time with **Logout** at the top right.
+You can log out at any time with **Logout** at the top right. After a single sign-on this also logs
+you out at the sign-on service.
 
 ## 2. Choosing a game
 
@@ -228,6 +234,9 @@ you change it on stays logged in.
 **Forgot your password?** There is no "forgot password" by email. An administrator can set a new
 password for you under **Account → Users**.
 
+**Signed in with single sign-on?** Then your email and password are managed by the sign-on
+service. In your profile you can only change your name.
+
 ## 8. Frequently asked questions
 
 **My server is stuck at "Downloading".**
@@ -287,6 +296,11 @@ Under **Account**, next to your profile, the **Users** list shows all other acco
   remove your own admin rights.
 - Accounts cannot be deleted. To lock someone out, set a new password they do not know. Their
   servers stay until you delete them.
+
+**Single sign-on:** if the installation uses it, people get a player account automatically the
+first time they sign on. Whether someone is an administrator may then be decided by the sign-on
+service; in that case changes to the **Administrator** tick in this list are undone at the person's
+next sign-on. Ask whoever runs the installation (see section 9 of the operator manual).
 
 ## 10. All servers at a glance
 

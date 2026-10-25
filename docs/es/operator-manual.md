@@ -22,6 +22,7 @@ interfaz los jugadores y administradores se explica en el [manual de usuario](us
 - [6. Actualizaciones, copias de seguridad y registros](#6-actualizaciones-copias-de-seguridad-y-registros)
 - [7. Jugadores en vivo y catálogo de juegos](#7-jugadores-en-vivo-y-catálogo-de-juegos)
 - [8. Solución de problemas](#8-solución-de-problemas)
+- [9. Inicio de sesión único](#9-inicio-de-sesión-único)
 
 ---
 
@@ -335,6 +336,15 @@ Todos los ajustes son variables de entorno. Hay una plantilla con comentarios en
 | `ENFORCE_MEMORY_LIMITS`   | `true`                             | `false` inicia los juegos sin el límite de memoria de su plantilla.                                            |
 | `CATALOG_URL`             | catálogo del repositorio de GitHub | Dirección del catálogo compartido de juegos (ver 7.2). Vacío = solo los juegos incluidos con la aplicación.    |
 | `CATALOG_SYNC_HOURS`      | `24`                               | Horas entre consultas automáticas del catálogo. `0` = solo con el botón.                                       |
+| `OIDC_ISSUER`             | –                                  | Inicio de sesión único: dirección del issuer del proveedor OpenID Connect (ver 9).                             |
+| `OIDC_CLIENT_ID`          | –                                  | Client ID registrado en el proveedor.                                                                          |
+| `OIDC_CLIENT_SECRET`      | –                                  | Client secret; vacío para un cliente público.                                                                  |
+| `OIDC_NAME`               | `SSO`                              | Nombre en el botón de inicio de sesión («Iniciar sesión con …»).                                               |
+| `OIDC_SCOPES`             | `openid email profile`             | Scopes que se piden al proveedor.                                                                              |
+| `OIDC_AUTO_CREATE`        | `true`                             | `false` = solo las cuentas existentes pueden entrar.                                                           |
+| `OIDC_ROLES_CLAIM`        | `roles`                            | Claim con roles o grupos, p. ej. `realm_access.roles`.                                                         |
+| `OIDC_ADMIN_ROLE`         | –                                  | Rol o grupo que hace administrador a alguien. Vacío = los roles se gestionan en la aplicación.                 |
+| `LOCAL_LOGIN`             | `true`                             | `false` = solo inicio de sesión único (si OIDC está configurado).                                              |
 
 ## 6. Actualizaciones, copias de seguridad y registros
 
@@ -490,3 +500,111 @@ entonces se crea una cuenta de administrador adicional.
 Infórmalo en
 [github.com/damaurer/PocketDimension/issues](https://github.com/damaurer/PocketDimension/issues) o
 con **Informar de un problema** abajo en la aplicación.
+
+## 9. Inicio de sesión único
+
+Además del inicio de sesión normal con nombre y contraseña, Pocket Dimension puede permitir entrar
+a través de un proveedor OpenID Connect, por ejemplo Keycloak, Authentik, Authelia, Zitadel o
+Microsoft Entra ID. Está desactivado hasta que se definen `OIDC_ISSUER` y `OIDC_CLIENT_ID`. Entonces
+la página de inicio de sesión muestra un botón **Iniciar sesión con …** debajo del formulario normal.
+
+### 9.1 Configurar Keycloak
+
+1. En tu realm, abre **Clients → Create client**. Client type _OpenID Connect_, Client ID por
+   ejemplo `pocketdimension`.
+2. Activa **Client authentication** y deja marcado solo **Standard flow**.
+3. En **Login settings** introduce (con tu propia dirección):
+   - **Valid redirect URIs:** `https://games.example.com/auth/oidc/callback`
+   - **Valid post logout redirect URIs:** `https://games.example.com/`
+   - **Web origins:** `https://games.example.com`
+4. Copia el **Client secret** de la pestaña **Credentials**.
+5. Opcional, derechos de administrador desde Keycloak (ver 9.3): crea un rol de realm, por ejemplo
+   `pocketdimension-admin`, y asígnalo a quienes deban ser administradores. De forma predeterminada
+   Keycloak pone los roles de realm solo en el access token, así que abre **Client scopes → roles →
+   Mappers → realm roles** y activa **Add to ID token** y **Add to userinfo**.
+
+Después inicia Pocket Dimension con estas variables adicionales:
+
+```bash
+OIDC_ISSUER=https://sso.example.com/realms/games
+OIDC_CLIENT_ID=pocketdimension
+OIDC_CLIENT_SECRET=<client secret>
+OIDC_NAME=Keycloak
+# opcional, ver 9.3
+OIDC_ROLES_CLAIM=realm_access.roles
+OIDC_ADMIN_ROLE=pocketdimension-admin
+```
+
+`OIDC_ISSUER` es la dirección bajo la que está `/.well-known/openid-configuration`; en Keycloak es
+`https://<keycloak>/realms/<realm>`. La propia aplicación (dentro de su contenedor) debe poder
+alcanzarla. Otros proveedores funcionan igual: registra una aplicación web con la URI de
+redirección del paso 3 y usa el issuer, el client ID y el secreto que te den.
+
+Detrás de un proxy inverso, define `ORIGIN` (sección 4), porque la URI de redirección se construye a
+partir de ella.
+
+### 9.2 Cuentas
+
+- **Primer inicio de sesión:** la aplicación crea una cuenta con el correo y el nombre de usuario
+  del proveedor. No tiene contraseña y su correo solo se puede cambiar en el proveedor. Con
+  `OIDC_AUTO_CREATE=false` no se crean cuentas; entonces solo pueden entrar personas con una cuenta
+  existente.
+- **Cuentas existentes:** si ya existe una cuenta con el mismo correo, se vincula en el primer
+  inicio de sesión, pero solo si el proveedor marca el correo como verificado (`email_verified`; en
+  Keycloak, el interruptor **Email verified** del usuario). Si no, la página de inicio de sesión
+  indica que el correo ya está en uso. Una cuenta vinculada puede entrar de las dos formas.
+- La cuenta está ligada al ID de usuario del proveedor (`sub`), no al correo. Si el correo cambia
+  después en el proveedor, no se crea una segunda cuenta.
+- Un administrador puede poner una contraseña a una cuenta de inicio de sesión único en **Cuenta →
+  Usuarios**. Entonces también puede entrar con el formulario normal.
+
+### 9.3 Rol de administrador desde el proveedor
+
+Sin `OIDC_ADMIN_ROLE`, los roles se gestionan en la aplicación como antes: las cuentas nuevas son
+jugadores y un administrador las promueve.
+
+Con `OIDC_ADMIN_ROLE`, decide el proveedor. En cada inicio de sesión la aplicación lee el claim
+indicado en `OIDC_ROLES_CLAIM` del ID token y de userinfo. El valor predeterminado es `roles`; un
+punto lee un claim anidado, como `realm_access.roles` de Keycloak; para grupos usa por ejemplo
+`groups`. Si el claim contiene el valor de `OIDC_ADMIN_ROLE`, la cuenta pasa a ser administrador; si
+no, pierde los derechos de administrador. Los cambios del rol en la aplicación se sobrescriben en el
+siguiente inicio de sesión.
+
+> **Atención:** esto también vale para cuentas vinculadas, incluido el primer administrador de
+> `DB_ADMIN_EMAIL`. Asígnate el rol en el proveedor antes de entrar con esa cuenta, o después ya no
+> será administrador.
+
+### 9.4 Solo inicio de sesión único
+
+`LOCAL_LOGIN=false` oculta el formulario de contraseña y rechaza los inicios de sesión con
+contraseña. Solo tiene efecto cuando OIDC está configurado. Asegúrate antes de que al menos un
+administrador pueda entrar a través del proveedor. Si el proveedor no funciona, reinicia la
+aplicación sin `LOCAL_LOGIN=false` para volver a entrar.
+
+### 9.5 Seguridad
+
+- La aplicación usa el flujo de código de autorización con PKCE (S256), `state` y `nonce`, y
+  comprueba la firma, el emisor, el destinatario y la caducidad del ID token. `state`, `nonce` y el
+  verificador PKCE se guardan diez minutos en una cookie HttpOnly firmada.
+- `http://` sin cifrar para el issuer solo se acepta para probar en local. En otro caso usa HTTPS.
+- **Cerrar sesión** termina la sesión en la aplicación y, tras un inicio de sesión único, también en
+  el proveedor, y luego vuelve a la página de inicio de sesión.
+- Bloquear a alguien en el proveedor impide nuevos inicios de sesión. Una sesión ya abierta en la
+  aplicación sigue siendo válida hasta que caduca (`SESSION_MAX_AGE_SECONDS`, un día de forma
+  predeterminada). Para terminarla enseguida, pon una contraseña nueva a la cuenta en **Cuenta →
+  Usuarios**; eso la desconecta en todas partes.
+
+### 9.6 Solución de problemas
+
+**«El inicio de sesión único falló»**
+El registro de la aplicación (`docker logs pocketdimension`) indica el motivo. Lo habitual:
+`OIDC_ISSUER` incorrecto, el proveedor no es accesible desde el contenedor o el client secret es
+incorrecto.
+
+**Keycloak muestra «Invalid parameter: redirect_uri»**
+La dirección de **Valid redirect URIs** no coincide exactamente. Debe ser la dirección con la que
+se abre la aplicación más `/auth/oidc/callback`. Detrás de un proxy, revisa `ORIGIN`.
+
+**No se aplica el rol de administrador**
+El claim falta en el ID token y en userinfo. En Keycloak, activa **Add to ID token** en el mapper
+«realm roles» (paso 5 de 9.1) y revisa `OIDC_ROLES_CLAIM`.

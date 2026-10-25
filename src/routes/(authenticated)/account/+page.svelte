@@ -37,6 +37,7 @@
 			idPrefix="account"
 			user={data.user}
 			ownAccount
+			ssoName={data.ssoName}
 			form={showModal ? undefined : form}
 		/>
 	</section>

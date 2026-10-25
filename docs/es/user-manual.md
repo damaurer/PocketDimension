@@ -61,8 +61,12 @@ Abre la dirección que te dio tu administrador, por ejemplo `https://games.examp
 `http://192.168.0.10:3000`. Inicia sesión con tu **correo o nombre de usuario** y tu
 **contraseña**.
 
+Si tu instalación usa inicio de sesión único, la página de inicio de sesión muestra además un
+botón como **Iniciar sesión con Keycloak**. Haz clic, entra en la página de inicio de sesión de tu
+organización y vuelves con la sesión iniciada. Algunas instalaciones solo muestran este botón.
+
 - **¿No tienes cuenta?** No puedes registrarte tú mismo. Pídesela al administrador de la
-  instalación.
+  instalación. Con inicio de sesión único, tu cuenta se crea la primera vez que entras.
 - **Demasiados intentos fallidos:** después de 10 contraseñas incorrectas para la misma cuenta, la
   aplicación bloquea nuevos intentos durante un máximo de 15 minutos. El mensaje indica cuánto
   esperar.
@@ -74,7 +78,8 @@ Abre la dirección que te dio tu administrador, por ejemplo `https://games.examp
 - **Móvil y modo oscuro:** la interfaz se adapta a pantallas pequeñas y sigue el modo claro u
   oscuro de tu dispositivo.
 
-Puedes cerrar sesión en cualquier momento con **Cerrar sesión**, arriba a la derecha.
+Puedes cerrar sesión en cualquier momento con **Cerrar sesión**, arriba a la derecha. Tras un inicio
+de sesión único, también cierra la sesión en el servicio de inicio de sesión.
 
 ## 2. Elegir un juego
 
@@ -236,6 +241,9 @@ dispositivo en el que la cambias sigue conectado.
 **¿Olvidaste tu contraseña?** No hay recuperación por correo. Un administrador puede ponerte una
 contraseña nueva en **Cuenta → Usuarios**.
 
+**¿Entraste con inicio de sesión único?** Entonces tu correo y tu contraseña se gestionan en el
+servicio de inicio de sesión. En tu perfil solo puedes cambiar el nombre.
+
 ## 8. Preguntas frecuentes
 
 **Mi servidor se queda en «Descargando».**
@@ -297,6 +305,12 @@ En **Cuenta**, junto a tu perfil, la lista **Usuarios** muestra todas las demás
   propios derechos de administrador.
 - Las cuentas no se pueden eliminar. Para bloquear a alguien, ponle una contraseña nueva que no
   conozca. Sus servidores se mantienen hasta que los elimines.
+
+**Inicio de sesión único:** si la instalación lo usa, las personas reciben automáticamente una
+cuenta de jugador la primera vez que entran. Que alguien sea administrador puede decidirlo entonces
+el servicio de inicio de sesión; en ese caso, los cambios en la casilla **Administrador** de esta
+lista se deshacen en el siguiente inicio de sesión de esa persona. Pregunta a quien gestiona la
+instalación (ver la sección 9 del manual del operador).
 
 ## 10. Todos los servidores
 

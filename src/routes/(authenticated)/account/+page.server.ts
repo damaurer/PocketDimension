@@ -15,14 +15,22 @@ import {
 } from '#lib/server/security/validation.ts';
 import { toPublicUser, type UserChanges } from '#lib/server/database/repository/user.repository.ts';
 import { Role } from '#lib/types.ts';
+import { config } from '#lib/server/config.ts';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const user = locals.user!;
 	const users = locals.isAdmin
 		? (await locals.repositories.user.findAllExcept(user.id)).map(toPublicUser)
 		: [];
+	// Accounts created through single sign-on have no password to confirm changes with.
+	const record = await locals.repositories.user.findById(user.id);
 
-	return { user, isAdmin: locals.isAdmin, users };
+	return {
+		user,
+		isAdmin: locals.isAdmin,
+		users,
+		ssoName: record && !record.password ? config.oidc.name : undefined
+	};
 };
 
 /** True for a UNIQUE violation, i.e. the email is already taken. */

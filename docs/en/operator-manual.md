@@ -21,6 +21,7 @@ administrators use the interface is described in the [user manual](user-manual.m
 - [6. Updates, backups and logs](#6-updates-backups-and-logs)
 - [7. Player count and game catalog](#7-player-count-and-game-catalog)
 - [8. Troubleshooting](#8-troubleshooting)
+- [9. Single sign-on](#9-single-sign-on)
 
 ---
 
@@ -326,6 +327,15 @@ All settings are environment variables. A template with comments is in
 | `ENFORCE_MEMORY_LIMITS`   | `true`                           | `false` starts games without the memory limit of their template.                           |
 | `CATALOG_URL`             | catalog in the GitHub repository | Address of the shared game catalog (see 7.2). Empty = only the games shipped with the app. |
 | `CATALOG_SYNC_HOURS`      | `24`                             | Hours between automatic catalog checks. `0` = only with the button.                        |
+| `OIDC_ISSUER`             | –                                | Single sign-on: issuer address of the OpenID Connect provider (see 9).                     |
+| `OIDC_CLIENT_ID`          | –                                | Client ID registered at the provider.                                                      |
+| `OIDC_CLIENT_SECRET`      | –                                | Client secret; empty for a public client.                                                  |
+| `OIDC_NAME`               | `SSO`                            | Name on the login button ("Sign in with …").                                               |
+| `OIDC_SCOPES`             | `openid email profile`           | Scopes requested from the provider.                                                        |
+| `OIDC_AUTO_CREATE`        | `true`                           | `false` = only existing accounts can sign on.                                              |
+| `OIDC_ROLES_CLAIM`        | `roles`                          | Claim with roles or groups, e.g. `realm_access.roles`.                                     |
+| `OIDC_ADMIN_ROLE`         | –                                | Role or group that makes someone administrator. Empty = roles are managed in the app.      |
+| `LOCAL_LOGIN`             | `true`                           | `false` = only single sign-on (when OIDC is set up).                                       |
 
 ## 6. Updates, backups and logs
 
@@ -477,3 +487,106 @@ administrator account is then created.
 Report it at
 [github.com/damaurer/PocketDimension/issues](https://github.com/damaurer/PocketDimension/issues) or
 with **Report a problem** at the bottom of the app.
+
+## 9. Single sign-on
+
+Besides the normal login with name and password, Pocket Dimension can let people sign in through
+an OpenID Connect provider, for example Keycloak, Authentik, Authelia, Zitadel or Microsoft Entra
+ID. It stays off until `OIDC_ISSUER` and `OIDC_CLIENT_ID` are set. The login page then shows a
+**Sign in with …** button below the normal form.
+
+### 9.1 Setting up Keycloak
+
+1. In your realm, open **Clients → Create client**. Client type _OpenID Connect_, Client ID for
+   example `pocketdimension`.
+2. Turn on **Client authentication** and keep only **Standard flow** ticked.
+3. Under **Login settings** enter (with your own address):
+   - **Valid redirect URIs:** `https://games.example.com/auth/oidc/callback`
+   - **Valid post logout redirect URIs:** `https://games.example.com/`
+   - **Web origins:** `https://games.example.com`
+4. Copy the **Client secret** from the **Credentials** tab.
+5. Optional, administrator rights from Keycloak (see 9.3): create a realm role, for example
+   `pocketdimension-admin`, and assign it to the people who should be administrators. Keycloak puts
+   realm roles only into the access token by default, so open **Client scopes → roles → Mappers →
+   realm roles** and turn on **Add to ID token** and **Add to userinfo**.
+
+Then start Pocket Dimension with these additional variables:
+
+```bash
+OIDC_ISSUER=https://sso.example.com/realms/games
+OIDC_CLIENT_ID=pocketdimension
+OIDC_CLIENT_SECRET=<client secret>
+OIDC_NAME=Keycloak
+# optional, see 9.3
+OIDC_ROLES_CLAIM=realm_access.roles
+OIDC_ADMIN_ROLE=pocketdimension-admin
+```
+
+`OIDC_ISSUER` is the address under which `/.well-known/openid-configuration` can be found; for
+Keycloak that is `https://<keycloak>/realms/<realm>`. The app itself (inside its container) must be
+able to reach it. Other providers work the same way: register a web application with the redirect
+URI from step 3 and use the issuer, client ID and secret they give you.
+
+Behind a reverse proxy, set `ORIGIN` (section 4), because the redirect URI is built from it.
+
+### 9.2 Accounts
+
+- **First sign-on:** the app creates an account with the email and user name from the provider.
+  It has no password, and its email can only be changed at the provider. With
+  `OIDC_AUTO_CREATE=false` no accounts are created; then only people with an existing account can
+  sign on.
+- **Existing accounts:** if an account with the same email already exists, it is linked on the
+  first sign-on, but only if the provider marks the email as verified (`email_verified`; in Keycloak
+  the **Email verified** switch on the user). Otherwise the login page says that the email is
+  already in use. A linked account can use both ways to log in.
+- The account is tied to the user ID at the provider (`sub`), not to the email. A later change of
+  the email at the provider does not create a second account.
+- An administrator can set a password for a single sign-on account under **Account → Users**. The
+  account can then also log in with the normal form.
+
+### 9.3 Administrator role from the provider
+
+Without `OIDC_ADMIN_ROLE`, roles are managed in the app as before: new accounts are players, and an
+administrator promotes them.
+
+With `OIDC_ADMIN_ROLE`, the provider decides. On every sign-on the app reads the claim named in
+`OIDC_ROLES_CLAIM` from the ID token and userinfo. The default is `roles`; a dot reads a nested
+claim, such as Keycloak's `realm_access.roles`; for groups use for example `groups`. If the claim
+contains the value of `OIDC_ADMIN_ROLE`, the account becomes administrator; if not, it loses
+administrator rights. Changes to the role in the app are overwritten at the next sign-on.
+
+> **Caution:** this also applies to linked accounts, including the first administrator from
+> `DB_ADMIN_EMAIL`. Give yourself the role at the provider before you sign on with that account,
+> or it is no longer administrator afterwards.
+
+### 9.4 Single sign-on only
+
+`LOCAL_LOGIN=false` hides the password form and rejects password logins. It only takes effect
+when OIDC is configured. Make sure first that at least one administrator can sign on through the
+provider. If the provider is down, restart the app without `LOCAL_LOGIN=false` to get back in.
+
+### 9.5 Security
+
+- The app uses the authorization code flow with PKCE (S256), `state` and `nonce`, and checks the
+  signature, issuer, audience and expiry of the ID token. `state`, `nonce` and the PKCE verifier are
+  kept in a signed HttpOnly cookie for ten minutes.
+- Plain `http://` for the issuer is accepted only for trying it out locally. Use HTTPS otherwise.
+- **Logout** ends the session in the app and, after a single sign-on, also at the provider, and
+  then returns to the login page.
+- Locking someone out at the provider stops new sign-ons. A session that is already open in the app
+  stays valid until it expires (`SESSION_MAX_AGE_SECONDS`, one day by default). To end it at once,
+  set a new password for the account under **Account → Users**; that logs it out everywhere.
+
+### 9.6 Troubleshooting
+
+**"Single sign-on failed"**
+The app log (`docker logs pocketdimension`) names the reason. Common ones: wrong `OIDC_ISSUER`, the
+provider cannot be reached from the container, wrong client secret.
+
+**Keycloak shows "Invalid parameter: redirect_uri"**
+The address in **Valid redirect URIs** does not match exactly. It must be the address the app is
+opened with plus `/auth/oidc/callback`. Behind a proxy, check `ORIGIN`.
+
+**Administrator role is not applied**
+The claim is missing from the ID token and userinfo. In Keycloak, turn on **Add to ID token** for
+the realm roles mapper (step 5 in 9.1) and check `OIDC_ROLES_CLAIM`.

@@ -173,9 +173,36 @@ comentarios.
 | `ENFORCE_MEMORY_LIMITS`   | `true`                           | `false` ejecuta los contenedores de juegos sin su límite de memoria.                                         |
 | `CATALOG_URL`             | `catalog/catalog.json` en GitHub | Catálogo compartido de juegos. Vacío = solo los juegos incluidos, sin acceso a la red.                       |
 | `CATALOG_SYNC_HOURS`      | `24`                             | Horas entre actualizaciones del catálogo; `0` = solo con el botón.                                           |
+| `OIDC_ISSUER`             | –                                | Inicio de sesión único: dirección del issuer del proveedor OpenID Connect (ver 9).                           |
+| `OIDC_CLIENT_ID`          | –                                | Client ID registrado en el proveedor.                                                                        |
+| `OIDC_CLIENT_SECRET`      | –                                | Client secret; vacío para un cliente público.                                                                |
+| `OIDC_NAME`               | `SSO`                            | Nombre en el botón de inicio de sesión («Iniciar sesión con …»).                                             |
+| `OIDC_SCOPES`             | `openid email profile`           | Scopes que se piden al proveedor.                                                                            |
+| `OIDC_AUTO_CREATE`        | `true`                           | `false` = solo las cuentas existentes pueden entrar.                                                         |
+| `OIDC_ROLES_CLAIM`        | `roles`                          | Claim con roles o grupos, p. ej. `realm_access.roles`.                                                       |
+| `OIDC_ADMIN_ROLE`         | –                                | Rol o grupo que hace administrador a alguien. Vacío = los roles se gestionan en la aplicación.               |
+| `LOCAL_LOGIN`             | `true`                           | `false` = solo inicio de sesión único (si OIDC está configurado).                                            |
 
 La aplicación crea la red Docker `POCKET_DIMENSION_NETWORK` en el primer inicio; no hay nada que
 configurar.
+
+### Inicio de sesión único (OpenID Connect)
+
+Inicio de sesión opcional con Keycloak u otro proveedor OpenID Connect, además del inicio de sesión
+normal con contraseña. Registra un cliente con la URI de redirección
+`https://<tu-app>/auth/oidc/callback` y define:
+
+```bash
+OIDC_ISSUER=https://sso.example.com/realms/games
+OIDC_CLIENT_ID=pocketdimension
+OIDC_CLIENT_SECRET=...
+OIDC_NAME=Keycloak
+```
+
+Los usuarios nuevos reciben una cuenta en su primer inicio de sesión; una cuenta existente se
+vincula cuando el proveedor ha verificado su correo. Con `OIDC_ADMIN_ROLE` el rol de administrador
+sigue al proveedor. La configuración de Keycloak paso a paso está en el
+[manual del operador, sección 9](docs/es/operator-manual.md#9-inicio-de-sesión-único).
 
 ## Sin Docker
 

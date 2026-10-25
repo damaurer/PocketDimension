@@ -11,6 +11,7 @@ import { toPublicUser } from '#lib/server/database/repository/user.repository.ts
 import { isAdmin } from '#lib/utils.ts';
 import { pickLocale } from '#lib/i18n/i18n.ts';
 import { config } from '#lib/server/config.ts';
+import { providerOrigins } from '#lib/server/security/oidc.ts';
 
 const SECURITY_HEADERS: Record<string, string> = {
 	'X-Content-Type-Options': 'nosniff',
@@ -79,6 +80,16 @@ export const handle: Handle = async ({ event, resolve }) => {
 		transformPageChunk: ({ html }) =>
 			html.replace('<html lang="en">', `<html lang="${event.locals.locale}">`)
 	});
+
+	// Logging out after a single sign-on sends the logout form on to the provider.
+	const csp = response.headers.get('content-security-policy');
+	const origins = providerOrigins();
+	if (csp && origins.length > 0) {
+		response.headers.set(
+			'content-security-policy',
+			csp.replace("form-action 'self'", `form-action 'self' ${origins.join(' ')}`)
+		);
+	}
 
 	for (const [header, value] of Object.entries(SECURITY_HEADERS)) {
 		response.headers.set(header, value);
