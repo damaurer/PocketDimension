@@ -163,7 +163,7 @@ En los servidores en marcha, la tarjeta muestra:
 Jugadores, mapa y versión solo están disponibles en juegos con **Jugadores en vivo**. Son Minecraft
 (Java y Bedrock), Valheim, Counter-Strike 2, Team Fortress 2, Rust, Project Zomboid, Satisfactory,
 7 Days to Die, Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest y OpenTTD. Terraria,
-Factorio, Palworld, Core Keeper y Necesse solo muestran CPU, memoria y el estado.
+Factorio, Palworld, Core Keeper, Necesse y OpenRA solo muestran CPU, memoria y el estado.
 
 Si dice **«El servidor todavía no responde»**, normalmente el juego aún está arrancando. Dale a los
 juegos grandes unos minutos en su primer inicio.

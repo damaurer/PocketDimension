@@ -222,7 +222,7 @@ Mehr im [Bedienerhandbuch, Abschnitt 8](docs/de/operator-manual.md#8-fehlerbeheb
 
 Der Katalog bringt Minecraft (Java und Bedrock), Valheim, Terraria, Factorio, Counter-Strike 2,
 Team Fortress 2, Palworld, Satisfactory, Rust, Core Keeper, Project Zomboid, 7 Days to Die,
-Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse und OpenTTD mit.
+Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse, OpenTTD und OpenRA mit.
 Administratoren können diese deaktivieren und jedes andere Spiel, das in Docker läuft, unter
 **Spiele → Neue Spielvorlage** hinzufügen (Image, Ports, Datenverzeichnisse und die Variablen, die
 Spieler setzen dürfen). Jeder Server bekommt eigene Docker-Volumes; ein zweiter Server desselben

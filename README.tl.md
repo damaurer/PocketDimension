@@ -227,7 +227,7 @@ Higit pa sa [manwal ng operator, seksyon 8](docs/tl/operator-manual.md#8-pag-aay
 
 Kasama sa catalog ang Minecraft (Java at Bedrock), Valheim, Terraria, Factorio, Counter-Strike 2,
 Team Fortress 2, Palworld, Satisfactory, Rust, Core Keeper, Project Zomboid, 7 Days to Die,
-Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse at OpenTTD. Puwedeng
+Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse, OpenTTD at OpenRA. Puwedeng
 i-disable ng mga administrator ang mga ito at magdagdag ng kahit anong larong tumatakbo sa Docker
 sa **Mga laro → Bagong game template** (image, mga port, mga data directory at ang mga variable na
 puwedeng itakda ng mga player). May sariling Docker volume ang bawat server; ang pangalawang server

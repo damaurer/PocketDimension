@@ -37,7 +37,9 @@ export const DESCRIPTIONS: Record<Language, Record<string, string>> = {
 		necesse:
 			'Sandbox-Abenteuer von oben mit Siedlungen. Beim ersten Start wird eine neue Welt erstellt.',
 		openttd:
-			'Open-Source-Transport-Tycoon. Startet ein neues Spiel oder setzt den letzten Autosave fort.'
+			'Open-Source-Transport-Tycoon. Startet ein neues Spiel oder setzt den letzten Autosave fort.',
+		openra:
+			'Open-Source-Neuauflage von Command & Conquer: Alarmstufe Rot, Tiberian Dawn und Dune 2000. Spieler brauchen den kostenlosen OpenRA-Client von openra.net und treten über „Direkt verbinden“ bei.'
 	},
 	es: {
 		'minecraft-java':
@@ -71,7 +73,9 @@ export const DESCRIPTIONS: Record<Language, Record<string, string>> = {
 		necesse:
 			'Aventura sandbox vista desde arriba con asentamientos. En el primer inicio se crea un mundo nuevo.',
 		openttd:
-			'Transport tycoon de código abierto. Empieza una partida nueva o continúa el último autoguardado.'
+			'Transport tycoon de código abierto. Empieza una partida nueva o continúa el último autoguardado.',
+		openra:
+			'Remake de código abierto de Command & Conquer: Red Alert, Tiberian Dawn y Dune 2000. Los jugadores necesitan el cliente gratuito de OpenRA de openra.net y se unen con «Conexión directa».'
 	},
 	tl: {
 		'minecraft-java':
@@ -105,7 +109,9 @@ export const DESCRIPTIONS: Record<Language, Record<string, string>> = {
 		necesse:
 			'Top-down na sandbox adventure na may mga pamayanan. Gagawa ng bagong mundo sa unang start.',
 		openttd:
-			'Open-source na transport tycoon. Magsisimula ng bagong laro o itutuloy ang huling autosave.'
+			'Open-source na transport tycoon. Magsisimula ng bagong laro o itutuloy ang huling autosave.',
+		openra:
+			'Open-source na remake ng Command & Conquer: Red Alert, Tiberian Dawn at Dune 2000. Kailangan ng mga player ang libreng OpenRA client mula sa openra.net at sumasali sila gamit ang Direct Connect.'
 	}
 };
 
@@ -169,7 +175,9 @@ export const LABELS: Record<Language, Record<string, string>> = {
 		'Pause when nobody is online (0 no, 1 yes)':
 			'Pausieren, wenn niemand online ist (0 nein, 1 ja)',
 		'Start with (false new game, last-autosave continue)':
-			'Starten mit (false neues Spiel, last-autosave fortsetzen)'
+			'Starten mit (false neues Spiel, last-autosave fortsetzen)',
+		'Game (ra Red Alert, cnc Tiberian Dawn, d2k Dune 2000)':
+			'Spiel (ra Alarmstufe Rot, cnc Tiberian Dawn, d2k Dune 2000)'
 	},
 	es: {
 		// ports
@@ -231,7 +239,9 @@ export const LABELS: Record<Language, Record<string, string>> = {
 		'Pause when nobody is online (0 no, 1 yes)':
 			'Pausar cuando no hay nadie conectado (0 no, 1 sí)',
 		'Start with (false new game, last-autosave continue)':
-			'Empezar con (false partida nueva, last-autosave continuar)'
+			'Empezar con (false partida nueva, last-autosave continuar)',
+		'Game (ra Red Alert, cnc Tiberian Dawn, d2k Dune 2000)':
+			'Juego (ra Red Alert, cnc Tiberian Dawn, d2k Dune 2000)'
 	},
 	tl: {
 		// ports
@@ -291,7 +301,9 @@ export const LABELS: Record<Language, Record<string, string>> = {
 		'Owner (player name)': 'May-ari (pangalan ng player)',
 		'Pause when nobody is online (0 no, 1 yes)': 'I-pause kapag walang online (0 hindi, 1 oo)',
 		'Start with (false new game, last-autosave continue)':
-			'Simulan sa (false bagong laro, last-autosave ituloy)'
+			'Simulan sa (false bagong laro, last-autosave ituloy)',
+		'Game (ra Red Alert, cnc Tiberian Dawn, d2k Dune 2000)':
+			'Laro (ra Red Alert, cnc Tiberian Dawn, d2k Dune 2000)'
 	}
 };
 
