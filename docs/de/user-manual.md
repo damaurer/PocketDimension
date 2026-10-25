@@ -164,7 +164,7 @@ Bei laufenden Servern zeigt die Karte:
 Spieler, Karte und Version gibt es nur bei Spielen mit **Spieleranzeige**. Das sind Minecraft (Java
 und Bedrock), Valheim, Counter-Strike 2, Team Fortress 2, Rust, Project Zomboid, Satisfactory,
 7 Days to Die, Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest und OpenTTD.
-Terraria, Factorio, Palworld, Core Keeper und Necesse zeigen nur CPU, Arbeitsspeicher und den
+Terraria, Factorio, Palworld, Core Keeper, Necesse und OpenRA zeigen nur CPU, Arbeitsspeicher und den
 Zustand.
 
 Steht dort **„Der Server antwortet noch nicht“**, startet das Spiel meist noch. Gib großen Spielen

@@ -168,7 +168,7 @@ Para sa mga tumatakbong server, ipinapakita ng card ang:
 Ang mga player, mapa at bersyon ay makikita lang sa mga larong may **Bilang ng player**. Ito ay ang
 Minecraft (Java at Bedrock), Valheim, Counter-Strike 2, Team Fortress 2, Rust, Project Zomboid,
 Satisfactory, 7 Days to Die, Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest at
-OpenTTD. Ang Terraria, Factorio, Palworld, Core Keeper at Necesse ay CPU, memory at estado lang ang
+OpenTTD. Ang Terraria, Factorio, Palworld, Core Keeper, Necesse at OpenRA ay CPU, memory at estado lang ang
 ipinapakita.
 
 Kung nakasulat ang **"Hindi pa sumasagot ang server"**, kadalasang nagsisimula pa ang laro. Bigyan

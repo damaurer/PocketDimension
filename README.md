@@ -216,7 +216,7 @@ More in the [operator manual, section 8](docs/en/operator-manual.md#8-troublesho
 
 The catalog ships with Minecraft (Java and Bedrock), Valheim, Terraria, Factorio, Counter-Strike 2,
 Team Fortress 2, Palworld, Satisfactory, Rust, Core Keeper, Project Zomboid, 7 Days to Die,
-Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse and OpenTTD. Administrators can disable these and add any
+Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse, OpenTTD and OpenRA. Administrators can disable these and add any
 other game that runs in Docker under **Games → New game template** (image, ports, data directories
 and the variables players may set). Each server gets its own Docker volumes; a second server of the
 same game gets its ports shifted (e.g. 25575 instead of 25565).

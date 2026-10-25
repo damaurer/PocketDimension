@@ -160,7 +160,7 @@ For running servers the card shows:
 Players, map and version are only available for games with **Player count**. These are Minecraft
 (Java and Bedrock), Valheim, Counter-Strike 2, Team Fortress 2, Rust, Project Zomboid, Satisfactory,
 7 Days to Die, Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest and OpenTTD.
-Terraria, Factorio, Palworld, Core Keeper and Necesse only show CPU, memory and the state.
+Terraria, Factorio, Palworld, Core Keeper, Necesse and OpenRA only show CPU, memory and the state.
 
 If it says **"The server is not answering yet"**, the game is usually still starting. Give big games
 a few minutes on their first start.

@@ -224,7 +224,7 @@ Más en el [manual de operación, sección 8](docs/es/operator-manual.md#8-soluc
 
 El catálogo incluye Minecraft (Java y Bedrock), Valheim, Terraria, Factorio, Counter-Strike 2,
 Team Fortress 2, Palworld, Satisfactory, Rust, Core Keeper, Project Zomboid, 7 Days to Die,
-Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse y OpenTTD. Los
+Enshrouded, V Rising, ARK: Survival Evolved, Sons of the Forest, Necesse, OpenTTD y OpenRA. Los
 administradores pueden desactivarlos y añadir cualquier otro juego que funcione en Docker en
 **Juegos → Nueva plantilla de juego** (imagen, puertos, directorios de datos y las variables que
 pueden definir los jugadores). Cada servidor recibe sus propios volúmenes Docker; un segundo

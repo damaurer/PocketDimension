@@ -1,0 +1,47 @@
+{
+	"version": 1,
+	"slug": "openra",
+	"name": "OpenRA",
+	"description": "Open-source remake of Command & Conquer: Red Alert, Tiberian Dawn and Dune 2000. Players need the free OpenRA client from openra.net and join via Direct Connect.",
+	"image": "m0ngr31/openra:release",
+	"ports": [
+		{
+			"container": 1234,
+			"protocol": "tcp",
+			"label": "Game"
+		}
+	],
+	"env": [
+		{
+			"key": "Mod",
+			"label": "Game (ra Red Alert, cnc Tiberian Dawn, d2k Dune 2000)",
+			"options": ["ra", "cnc", "d2k"],
+			"default": "ra",
+			"required": true
+		},
+		{
+			"key": "Name",
+			"label": "Server name",
+			"default": "PocketDimension",
+			"required": true
+		},
+		{
+			"key": "Password",
+			"label": "Server password",
+			"secret": true
+		},
+		{
+			"key": "AdvertiseOnline",
+			"label": "List in server browser",
+			"options": ["False", "True"],
+			"default": "False"
+		}
+	],
+	"volumes": [
+		{
+			"container": "/home/openra/.openra"
+		}
+	],
+	"memoryMb": 1024,
+	"docsUrl": "https://github.com/m0ngr31/OpenRA-server"
+}
