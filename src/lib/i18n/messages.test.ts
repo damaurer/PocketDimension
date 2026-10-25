@@ -23,6 +23,18 @@ describe('localizeServerMessage', () => {
 		);
 	});
 
+	it('translates access errors shown on the error page', () => {
+		expect(localizeServerMessage('de', 'Only administrators can edit games.')).toBe(
+			'Nur Administratoren dürfen Spiele bearbeiten.'
+		);
+		expect(localizeServerMessage('es', 'Only administrators can manage containers.')).toBe(
+			'Solo los administradores pueden gestionar contenedores.'
+		);
+		expect(localizeServerMessage('de', 'Only administrators can fly.')).toBe(
+			'Only administrators can fly.'
+		);
+	});
+
 	it('keeps unknown messages and English as they are', () => {
 		expect(localizeServerMessage('de', 'Something else')).toBe('Something else');
 		expect(localizeServerMessage('en', 'Server not found.')).toBe('Server not found.');

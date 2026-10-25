@@ -19,7 +19,11 @@
 		string
 	>;
 
-	let { values, message }: { values: Values; message?: string } = $props();
+	let {
+		values,
+		message,
+		slugLocked = false
+	}: { values: Values; message?: string; slugLocked?: boolean } = $props();
 
 	const envExample =
 		'[{ "key": "EULA", "label": "Accept EULA", "options": ["TRUE"], "required": true }]';
@@ -45,6 +49,7 @@
 				required
 				pattern="[a-z0-9]+(-[a-z0-9]+)*"
 				maxlength="40"
+				readonly={slugLocked}
 			/>
 			<span class="hint"><Translate key="template.slugHint" /></span>
 		</div>

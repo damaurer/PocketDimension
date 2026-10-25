@@ -62,3 +62,28 @@ test('admin pulls new games from the online catalog, disabled', async ({ page })
 	await expect(card.getByRole('link', { name: /create server/i })).toHaveCount(0);
 	await expect(page.getByText(/Catalog checked/)).toBeVisible();
 });
+
+test('admin changes to a catalog game survive a catalog update', async ({ page }) => {
+	await page.goto('/');
+	await page.fill('#email_or_name_input', 'admin');
+	await page.fill('#password_input', 'playwright-password');
+	await page.getByRole('button', { name: /login/i }).click();
+	await expect(page).toHaveURL('/servers');
+
+	await page.goto('/games');
+	await page.getByRole('button', { name: /update catalog/i }).click();
+	await expect(page.getByText(/Catalog checked/)).toBeVisible();
+
+	await page.goto('/games/community-test-game/edit');
+	await expect(page.locator('#t_slug')).toHaveAttribute('readonly');
+	await page.fill('#t_image', 'local/community-test:dev');
+	await page.getByRole('button', { name: /save/i }).click();
+	await expect(page).toHaveURL('/games');
+
+	await Promise.all([
+		page.waitForResponse((response) => response.url().includes('syncCatalog')),
+		page.getByRole('button', { name: /update catalog/i }).click()
+	]);
+	await page.goto('/games/community-test-game/edit');
+	await expect(page.locator('#t_image')).toHaveValue('local/community-test:dev');
+});

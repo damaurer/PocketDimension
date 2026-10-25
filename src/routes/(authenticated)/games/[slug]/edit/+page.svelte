@@ -28,6 +28,7 @@
 	<TemplateForm
 		values={form && 'values' in form && form.values ? form.values : data.values}
 		message={form?.message}
+		slugLocked={data.builtin}
 	/>
 
 	<section class="export">

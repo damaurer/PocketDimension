@@ -25,6 +25,13 @@ export const actions: Actions = {
 
 		const { values, value, error: message } = readTemplateForm(await request.formData());
 		if (!value) return fail(400, { values, message });
+		// The catalog finds its games by slug; a renamed one would come back as a second game.
+		if (template.builtin && value.slug !== template.slug) {
+			return fail(400, {
+				values: { ...values, slug: template.slug },
+				message: 'The slug of a game from the catalog cannot be changed.'
+			});
+		}
 
 		const other = await games.findTemplateBySlug(value.slug);
 		if (other && other.id !== template.id) {

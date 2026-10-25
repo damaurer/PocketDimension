@@ -8,7 +8,83 @@ type Replacement = string | ((match: string, ...groups: string[]) => string);
  * says how to write it in the other languages; a message without a rule is
  * shown as it is.
  */
+/** What only administrators may do, as named in "Only administrators can …" errors. */
+const ADMIN_ONLY: Record<string, Record<Language, string>> = {
+	'manage containers': {
+		de: 'Container verwalten',
+		es: 'gestionar contenedores',
+		tl: 'mamahala ng mga container'
+	},
+	'create accounts': { de: 'Konten anlegen', es: 'crear cuentas', tl: 'gumawa ng mga account' },
+	'change other accounts': {
+		de: 'andere Konten ändern',
+		es: 'cambiar otras cuentas',
+		tl: 'magbago ng ibang account'
+	},
+	'add games': { de: 'Spiele hinzufügen', es: 'añadir juegos', tl: 'magdagdag ng mga laro' },
+	'edit games': { de: 'Spiele bearbeiten', es: 'editar juegos', tl: 'mag-edit ng mga laro' },
+	'delete games': { de: 'Spiele löschen', es: 'eliminar juegos', tl: 'magbura ng mga laro' },
+	'export games': { de: 'Spiele exportieren', es: 'exportar juegos', tl: 'mag-export ng mga laro' },
+	'change templates': {
+		de: 'Spielvorlagen ändern',
+		es: 'cambiar plantillas',
+		tl: 'magbago ng mga template'
+	},
+	'update the catalog': {
+		de: 'den Katalog aktualisieren',
+		es: 'actualizar el catálogo',
+		tl: 'mag-update ng catalog'
+	}
+};
+
+const adminOnly =
+	(language: Language, sentence: (action: string) => string) => (match: string, action: string) => {
+		const translated = ADMIN_ONLY[action]?.[language];
+		return translated ? sentence(translated) : match;
+	};
+
 const RULES: [RegExp, Record<Language, Replacement>][] = [
+	// Access and requests
+	[
+		/^Only administrators can (.+)\.$/,
+		{
+			de: adminOnly('de', (action) => `Nur Administratoren dürfen ${action}.`),
+			es: adminOnly('es', (action) => `Solo los administradores pueden ${action}.`),
+			tl: adminOnly('tl', (action) => `Mga administrator lang ang puwedeng ${action}.`)
+		}
+	],
+	[
+		/^Not authenticated\.?$/,
+		{ de: 'Nicht angemeldet.', es: 'No has iniciado sesión.', tl: 'Hindi ka naka-login.' }
+	],
+	[
+		/^Cross-site request blocked\.$/,
+		{
+			de: 'Anfrage von einer fremden Seite blockiert.',
+			es: 'Solicitud de otro sitio bloqueada.',
+			tl: 'Na-block ang request mula sa ibang site.'
+		}
+	],
+	[
+		/^Invalid container id or status\.$/,
+		{
+			de: 'Ungültige Container-ID oder ungültiger Status.',
+			es: 'ID de contenedor o estado no válido.',
+			tl: 'Hindi wastong container ID o status.'
+		}
+	],
+	[
+		/^Docker request failed\.$/,
+		{
+			de: 'Die Docker-Anfrage ist fehlgeschlagen.',
+			es: 'La solicitud a Docker falló.',
+			tl: 'Pumalya ang request sa Docker.'
+		}
+	],
+	[
+		/^Game not found\.$/,
+		{ de: 'Spiel nicht gefunden.', es: 'Juego no encontrado.', tl: 'Hindi nahanap ang laro.' }
+	],
 	// Login
 	[
 		/^Email\/name or password is not correct\.$/,
@@ -324,6 +400,14 @@ const RULES: [RegExp, Record<Language, Replacement>][] = [
 			de: 'Es gibt bereits ein Spiel mit diesem Kurznamen.',
 			es: 'Ya existe un juego con este nombre corto.',
 			tl: 'May laro nang may ganitong maikling pangalan.'
+		}
+	],
+	[
+		/^The slug of a game from the catalog cannot be changed\.$/,
+		{
+			de: 'Der Kurzname eines Spiels aus dem Katalog kann nicht geändert werden.',
+			es: 'El nombre corto de un juego del catálogo no se puede cambiar.',
+			tl: 'Hindi mapapalitan ang maikling pangalan ng laro mula sa katalogo.'
 		}
 	],
 	[
